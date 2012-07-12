@@ -11,7 +11,7 @@ var init = function () {
 
 
     var halfWidth = canvasLeft.width / 2;
-   	var halfHeight = canvasLeft.height / 2;
+    var halfHeight = canvasLeft.height / 2;
 
     var bufferOfLines = [];
 
@@ -36,52 +36,62 @@ var init = function () {
 
     var rotation = 0;
 
-    var clear = function()
+    var clear = function(canvas)
     {
-    	// Store the current transformation matrix
-		ctxLeft.save();
+        var context = canvas.getContext("2d");
+        // Store the current transformation matrix
+        context.save();
 
-		// Use the identity matrix while clearing the canvas
-		ctxLeft.setTransform(1, 0, 0, 1, 0, 0);
-		ctxLeft.clearRect(0, 0, canvasLeft.width, canvasLeft.height);
+        // Use the identity matrix while clearing the canvas
+        context.setTransform(1, 0, 0, 1, 0, 0);
+        context.clearRect(0, 0, canvas.width, canvas.height);
 
-		// Restore the transform
-		ctxLeft.restore();
+        // Restore the transform
+        context.restore();
     }
 
     var toRadians = function(degrees)
     {
-    	return  degrees * Math.PI / 180; 
+        return  degrees * Math.PI / 180; 
     }
 
-    var draw = function()
+    var draw_left = function()
     {
 
-    	clear();
+        clear(canvasLeft);
 
-    	ctxLeft.fillStyle = "rgb(0,0,0)";
-		ctxLeft.fillRect(0, 0, canvasLeft.width, canvasLeft.height);
-		
-	
-    	ctxLeft.save();
-    	ctxLeft.translate(halfWidth, halfHeight);
+        ctxLeft.fillStyle = "rgb(0,0,0)";
+        ctxLeft.fillRect(0, 0, canvasLeft.width, canvasLeft.height);
+        
+    
+        ctxLeft.save();
+        ctxLeft.translate(halfWidth, halfHeight);
         ctxLeft.scale(3, 3);
         ctxLeft.rotate(toRadians(rotation));
 
         rotation = (rotation + 1) % 360;
 
-    	ctxLeft.fillStyle = "rgb(200,0,0)";
-    	ctxLeft.fillRect(-25, -25, 50, 50);
+        ctxLeft.fillStyle = "rgb(200,0,0)";
+        ctxLeft.fillRect(-25, -25, 50, 50);
 
 
-    	ctxLeft.restore();
+        ctxLeft.restore();
 
         // image data
         var imageDataForTopLine = ctxLeft.getImageData(0, 0, canvasLeft.width, 1);
+        return imageDataForTopLine;
+    }
 
-
-        bufferOfLines.push(imageDataForTopLine.data);
-
+   var draw = function()
+    {
+        var imageDataForTopLine = draw_left();
+        draw_right(imageDataForTopLine.data);
+    }
+    
+   var draw_right = function(pixel_data)
+    {
+       bufferOfLines.push(pixel_data);
+ 
         //console.log("pix color" + bufferOfLines.lines.length);
 
         var rightImageData = ctxRight.createImageData(canvasRight.width, canvasRight.height);
