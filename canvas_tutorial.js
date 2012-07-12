@@ -93,7 +93,7 @@ var init = function () {
     };
 
    var draw_right = function(pixel_data){
-       bufferOfLines.push(pixel_data);
+        bufferOfLines.push(pixel_data);
  
 
         var rightImageData = ctxRight.createImageData(canvasRight.width, canvasRight.height);
