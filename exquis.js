@@ -4,20 +4,6 @@
 var init = function () {
 
 
-
-    var clear = function (canvas) {
-        var context = canvas.getContext("2d");
-        // Store the current transformation matrix
-        context.save();
-
-        // Use the identity matrix while clearing the canvas
-        context.setTransform(1, 0, 0, 1, 0, 0);
-        context.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Restore the transform
-        context.restore();
-    };
-
     var CanvasLeft = function(canvas){
         this.canvas = canvas;
         this.ctx = canvas.getContext("2d");
@@ -27,8 +13,7 @@ var init = function () {
         var halfHeight = this.canvas.height / 2;
 
         this.draw = function(){
-            clear(this.canvas);
-
+    
             this.ctx.fillStyle = "rgb(0,0,0)";
             this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
             
@@ -56,29 +41,12 @@ var init = function () {
 
 
 
-
-    var BufferOfLines = function(maxLines){
-        this.maxLines = maxLines;
-        this.lines = [];
-
-
-        this.push = function(newLine){
-            this.lines.push(newLine);
-        
-            if (this.lines.length >= maxLines)
-            {
-                this.lines.shift();
-            }
-        };
-    };
-
     var canvasLeft = new CanvasLeft(document.getElementById('canvas_left')),
         canvasRight = document.getElementById('canvas_right');
 
 
     var ctxRight = canvasRight.getContext('2d');
 
-    var bufferOfLines = new BufferOfLines(canvasRight.height);
 
     var rotation = 0;
 
@@ -89,28 +57,18 @@ var init = function () {
 
    var draw = function(){
         var imageDataForTopLine = canvasLeft.draw();
-        draw_right(imageDataForTopLine.data);
+        draw_right(imageDataForTopLine);
     };
 
    var draw_right = function(pixel_data){
-        bufferOfLines.push(pixel_data);
- 
+        
+        // paste current image one pixel down
+        var currentImage = ctxRight.getImageData(0, 0, canvasRight.width, canvasRight.height);
+        ctxRight.putImageData(currentImage, 0, 1);
 
-        var rightImageData = ctxRight.createImageData(canvasRight.width, canvasRight.height);
+        // add new line on the top 
 
-        var nextLine;
-
-        for (var i = 0; i < bufferOfLines.lines.length; i++) {
-            nextLine = bufferOfLines.lines[i];
-
-            for (var j = 0; j < nextLine.length; j++) {
-                rightImageData.data[(i * nextLine.length) + j] = nextLine[j];
-            }
-        }
-
-
-
-        ctxRight.putImageData(rightImageData, 0, 0);
+        ctxRight.putImageData(pixel_data, 0, 0);
 
     };
 
