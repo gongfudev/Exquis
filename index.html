@@ -6,14 +6,19 @@
     <meta name="description" content="">
     <!-- Mobile viewport optimized: h5bp.com/viewport -->
     <meta name="viewport" content="width=device-width">
-
+    <style>
+    	#dashboard { width: 300px; max-width: 300px; }
+    	canvas { float: left; }
+    </style>
     <script type="text/javascript" src="exquis.js"></script>
 </head>
 <body>
-       
-    <canvas id="canvas_left" width="150" height="150"></canvas>
-    <canvas id="canvas_right" width="150" height="150"></canvas>
-
+    <div id="dashboard">
+	    <canvas id="canvas_top_left" width="150" height="150"></canvas>
+	    <canvas id="canvas_top_right" width="150" height="150"></canvas>
+	    <canvas id="canvas_bottom_left" width="150" height="150"></canvas>
+	    <canvas id="canvas_bottom_right" width="150" height="150"></canvas>
+	</div>
 </body>
 
 </html>

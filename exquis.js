@@ -24,10 +24,6 @@ var makeAnimationLeft = function(context){
             context.fillRect(-25, -25, 50, 50);
 
             context.restore();
-
-            // image data
-            var imageDataForTopLine = context.getImageData(0, 0, context.canvas.width, 1);
-            return imageDataForTopLine;
         }
     }
  };
@@ -38,10 +34,23 @@ var makeAnimationRight = function(context){
         draw: function(borders) {
             // paste current image one pixel down
             var currentImage = context.getImageData(0, 0, context.canvas.width, context.canvas.height);
+            context.putImageData(currentImage, 1, 0);
+
+            // add new line on the top 
+            context.putImageData(borders.west, 0, 0);
+        }
+    }
+ };
+
+var makeAnimationBottom = function(context){
+    return {
+        draw: function(borders) {
+            // paste current image one pixel down
+            var currentImage = context.getImageData(0, 0, context.canvas.width, context.canvas.height);
             context.putImageData(currentImage, 0, 1);
 
             // add new line on the top 
-            context.putImageData(borders, 0, 0);
+            context.putImageData(borders.north, 0, 0);
         }
     }
  };
@@ -49,15 +58,26 @@ var makeAnimationRight = function(context){
 var init = function () {
 
     //animationLeft.init(document.getElementById('canvas_left'));
-    var contextLeft = document.getElementById('canvas_left').getContext("2d");
-    var contextRight = document.getElementById('canvas_right').getContext("2d");
-    var animationLeft = makeAnimationLeft(contextLeft)
-    var animationRight = makeAnimationRight(contextRight);
+    var contextTL = document.getElementById('canvas_top_left').getContext("2d"),
+        contextTR = document.getElementById('canvas_top_right').getContext("2d"),
+        contextBL = document.getElementById('canvas_bottom_left').getContext("2d"),
+        contextBR = document.getElementById('canvas_bottom_right').getContext("2d");
+    var animationTL = makeAnimationLeft(contextTL),
+        animationTR = makeAnimationRight(contextTR),
+        animationBL = makeAnimationBottom(contextBL),
+        animationBR = makeAnimationRight(contextBR);
 
     var draw = function(){
-        var imageDataForTopLine = animationLeft.draw();
-        //draw_right(imageDataForTopLine);
-        animationRight.draw(imageDataForTopLine);
+        var bordersTL = {
+            north: contextTL.getImageData(0, 0, contextTL.canvas.width, 1),
+            south: contextTL.getImageData(0, contextTL.canvas.height-1, contextTL.canvas.width, 1),
+            east: contextTL.getImageData(contextTL.canvas.width-1, 0, 1 , contextTL.canvas.height)
+        };
+        var bordersBL = {east: contextBL.getImageData(contextBL.canvas.width-1, 0, 1, contextBL.canvas.height)};
+        animationTL.draw();
+        animationTR.draw({west: bordersTL.east});
+        animationBL.draw({north: bordersTL.south});
+        animationBR.draw({west: bordersBL.east});
     };
 
 
