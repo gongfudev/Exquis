@@ -1,97 +1,63 @@
 "use strict";
 
-// Version 2
- var animationDefinitionLiterale = function(){
-    var myPrivateStuff = SOMEVALUE,
-        myEvenMorePrivateStuff = SOMEVALUE;
+var makeAnimationLeft = function(context){
+    var toRadians = function(degrees){
+        return  degrees * Math.PI / 180; 
+    };
+    var rotation = 0,
+        halfWidth = context.canvas.width / 2,
+        halfHeight = context.canvas.height / 2;
 
     return {
-        init: function( canvas) {
-        },
-        draw: function( borders) {
-            throw ("redefine me");
-        },
-        canvas: self.canvas
+        draw: function(borders) {
+            context.fillStyle = "rgb(0,0,0)";
+            context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+
+            context.save();
+            context.translate(halfWidth, halfHeight);
+            context.scale(3, 3);
+            context.rotate(toRadians(rotation));
+
+            rotation = (rotation + 1) % 360;
+
+            context.fillStyle = "rgb(200,0,0)";
+            context.fillRect(-25, -25, 50, 50);
+
+            context.restore();
+
+            // image data
+            var imageDataForTopLine = context.getImageData(0, 0, context.canvas.width, 1);
+            return imageDataForTopLine;
+        }
     }
- }
-
-// Version 1 -- avec dépendance sur une "classe" Animation
-
-var animation_1 = Animation();
-animation_1.toRadians = function(degrees){
-    return  degrees * Math.PI / 180; 
-};
-
-animation_1.setup = function(){
-    this.rotation = 0;
-    this.halfWidth = this.canvas.width / 2;
-    this.halfHeight = this.canvas.height / 2;
-}
-
-animation_1.draw = function(borders){
-
-        this.context.fillStyle = "rgb(0,0,0)";
-        this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
-        
-    
-        this.context.save();
-        this.context.translate(halfWidth, halfHeight);
-        this.context.scale(3, 3);
-        this.context.rotate(this.toRadians(this.rotation));
-
-        this.rotation = (this.rotation + 1) % 360;
-        
-
-        this.context.fillStyle = "rgb(200,0,0)";
-        this.context.fillRect(-25, -25, 50, 50);
+ };
 
 
-        this.context.restore();
+var makeAnimationRight = function(context){
+    return {
+        draw: function(borders) {
+            // paste current image one pixel down
+            var currentImage = context.getImageData(0, 0, context.canvas.width, context.canvas.height);
+            context.putImageData(currentImage, 0, 1);
 
-        // image data
-        var imageDataForTopLine = this.context.getImageData(0, 0, this.canvas.width, 1);
-        return imageDataForTopLine;
-
-};
-
-//exquis.addToDashboard( animation_1);
-
-// FIXME: move this call to the Dashboard
-var canvas = TODO;
-animation_1.init( canvas);
-  
+            // add new line on the top 
+            context.putImageData(borders, 0, 0);
+        }
+    }
+ };
 
 var init = function () {
 
+    //animationLeft.init(document.getElementById('canvas_left'));
+    var contextLeft = document.getElementById('canvas_left').getContext("2d");
+    var contextRight = document.getElementById('canvas_right').getContext("2d");
+    var animationLeft = makeAnimationLeft(contextLeft)
+    var animationRight = makeAnimationRight(contextRight);
 
-
-    var canvasLeft = new CanvasLeft(document.getElementById('canvas_left')),
-        canvasRight = document.getElementById('canvas_right');
-
-
-    var contextRight = canvasRight.getContext('2d');
-
-
-    var rotation = 0;
-
-
-
-
-   var draw = function(){
-        var imageDataForTopLine = canvasLeft.draw();
-        draw_right(imageDataForTopLine);
-    };
-
-   var draw_right = function(pixel_data){
-        
-        // paste current image one pixel down
-        var currentImage = contextRight.getImageData(0, 0, canvasRight.width, canvasRight.height);
-        contextRight.putImageData(currentImage, 0, 1);
-
-        // add new line on the top 
-
-        contextRight.putImageData(pixel_data, 0, 0);
-
+    var draw = function(){
+        var imageDataForTopLine = animationLeft.draw();
+        //draw_right(imageDataForTopLine);
+        animationRight.draw(imageDataForTopLine);
     };
 
 
