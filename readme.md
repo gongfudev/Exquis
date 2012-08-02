@@ -42,8 +42,18 @@ session 2 aout 2012:
 --------------------
 
 grille de 3 x 3 canevas.
+
+système d'enchaînement d'animations
+
+discussion sécurité du context d'évaluation. (voir solution iframe cf jsfiddle)
+
+
+session 9 aout 2012:
+-------------------
+
 structure de données pour les animations.
 généralisation du système de communication des bordures.
+
 
 
 
