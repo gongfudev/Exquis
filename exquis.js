@@ -101,7 +101,7 @@ var init = function () {
         animationBM = chainSideCopyAnimations(contextBM,['west', 'north']),
         animationBR = makeSideCopyAnimation(contextBR,'west');
 
-    var draw = function(){
+    var mainDraw = function(){
 
         var bordersMM = makeBordersForContext(contextMM),
             bordersBM = makeBordersForContext(contextBM), //{east: contextBM.getImageData(contextBM.canvas.width-1, 0, 1, contextBM.canvas.height)};
@@ -131,11 +131,12 @@ var init = function () {
         animationBR.draw({west: bordersBM.east});
         animationTM.draw({south: bordersMM.north});
 
+        window.requestNextAnimationFrame(mainDraw);
+
     };
 
 
-    setInterval(draw, 50);
-    //draw();
+    window.requestNextAnimationFrame(mainDraw);
 
 };
 
