@@ -55,6 +55,13 @@ structure de données pour les animations.
 généralisation du système de communication des bordures.
 
 
+session 16 aout 2012:
+---------------------
+
+comprendre le très joli bug pour le reproduire délibérement.
+
+pourquoi TR  copie t'il le bord nord au lieu du bord ouest ?
+
 
 
 

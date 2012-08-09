@@ -1,5 +1,69 @@
 "use strict";
 
+var makeCanvas = function(id){
+    var canvas = document.createElement('canvas');
+    canvas.id = id;
+    canvas.width = 150;
+    canvas.height = 150;
+
+    document.getElementById('dashboard').appendChild(canvas);
+    return canvas;
+}
+
+
+// ids of type "canvas-row-col"
+var makeGrid = function(){
+   var result = [];
+
+    for (var row = 0; row < 3; row++) {
+        result.push([]);
+
+        for (var col = 0; col < 3; col++) {
+            var canvasId = "canvas-" + row + "-" + col;
+            result[row].push(makeCanvas(canvasId)); 
+        }
+    };
+    return result ;
+}
+
+var map2dArray = function(array2d, func) {
+    var result = [];
+
+    for (var row = 0; row < 3; row++) {
+        result.push([]);
+        for (var col = 0; col < 3; col++) {
+            result[row][col] = func(array2d[row][col], row, col);
+        };
+    };
+
+    return result;
+};
+
+var forEach2dArray = function(array2d, func) {
+    for (var row = 0; row < 3; row++) {
+        for (var col = 0; col < 3; col++) {
+            func(array2d[row][col], row, col);
+        };
+    };
+};
+
+
+var makeCell = function(context, mkAnimation){
+    return {
+        animation : mkAnimation(context),
+        borders : function(){
+            return {
+                    north: context.getImageData(0, 0, context.canvas.width, 1),
+                    south: context.getImageData(0, context.canvas.height - 1, context.canvas.width, 1),
+                    east: context.getImageData(context.canvas.width - 1, 0, 1 , context.canvas.height),
+                    west: context.getImageData(0, 0, 1, context.canvas.height - 1)
+                };
+        },
+        draw : function(borders){ this.animation.draw(borders);}
+    };
+
+}
+
 var makeCubeAnimation = function(context){
     var toRadians = function(degrees){
         return  degrees * Math.PI / 180; 
@@ -38,6 +102,8 @@ var makeSideCopyAnimation = function(context, side){
                             east: {x:context.canvas.width - 1, y:0},
                            north: {x:0, y:0},
                            south: {x:0, y:context.canvas.height - 1} };
+
+
     
     return {
         draw: function(borders){
@@ -70,76 +136,60 @@ var chainSideCopyAnimations = function (context, sides) {
     return chainAnimations(animations);
 }
 
-var makeBordersForContext = function(context){
-    return {
-            north: context.getImageData(0, 0, context.canvas.width, 1),
-            south: context.getImageData(0, context.canvas.height - 1, context.canvas.width, 1),
-            east: context.getImageData(context.canvas.width - 1, 0, 1 , context.canvas.height),
-            west: context.getImageData(0, 0, 1, context.canvas.height - 1)
-        };
-}
+var mkAnimationTL = function(context){return chainSideCopyAnimations(context, ['south', 'east']);},
+    mkAnimationTM = function(context){return  makeSideCopyAnimation(context,'south');}, 
+        mkAnimationTR = function(context){return  makeSideCopyAnimation(context,'west');}, 
+        mkAnimationML = function(context){return   chainSideCopyAnimations(context,['south', 'east']);},
+        mkAnimationMM = function(context){return  makeCubeAnimation(context);},
+        mkAnimationMR = function(context){return  makeSideCopyAnimation(context,'west');}, 
+        mkAnimationBL = function(context){return  makeCubeAnimation(context);},
+        mkAnimationBM = function(context){return  chainSideCopyAnimations(context,['west', 'north']);},
+        mkAnimationBR = function(context){return  makeSideCopyAnimation(context,'north');};
+
+var relativeCoordinates = {
+    north : {row: -1, col: 0, opposite: "south"},
+    south : {row: 1, col: 0, opposite: "north"},
+    west : {row: 0, col: -1, opposite: "east"},
+    east : {row: 0, col: 1, opposite: "west"}
+};
 
 var init = function () {
+    var gridOfCanvases = makeGrid();
 
-    //animationLeft.init(document.getElementById('canvas_left'));
-    var contextTL = document.getElementById('canvas_top_left').getContext("2d"),
-        contextTM = document.getElementById('canvas_top_middle').getContext("2d"),
-        contextTR = document.getElementById('canvas_top_right').getContext("2d"),
-        contextML = document.getElementById('canvas_middle_left').getContext("2d"),
-        contextMM = document.getElementById('canvas_middle_middle').getContext("2d"),
-        contextMR = document.getElementById('canvas_middle_right').getContext("2d"),
-        contextBL = document.getElementById('canvas_bottom_left').getContext("2d"),
-        contextBM = document.getElementById('canvas_bottom_middle').getContext("2d"),
-        contextBR = document.getElementById('canvas_bottom_right').getContext("2d");
-    var animationTL = chainSideCopyAnimations(contextTL, ['south', 'east']),
-        animationTM = makeSideCopyAnimation(contextTM,'south'), 
-        animationTR = makeSideCopyAnimation(contextTR,'west'), 
-        animationML =  chainSideCopyAnimations(contextML,['south', 'east']),
-        animationMM = makeCubeAnimation(contextMM),
-        animationMR = makeSideCopyAnimation(contextMR,'west'), 
-        animationBL = makeCubeAnimation(contextBL),
-        animationBM = chainSideCopyAnimations(contextBM,['west', 'north']),
-        animationBR = makeSideCopyAnimation(contextBR,'west');
+    var mkAnimationsDefinitions = [[mkAnimationTL, mkAnimationTM, mkAnimationTR],
+                                    [mkAnimationML, mkAnimationMM, mkAnimationMR],
+                                    [mkAnimationBL, mkAnimationBM, mkAnimationBR]];
+
+    var cells = map2dArray(gridOfCanvases,function(canvas,row,col){
+        var context = canvas.getContext("2d");
+        return  makeCell(context, mkAnimationsDefinitions[row][col]);
+    });
+
 
     var draw = function(){
 
-        var bordersMM = makeBordersForContext(contextMM),
-            bordersBM = makeBordersForContext(contextBM), //{east: contextBM.getImageData(contextBM.canvas.width-1, 0, 1, contextBM.canvas.height)};
-            bordersBL = makeBordersForContext(contextBL),
-            bordersML = makeBordersForContext(contextML),
-            bordersTM = makeBordersForContext(contextTM);
-        
-        var inputBM = {west: bordersMM.east,
-                       north: bordersMM.south};
-        var inputML = {
-                        east: bordersMM.west,
-                        south: bordersBL.north
-                        };
+        var allBorders = map2dArray(cells,function(cell){ 
+            return cell.borders();
+        });
 
-        var inputTL = {
-                        south: bordersML.north,
-                        east: bordersTM.west
-                        };
+        forEach2dArray(cells,function(cell, col, row){
+            var neighbouringBorders = {};
+            ["north", "south", "east", "west"].forEach(function(side){
+                var offset = relativeCoordinates[side];
+                var siderow = (row + offset.row + cells.length) % cells.length;
+                var sidecol = (col + offset.col + cells[0].length) % cells[0].length;
+                neighbouringBorders[side] = allBorders[siderow][sidecol][offset.opposite];
+    
+            });
+            
 
-        animationTL.draw(inputTL);
-        animationTR.draw({ west: bordersTM.east });
-        animationML.draw(inputML);                        
-        animationMM.draw();
-        animationMR.draw({west: bordersMM.east});
-        animationBL.draw();
-        animationBM.draw(inputBM);
-        animationBR.draw({west: bordersBM.east});
-        animationTM.draw({south: bordersMM.north});
-
+            cell.draw(neighbouringBorders);
+        });
     };
 
 
     setInterval(draw, 50);
-    //draw();
 
 };
 
 window.onload = init;
-
-
-// makeAnimationBottom(contextBM),// makeAnimationBottom(contextBM),
