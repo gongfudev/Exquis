@@ -142,15 +142,12 @@ var init = function () {
                                    [mkAnimationML, mkAnimationMM, mkAnimationMR],
                                    [mkAnimationBL, mkAnimationBM, mkAnimationBR]];
 
-    var gridOfCanvases = map2dArray(mkAnimationsDefinitions, function(mkAnim,row,col){
-        return makeCanvas("canvas-" + row + "-" + col); 
-    })
-    //TODO: adapt style to number of canvases in one line?
-
-    var cells = map2dArray(gridOfCanvases,function(canvas,row,col){
+    var cells = map2dArray(mkAnimationsDefinitions,function(mkAnimDef,row,col){
+        var canvas = makeCanvas("canvas-" + row + "-" + col); 
         var context = canvas.getContext("2d");
-        return  makeCell(context, mkAnimationsDefinitions[row][col]);
+        return  makeCell(context, mkAnimDef);
     });
+    //TODO: adapt style to number of cells in one line?
 
 
     var draw = function(){
