@@ -10,22 +10,6 @@ var makeCanvas = function(id){
     return canvas;
 }
 
-
-// ids of type "canvas-row-col"
-var makeGrid = function(){
-   var result = [];
-
-    for (var row = 0; row < 3; row++) {
-        result.push([]);
-
-        for (var col = 0; col < 3; col++) {
-            var canvasId = "canvas-" + row + "-" + col;
-            result[row].push(makeCanvas(canvasId)); 
-        }
-    };
-    return result ;
-}
-
 var map2dArray = function(array2d, func) {
     var result = [];
 
@@ -138,13 +122,13 @@ var chainSideCopyAnimations = function (context, sides) {
 
 var mkAnimationTL = function(context){return chainSideCopyAnimations(context, ['south', 'east']);},
     mkAnimationTM = function(context){return  makeSideCopyAnimation(context,'south');}, 
-        mkAnimationTR = function(context){return  makeSideCopyAnimation(context,'west');}, 
-        mkAnimationML = function(context){return   chainSideCopyAnimations(context,['south', 'east']);},
-        mkAnimationMM = function(context){return  makeCubeAnimation(context);},
-        mkAnimationMR = function(context){return  makeSideCopyAnimation(context,'west');}, 
-        mkAnimationBL = function(context){return  makeCubeAnimation(context);},
-        mkAnimationBM = function(context){return  chainSideCopyAnimations(context,['west', 'north']);},
-        mkAnimationBR = function(context){return  makeSideCopyAnimation(context,'north');};
+    mkAnimationTR = function(context){return  makeSideCopyAnimation(context,'west');}, 
+    mkAnimationML = function(context){return  chainSideCopyAnimations(context,['south', 'east']);},
+    mkAnimationMM = function(context){return  makeCubeAnimation(context);},
+    mkAnimationMR = function(context){return  makeSideCopyAnimation(context,'west');}, 
+    mkAnimationBL = function(context){return  makeCubeAnimation(context);},
+    mkAnimationBM = function(context){return  chainSideCopyAnimations(context,['west', 'north']);},
+    mkAnimationBR = function(context){return  makeSideCopyAnimation(context,'north');};
 
 var relativeCoordinates = {
     north : {row: -1, col: 0, opposite: "south"},
@@ -154,11 +138,14 @@ var relativeCoordinates = {
 };
 
 var init = function () {
-    var gridOfCanvases = makeGrid();
-
     var mkAnimationsDefinitions = [[mkAnimationTL, mkAnimationTM, mkAnimationTR],
-                                    [mkAnimationML, mkAnimationMM, mkAnimationMR],
-                                    [mkAnimationBL, mkAnimationBM, mkAnimationBR]];
+                                   [mkAnimationML, mkAnimationMM, mkAnimationMR],
+                                   [mkAnimationBL, mkAnimationBM, mkAnimationBR]];
+
+    var gridOfCanvases = map2dArray(mkAnimationsDefinitions, function(mkAnim,row,col){
+        return makeCanvas("canvas-" + row + "-" + col); 
+    })
+    //TODO: adapt style to number of canvases in one line?
 
     var cells = map2dArray(gridOfCanvases,function(canvas,row,col){
         var context = canvas.getContext("2d");
