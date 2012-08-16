@@ -24,8 +24,8 @@ var map2dArray = function(array2d, func) {
 };
 
 var forEach2dArray = function(array2d, func) {
-    for (var row = 0; row < 3; row++) {
-        for (var col = 0; col < 3; col++) {
+    for (var row = 0; row < array2d.length; row++) {
+        for (var col = 0; col < array2d[row].length; col++) {
             func(array2d[row][col], row, col);
         };
     };
@@ -155,8 +155,7 @@ var init = function () {
         var allBorders = map2dArray(cells,function(cell){ 
             return cell.borders();
         });
-
-        forEach2dArray(cells,function(cell, col, row){
+        forEach2dArray(cells,function(cell, row, col){
             var neighbouringBorders = {};
             ["north", "south", "east", "west"].forEach(function(side){
                 var offset = relativeCoordinates[side];
@@ -165,12 +164,10 @@ var init = function () {
                 neighbouringBorders[side] = allBorders[siderow][sidecol][offset.opposite];
     
             });
-            
 
             cell.draw(neighbouringBorders);
         });
     };
-
 
     setInterval(draw, 50);
 
