@@ -34,7 +34,7 @@ var forEach2dArray = function(array2d, func) {
 
 var makeCell = function(context, mkAnimation){
     return {
-        animation : mkAnimation(context),
+        animation : mkAnimation(),
         borders : function(){
             return {
                     north: context.getImageData(0, 0, context.canvas.width, 1),
@@ -43,30 +43,37 @@ var makeCell = function(context, mkAnimation){
                     west: context.getImageData(0, 0, 1, context.canvas.height - 1)
                 };
         },
-        draw : function(borders){ this.animation.draw(borders);}
+        draw : function(borders){ this.animation.draw(context, borders);},
+        setup : function(){ this.animation.setup(context);}
     };
 
 }
-
-var makeCubeAnimation = function(context){
-    var toRadians = function(degrees){
-        return  degrees * Math.PI / 180; 
-    };
-    var rotation = 0,
-        halfWidth = context.canvas.width / 2,
-        halfHeight = context.canvas.height / 2;
+/* 
+var o = {}
+o.setup = wrapCodeString(string1delutilisateur);
+o.draw = wrapCodeString(string2delutilisateur);
+*/
+var makeCubeAnimation = function(){
 
     return {
-        draw: function(borders) {
+        setup: function(context){
+            this.toRadians = function(degrees){
+                return  degrees * Math.PI / 180; 
+            };
+            this.rotation = 0;
+            this.halfWidth = context.canvas.width / 2;
+            this.halfHeight = context.canvas.height / 2;
+        },
+        draw: function(context,borders) {
             context.fillStyle = "rgb(0,0,0)";
             context.fillRect(0, 0, context.canvas.width, context.canvas.height);
 
             context.save();
-            context.translate(halfWidth, halfHeight);
+            context.translate(this.halfWidth, this.halfHeight);
             context.scale(3, 3);
-            context.rotate(toRadians(rotation));
+            context.rotate(this.toRadians(this.rotation));
 
-            rotation = (rotation + 1) % 360;
+            this.rotation = (this.rotation + 1) % 360;
 
             context.fillStyle = "rgb(200,0,0)";
             context.fillRect(-25, -25, 50, 50);
@@ -77,26 +84,27 @@ var makeCubeAnimation = function(context){
  };
 
 
-var makeSideCopyAnimation = function(context, side){
-    var imageCopyOrigin = { west: {x:1, y:0}, 
-                            east: {x:-1, y:0},
-                           north: {x:0, y:1},
-                           south: {x:0, y:-1} };
-    var borderOrigin = { west: {x:0, y:0}, 
-                            east: {x:context.canvas.width - 1, y:0},
-                           north: {x:0, y:0},
-                           south: {x:0, y:context.canvas.height - 1} };
+var makeSideCopyAnimation = function(side){
 
-
-    
     return {
-        draw: function(borders){
+        setup: function(context){
+            this.imageCopyOrigin = { west: {x:1, y:0}, 
+                                    east: {x:-1, y:0},
+                                   north: {x:0, y:1},
+                                   south: {x:0, y:-1} };
+            this.borderOrigin = { west: {x:0, y:0}, 
+                                    east: {x:context.canvas.width - 1, y:0},
+                                   north: {x:0, y:0},
+                                   south: {x:0, y:context.canvas.height - 1} };
+
+        },
+        draw: function(context, borders){
             // paste current image one pixel down
             var currentImage = context.getImageData(0, 0, context.canvas.width, context.canvas.height);
-            var origin = imageCopyOrigin[side];
+            var origin = this.imageCopyOrigin[side];
             context.putImageData(currentImage, origin.x, origin.y);
             // add new line
-            var borderO = borderOrigin[side];
+            var borderO = this.borderOrigin[side];
             context.putImageData(borders[side], borderO.x, borderO.y);
         }
 
@@ -105,30 +113,35 @@ var makeSideCopyAnimation = function(context, side){
 
 var chainAnimations = function(animations){
     return{
-        draw: function(borders) {
+        setup: function(context){
            animations.forEach(function(animation){ 
-                                animation.draw(borders);
+                    animation.setup(context);
+                  });
+        },
+        draw: function(context, borders) {
+           animations.forEach(function(animation){ 
+                                animation.draw(context, borders);
                               });
         }
     }
 }
 
-var chainSideCopyAnimations = function (context, sides) {
+var chainSideCopyAnimations = function (sides) {
     var animations = sides.map(function(side){ 
-            return makeSideCopyAnimation(context, side);
+            return makeSideCopyAnimation(side);
             });
     return chainAnimations(animations);
 }
 
-var mkAnimationTL = function(context){return chainSideCopyAnimations(context, ['south', 'east']);},
-    mkAnimationTM = function(context){return  makeSideCopyAnimation(context,'south');}, 
-    mkAnimationTR = function(context){return  makeSideCopyAnimation(context,'west');}, 
-    mkAnimationML = function(context){return  chainSideCopyAnimations(context,['south', 'east']);},
-    mkAnimationMM = function(context){return  makeCubeAnimation(context);},
-    mkAnimationMR = function(context){return  makeSideCopyAnimation(context,'west');}, 
-    mkAnimationBL = function(context){return  makeCubeAnimation(context);},
-    mkAnimationBM = function(context){return  chainSideCopyAnimations(context,['west', 'north']);},
-    mkAnimationBR = function(context){return  makeSideCopyAnimation(context,'north');};
+var mkAnimationTL = function(context){return chainSideCopyAnimations( ['south', 'east']);},
+    mkAnimationTM = function(context){return  makeSideCopyAnimation('south');}, 
+    mkAnimationTR = function(context){return  makeSideCopyAnimation('west');}, 
+    mkAnimationML = function(context){return  chainSideCopyAnimations(['south', 'east']);},
+    mkAnimationMM = function(context){return  makeCubeAnimation();},
+    mkAnimationMR = function(context){return  makeSideCopyAnimation('west');}, 
+    mkAnimationBL = function(context){return  makeCubeAnimation();},
+    mkAnimationBM = function(context){return  chainSideCopyAnimations(['west', 'north']);},
+    mkAnimationBR = function(context){return  makeSideCopyAnimation('north');};
 
 var relativeCoordinates = {
     north : {row: -1, col: 0, opposite: "south"},
@@ -169,6 +182,7 @@ var init = function () {
         });
     };
 
+    forEach2dArray(cells,function(cell){ cell.setup(); });
     setInterval(draw, 50);
 
 };
