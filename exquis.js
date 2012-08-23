@@ -48,14 +48,9 @@ var makeCell = function(context, mkAnimation){
     };
 
 }
-/* 
-var o = {}
-o.setup = wrapCodeString(string1delutilisateur);
-o.draw = wrapCodeString(string2delutilisateur);
-*/
-var makeCubeAnimation = function(){
 
-    return {
+
+var squareAnimation = {
         setup: function(context){
             this.toRadians = function(degrees){
                 return  degrees * Math.PI / 180; 
@@ -80,9 +75,21 @@ var makeCubeAnimation = function(){
 
             context.restore();
         }
-    }
  };
 
+var makeSquareAnim = function(){
+    return makeAnimFromStrings( squareAnimation.setup.toString(),
+                                squareAnimation.draw.toString());
+};
+
+var makeAnimFromStrings = function(setup_string, draw_string){
+    var animation = {};
+
+    eval ("animation.setup = "  + setup_string );
+    eval ("animation.draw = "  + draw_string );
+
+    return animation;
+}
 
 var makeSideCopyAnimation = function(side){
 
@@ -137,9 +144,9 @@ var mkAnimationTL = function(context){return chainSideCopyAnimations( ['south', 
     mkAnimationTM = function(context){return  makeSideCopyAnimation('south');}, 
     mkAnimationTR = function(context){return  makeSideCopyAnimation('west');}, 
     mkAnimationML = function(context){return  chainSideCopyAnimations(['south', 'east']);},
-    mkAnimationMM = function(context){return  makeCubeAnimation();},
+    mkAnimationMM = function(context){return  makeSquareAnim();},
     mkAnimationMR = function(context){return  makeSideCopyAnimation('west');}, 
-    mkAnimationBL = function(context){return  makeCubeAnimation();},
+    mkAnimationBL = function(context){return  squareAnimation;},
     mkAnimationBM = function(context){return  chainSideCopyAnimations(['west', 'north']);},
     mkAnimationBR = function(context){return  makeSideCopyAnimation('north');};
 
@@ -160,7 +167,37 @@ var init = function () {
         var context = canvas.getContext("2d");
         return  makeCell(context, mkAnimDef);
     });
-    //TODO: adapt style to number of cells in one line?
+
+    var textAreaSetup = document.getElementById("text_area_setup"),
+        textAreaDraw = document.getElementById("text_area_draw");
+
+    var evalCodeString = function(codeString){
+        var tempFunc;
+        try{            
+            eval("tempFunc = function(context, borders) { " + codeString + "};");
+        } catch(e){
+            tempFunc = false;
+        }
+        return tempFunc;
+    }
+
+
+    textAreaSetup.onkeyup = function(){
+        var tempSetup = evalCodeString( this.value );
+        if(tempSetup){
+            cells[1][1].animation.setup = tempSetup;
+            cells[1][1].setup();
+        }
+    };
+
+    textAreaDraw.onkeyup = function(){
+        var tempDraw = evalCodeString( this.value );
+        if(tempDraw){
+            cells[1][1].animation.draw = tempDraw;
+        }
+    };
+
+
 
 
     var draw = function(){

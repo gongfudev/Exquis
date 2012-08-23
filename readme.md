@@ -63,6 +63,21 @@ comprendre le très joli bug pour le reproduire délibérement.
 pourquoi TR  copie t'il le bord nord au lieu du bord ouest ?
 
 
+session 23 aout 2012:
+---------------------
+
+implémentation du live coding pour la case du milieu.
+
+bug sur la mise à jour de la fonction draw, quand la string est incorrecte.
+
+
+session 30 aout 2012:
+---------------------
+
+correction du bug du 23.
+live coding pour toutes les cellules.
+
+
 
 
 
