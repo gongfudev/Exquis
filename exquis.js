@@ -184,16 +184,45 @@ var init = function () {
 
     textAreaSetup.onkeyup = function(){
         var tempSetup = evalCodeString( this.value );
+
         if(tempSetup){
+            var targetCell = cells[1][1],
+                setupBackup = targetCell.animation.setup;
+
             cells[1][1].animation.setup = tempSetup;
-            cells[1][1].setup();
+            
+            try{
+                cells[1][1].setup();
+            }catch(e)
+            {
+                cells[1][1].animation.setup = setupBackup;
+            }
+            
         }
     };
 
     textAreaDraw.onkeyup = function(){
         var tempDraw = evalCodeString( this.value );
+  
         if(tempDraw){
-            cells[1][1].animation.draw = tempDraw;
+            var targetCell = cells[1][1],
+                drawBackup = targetCell.animation.draw;
+
+            targetCell.animation.draw = tempDraw;
+
+            var drawEvalsCorrectlyInContextOfAnimation = true;
+
+            var fakeBorders = { north : [], 
+                                south : [],
+                                east : [],
+                                west : []
+                               };
+
+            try{
+                targetCell.draw(fakeBorders);
+            }catch(e){
+                targetCell.animation.draw = drawBackup;
+            }
         }
     };
 
