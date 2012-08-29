@@ -43,8 +43,18 @@ var makeCell = function(context, mkAnimation){
                     west: context.getImageData(0, 0, 1, context.canvas.height - 1)
                 };
         },
-        draw : function(borders){ this.animation.draw(context, borders);},
-        setup : function(){ this.animation.setup(context);}
+
+        draw : function(borders){ 
+            // force reset matrix
+            context.setTransform(1, 0, 0, 1, 0, 0);
+            this.animation.draw(context, borders);
+        },
+
+        setup : function(){ 
+            // force reset matrix
+            context.setTransform(1, 0, 0, 1, 0, 0);
+            this.animation.setup(context);
+        }
     };
 
 }
