@@ -43,8 +43,8 @@ var makeCell = function(context, mkAnimation){
                     west: context.getImageData(0, 0, 1, context.canvas.height - 1)
                 };
         },
-        draw : function(borders){ this.animation.draw(context, borders);},
-        setup : function(){ this.animation.setup(context);}
+        draw : function(borders){ this.animation.draw(context, borders); },
+        setup : function(){ this.animation.setup(context); }
     };
 
 }
@@ -157,7 +157,9 @@ var relativeCoordinates = {
     east : {row: 0, col: 1, opposite: "west"}
 };
 
+
 var init = function () {
+
     var mkAnimationsDefinitions = [[mkAnimationTL, mkAnimationTM, mkAnimationTR],
                                    [mkAnimationML, mkAnimationMM, mkAnimationMR],
                                    [mkAnimationBL, mkAnimationBM, mkAnimationBR]];
@@ -171,6 +173,7 @@ var init = function () {
     var textAreaSetup = document.getElementById("text_area_setup"),
         textAreaDraw = document.getElementById("text_area_draw");
 
+   
     var evalCodeString = function(codeString){
         var tempFunc;
         try{            
@@ -181,6 +184,16 @@ var init = function () {
         return tempFunc;
     }
 
+
+    fillTextAreasWithSavedContent(textAreaSetup, textAreaDraw);
+
+    window.onbeforeunload = function(){
+
+        // store code strings on page quit
+        localStorage.setItem("setupString", textAreaSetup.value);
+        localStorage.setItem("drawString", textAreaDraw.value);
+
+    }
 
     textAreaSetup.onkeyup = function(){
         var tempSetup = evalCodeString( this.value );
