@@ -218,28 +218,21 @@ var init = function () {
     textAreaDraw.onkeyup = function(){
         var targetCell = cells[1][1];
 
+        
         targetCell.updateDraw = function(neighbouringBorders){
-            var newDraw = evalCodeString( textAreaDraw.value );
-            if(newDraw){
-                if(!targetCell.animation.drawBackup){
-                    //if there is no backup, the last draw function was valid
-                    targetCell.animation.drawBackup = targetCell.animation.draw;
-                }
-                targetCell.animation.draw = newDraw;
-                try{
-                    targetCell.draw(neighbouringBorders);
-                    delete(targetCell.animation.drawBackup);
-                    textAreaDraw.className = "code_valid";     
-                }catch(e){
-                    targetCell.animation.draw = targetCell.animation.drawBackup;
-                    targetCell.draw(neighbouringBorders);
-                    textAreaDraw.className = "code_invalid";
-                }
-            }else{
-                textAreaDraw.className = "code_invalid"
+            var drawString = textAreaDraw.value,
+                drawBackup = targetCell.animation.draw;
+            try{
+                eval("targetCell.animation.draw = function(context, borders) {" + drawString + "};" +
+                     "targetCell.draw(neighbouringBorders);");
+                textAreaDraw.className = "code_valid";     
+            }catch(e){
+                targetCell.animation.draw = drawBackup;
                 targetCell.draw(neighbouringBorders);
+                textAreaDraw.className = "code_invalid";     
             }
         }
+        
     };
 
 
