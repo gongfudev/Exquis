@@ -216,17 +216,29 @@ var init = function () {
     };
 
     textAreaDraw.onkeyup = function(){
-        var newDraw = evalCodeString( this.value );
-        if(newDraw){
-            var targetCell = cells[1][1];
-            if(!targetCell.animation.drawBackup){
-                //if there is no backup, the last draw function was valid
-                targetCell.animation.drawBackup = targetCell.animation.draw;
+        var targetCell = cells[1][1];
+
+        targetCell.updateDraw = function(neighbouringBorders){
+            var newDraw = evalCodeString( textAreaDraw.value );
+            if(newDraw){
+                if(!targetCell.animation.drawBackup){
+                    //if there is no backup, the last draw function was valid
+                    targetCell.animation.drawBackup = targetCell.animation.draw;
+                }
+                targetCell.animation.draw = newDraw;
+                try{
+                    targetCell.draw(neighbouringBorders);
+                    delete(targetCell.animation.drawBackup);
+                    textAreaDraw.className = "code_valid";     
+                }catch(e){
+                    targetCell.animation.draw = targetCell.animation.drawBackup;
+                    targetCell.draw(neighbouringBorders);
+                    textAreaDraw.className = "code_invalid";
+                }
+            }else{
+                textAreaDraw.className = "code_invalid"
+                targetCell.draw(neighbouringBorders);
             }
-            targetCell.animation.draw = newDraw;
-            targetCell.animation.hasNewDraw = true;
-        }else{
-            textAreaDraw.className = "code_invalid"
         }
     };
 
@@ -248,20 +260,14 @@ var init = function () {
     
             });
 
-            if(cell.animation.hasNewDraw){
-                try{
-                    cell.draw(neighbouringBorders);
-                    delete(cell.animation.drawBackup);
-                    textAreaDraw.className = "code_valid";     
-                }catch(e){
-                    cell.animation.draw = cell.animation.drawBackup;
-                    cell.draw(neighbouringBorders);
-                    textAreaDraw.className = "code_invalid";
-                }
-                cell.animation.hasNewDraw = false;
+            if(cell.updateDraw){
+                cell.updateDraw(neighbouringBorders);
+                delete(cell.updateDraw);
             }else{
                 cell.draw(neighbouringBorders);
             }
+
+
 
         });
     };
