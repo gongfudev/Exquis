@@ -181,6 +181,9 @@ var init = function () {
     var textAreaSetup = document.getElementById("text_area_setup"),
         textAreaDraw = document.getElementById("text_area_draw");
 
+    textAreaDraw.className = "code_valid";
+    textAreaSetup.className = "code_valid";
+
     var evalCodeString = function(codeString){
         var tempFunc;
         try{            
@@ -199,40 +202,31 @@ var init = function () {
             var targetCell = cells[1][1],
                 setupBackup = targetCell.animation.setup;
 
-            cells[1][1].animation.setup = tempSetup;
+            targetCell.animation.setup = tempSetup;
             
             try{
-                cells[1][1].setup();
+                targetCell.setup();
             }catch(e)
             {
-                cells[1][1].animation.setup = setupBackup;
+                targetCell.animation.setup = setupBackup;
+                targetCell.setup();
             }
             
         }
     };
 
     textAreaDraw.onkeyup = function(){
-        var tempDraw = evalCodeString( this.value );
-  
-        if(tempDraw){
-            var targetCell = cells[1][1],
-                drawBackup = targetCell.animation.draw;
-
-            targetCell.animation.draw = tempDraw;
-
-            var drawEvalsCorrectlyInContextOfAnimation = true;
-
-            var fakeBorders = { north : [], 
-                                south : [],
-                                east : [],
-                                west : []
-                               };
-
-            try{
-                targetCell.draw(fakeBorders);
-            }catch(e){
-                targetCell.animation.draw = drawBackup;
+        var newDraw = evalCodeString( this.value );
+        if(newDraw){
+            var targetCell = cells[1][1];
+            if(!targetCell.animation.drawBackup){
+                //if there is no backup, the last draw function was valid
+                targetCell.animation.drawBackup = targetCell.animation.draw;
             }
+            targetCell.animation.draw = newDraw;
+            targetCell.animation.hasNewDraw = true;
+        }else{
+            textAreaDraw.className = "code_invalid"
         }
     };
 
@@ -254,7 +248,21 @@ var init = function () {
     
             });
 
-            cell.draw(neighbouringBorders);
+            if(cell.animation.hasNewDraw){
+                try{
+                    cell.draw(neighbouringBorders);
+                    delete(cell.animation.drawBackup);
+                    textAreaDraw.className = "code_valid";     
+                }catch(e){
+                    cell.animation.draw = cell.animation.drawBackup;
+                    cell.draw(neighbouringBorders);
+                    textAreaDraw.className = "code_invalid";
+                }
+                cell.animation.hasNewDraw = false;
+            }else{
+                cell.draw(neighbouringBorders);
+            }
+
         });
     };
 
