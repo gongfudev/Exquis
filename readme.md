@@ -75,7 +75,15 @@ session 30 aout 2012:
 ---------------------
 
 correction du bug du 23.
+visualisation de la validité du code.
+refactor du mécanisme de mise à jour du code évalué.
+
+
+session 6 septembre 2012:
+-------------------------
+
 live coding pour toutes les cellules.
+
 
 
 

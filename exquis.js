@@ -184,41 +184,24 @@ var init = function () {
     textAreaDraw.className = "code_valid";
     textAreaSetup.className = "code_valid";
 
-    var evalCodeString = function(codeString){
-        var tempFunc;
-        try{            
-            eval("tempFunc = function(context, borders) { " + codeString + "};");
-        } catch(e){
-            tempFunc = false;
-        }
-        return tempFunc;
-    }
-
-
     textAreaSetup.onkeyup = function(){
-        var tempSetup = evalCodeString( this.value );
+        var targetCell = cells[1][1];     
 
-        if(tempSetup){
-            var targetCell = cells[1][1],
-                setupBackup = targetCell.animation.setup;
-
-            targetCell.animation.setup = tempSetup;
-            
+        targetCell.updateSetup = function(){
+            var setupString = textAreaSetup.value;
             try{
-                targetCell.setup();
-            }catch(e)
-            {
-                targetCell.animation.setup = setupBackup;
-                targetCell.setup();
+                eval("targetCell.animation.setup = function(context) {" + setupString + "};" +
+                     "targetCell.setup();");
+                textAreaSetup.className = "code_valid";     
+            }catch(e){
+                textAreaSetup.className = "code_invalid";     
             }
-            
         }
     };
 
     textAreaDraw.onkeyup = function(){
         var targetCell = cells[1][1];
-
-        
+    
         targetCell.updateDraw = function(neighbouringBorders){
             var drawString = textAreaDraw.value,
                 drawBackup = targetCell.animation.draw;
@@ -253,6 +236,11 @@ var init = function () {
     
             });
 
+            if(cell.updateSetup){
+                cell.updateSetup();
+                delete(cell.updateSetup);
+            }
+            
             if(cell.updateDraw){
                 cell.updateDraw(neighbouringBorders);
                 delete(cell.updateDraw);
