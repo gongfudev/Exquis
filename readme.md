@@ -79,11 +79,18 @@ visualisation de la validité du code.
 refactor du mécanisme de mise à jour du code évalué.
 
 
-session 6 septembre 2012:
+session 7 septembre 2012:
 -------------------------
 
 live coding pour toutes les cellules.
 
+rajouté serveur statique (node.js)
+
+
+session 13 septembre 2012
+-------------------------
+
+charger les définitions des animations via le serveur (json)
 
 
 

@@ -34,7 +34,7 @@ var forEach2dArray = function(array2d, func) {
 
 var makeCell = function(context, mkAnimation){
     return {
-        animation : mkAnimation(),
+        animation : mkAnimation ? mkAnimation() : {},
         borders : function(){
             return {
                     north: context.getImageData(0, 0, context.canvas.width, 1),
@@ -86,20 +86,6 @@ var squareAnimation = {
             context.restore();
         }
  };
-
-var makeSquareAnim = function(){
-    return makeAnimFromStrings( squareAnimation.setup.toString(),
-                                squareAnimation.draw.toString());
-};
-
-var makeAnimFromStrings = function(setup_string, draw_string){
-    var animation = {};
-
-    eval ("animation.setup = "  + setup_string );
-    eval ("animation.draw = "  + draw_string );
-
-    return animation;
-}
 
 var makeSideCopyAnimation = function(side){
 
@@ -167,9 +153,17 @@ var relativeCoordinates = {
     east : {row: 0, col: 1, opposite: "west"}
 };
 
+var addSetupToCell = function(targetCell, setupString){
+    eval("targetCell.animation.setup = function(context) {" + setupString + "};");
+}
+
+var addDrawToCell = function(targetCell, drawString){
+    eval("targetCell.animation.draw = function(context, borders) {" + drawString + "};");
+}
+
 var init = function () {
     var mkAnimationsDefinitions = [[mkAnimationTL, mkAnimationTM, mkAnimationTR],
-                                   [mkAnimationML, mkAnimationMM, mkAnimationMR],
+                                   [mkAnimationML, 0, mkAnimationMR],
                                    [mkAnimationBL, mkAnimationBM, mkAnimationBR]];
 
     var cells = map2dArray(mkAnimationsDefinitions,function(mkAnimDef,row,col){
@@ -177,6 +171,13 @@ var init = function () {
         var context = canvas.getContext("2d");
         return  makeCell(context, mkAnimDef);
     });
+
+    var cqt = {
+    "setup": 'this.toRadians = function(degrees){\n    return  degrees * Math.PI / 180; \n};\nthis.rotation = 0;\nthis.halfWidth = context.canvas.width / 2;\nthis.halfHeight = context.canvas.height / 2;',
+    "draw": 'context.fillStyle = "rgb(0,0,0)";\ncontext.fillRect(0, 0, context.canvas.width, context.canvas.height);\n\ncontext.save();\ncontext.translate(this.halfWidth, this.halfHeight);\ncontext.scale(3, 3);\ncontext.rotate(this.toRadians(this.rotation));\n\nthis.rotation = (this.rotation + 1) % 360;\n\ncontext.fillStyle = "rgb(200,0,0)";\ncontext.fillRect(-25, -25, 50, 50);\n\ncontext.restore();\n'
+    }
+    addDrawToCell(cells[1][1], cqt.draw);
+    addSetupToCell(cells[1][1], cqt.setup);
 
     var textAreaSetup = document.getElementById("text_area_setup"),
         textAreaDraw = document.getElementById("text_area_draw");
@@ -190,8 +191,8 @@ var init = function () {
         targetCell.updateSetup = function(){
             var setupString = textAreaSetup.value;
             try{
-                eval("targetCell.animation.setup = function(context) {" + setupString + "};" +
-                     "targetCell.setup();");
+                addSetupToCell(targetCell, setupString);
+                targetCell.setup();
                 textAreaSetup.className = "code_valid";     
             }catch(e){
                 textAreaSetup.className = "code_invalid";     
@@ -206,10 +207,12 @@ var init = function () {
             var drawString = textAreaDraw.value,
                 drawBackup = targetCell.animation.draw;
             try{
-                eval("targetCell.animation.draw = function(context, borders) {" + drawString + "};" +
-                     "targetCell.draw(neighbouringBorders);");
+                addDrawToCell(targetCell, drawString);
+                targetCell.draw(neighbouringBorders);
                 textAreaDraw.className = "code_valid";     
             }catch(e){
+                throw e;
+                console.error(e);
                 targetCell.animation.draw = drawBackup;
                 targetCell.draw(neighbouringBorders);
                 textAreaDraw.className = "code_invalid";     
@@ -217,9 +220,6 @@ var init = function () {
         }
         
     };
-
-
-
 
     var draw = function(){
 
