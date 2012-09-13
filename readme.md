@@ -90,9 +90,18 @@ rajouté serveur statique (node.js)
 session 13 septembre 2012
 -------------------------
 
+session en remote gung-fu (Skype + TeamViewer)
 charger les définitions des animations via le serveur (json)
 
 
+session 20 septembre 2012
+-------------------------
+
+toutes les animations sous formes de json servies par le serveur
+définir un assemblage d'animations sous forme de json sur le serveur.
+
+...
+enregistrer les modifications au code d'animations
 
 
 

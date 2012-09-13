@@ -161,7 +161,44 @@ var addDrawToCell = function(targetCell, drawString){
     eval("targetCell.animation.draw = function(context, borders) {" + drawString + "};");
 }
 
-var init = function () {
+// jsons -> [ path ]
+var loadJsons = function(jsons, callback ){
+
+    var results = [];
+    var loadNextJson = function(result){
+            results.push(result);
+
+            if (jsons.length > 0){
+                loadJson(jsons.shift(),loadNextJson);
+            }else{
+                callback(results);
+            }
+               
+    } 
+    loadJson(jsons.shift(), loadNextJson);
+
+}
+
+var loadJson = function(path, callback){
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function(){
+        if (xmlhttp.readyState==4 && xmlhttp.status==200){
+            var result = JSON.parse(xmlhttp.responseText);
+            callback(result);
+        }
+    }
+    xmlhttp.open("GET", path, true);
+    xmlhttp.send();
+}
+
+var loadAnimations = function(){
+    loadJsons([ "animations/carreQuiTourne.json"],function(results){
+        init(results[0]);
+    });
+}
+
+var init = function (cqt) {
     var mkAnimationsDefinitions = [[mkAnimationTL, mkAnimationTM, mkAnimationTR],
                                    [mkAnimationML, 0, mkAnimationMR],
                                    [mkAnimationBL, mkAnimationBM, mkAnimationBR]];
@@ -172,10 +209,6 @@ var init = function () {
         return  makeCell(context, mkAnimDef);
     });
 
-    var cqt = {
-    "setup": 'this.toRadians = function(degrees){\n    return  degrees * Math.PI / 180; \n};\nthis.rotation = 0;\nthis.halfWidth = context.canvas.width / 2;\nthis.halfHeight = context.canvas.height / 2;',
-    "draw": 'context.fillStyle = "rgb(0,0,0)";\ncontext.fillRect(0, 0, context.canvas.width, context.canvas.height);\n\ncontext.save();\ncontext.translate(this.halfWidth, this.halfHeight);\ncontext.scale(3, 3);\ncontext.rotate(this.toRadians(this.rotation));\n\nthis.rotation = (this.rotation + 1) % 360;\n\ncontext.fillStyle = "rgb(200,0,0)";\ncontext.fillRect(-25, -25, 50, 50);\n\ncontext.restore();\n'
-    }
     addDrawToCell(cells[1][1], cqt.draw);
     addSetupToCell(cells[1][1], cqt.setup);
 
@@ -258,4 +291,4 @@ var init = function () {
 
 };
 
-window.onload = init;
+window.onload = loadAnimations;
