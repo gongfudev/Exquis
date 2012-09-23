@@ -179,6 +179,22 @@ var loadJsons = function(jsons, callback ){
 
 }
 
+var loadJsonsAsync = function(jsons, callback ){
+
+    var results = [];
+    var handleJson = function(result){
+            results.push(result);
+            if (results.length == jsons.length ){
+                callback(results);
+            }
+    } 
+    for(var i=0; i<jsons.length; i++){
+	loadJson(jsons[i], handleJson);
+    }
+
+}
+
+//TODO add an error handler callback
 var loadJson = function(path, callback){
 
     var xmlhttp = new XMLHttpRequest();
