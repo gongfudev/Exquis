@@ -114,6 +114,22 @@ var makeSideCopyAnimation = function(side){
     };
 };
 
+var makeSouthCopyAnimation = function(){
+
+    return {
+        setup: function(context){
+        },
+        draw: function(context, borders){
+            // paste current image one pixel down
+            var currentImage = context.getImageData(0, 0, context.canvas.width, context.canvas.height);
+            context.putImageData(currentImage, 0, -1);
+            // add new line
+            context.putImageData(borders.south, 0, context.canvas.height - 1);
+        }
+
+    };
+};
+
 var chainAnimations = function(animations){
     return{
         setup: function(context){
@@ -137,7 +153,7 @@ var chainSideCopyAnimations = function (sides) {
 }
 
 var mkAnimationTL = function(context){return chainSideCopyAnimations( ['south', 'east']);},
-    mkAnimationTM = function(context){return  makeSideCopyAnimation('south');}, 
+    mkAnimationTM = function(context){return  makeSouthCopyAnimation();}, 
     mkAnimationTR = function(context){return  makeSideCopyAnimation('west');}, 
     mkAnimationML = function(context){return  chainSideCopyAnimations(['south', 'east']);},
     mkAnimationMM = function(context){return  makeSquareAnim();},
@@ -161,35 +177,20 @@ var addDrawToCell = function(targetCell, drawString){
     eval("targetCell.animation.draw = function(context, borders) {" + drawString + "};");
 }
 
-// jsons -> [ path ]
 var loadJsons = function(jsons, callback ){
 
-    var results = [];
-    var loadNextJson = function(result){
-            results.push(result);
-
-            if (jsons.length > 0){
-                loadJson(jsons.shift(),loadNextJson);
-            }else{
-                callback(results);
-            }
-               
-    } 
-    loadJson(jsons.shift(), loadNextJson);
-
-}
-
-var loadJsonsAsync = function(jsons, callback ){
-
-    var results = [];
-    var handleJson = function(result){
-            results.push(result);
-            if (results.length == jsons.length ){
+    var results = {};
+    var counter = 0;
+    var handleJson = function(result, path){
+            var name =  /animations\/(\w+)\.json/.exec(path)[1];
+            results[name] = result;
+            counter ++;
+            if (counter == jsons.length ){
                 callback(results);
             }
     } 
     for(var i=0; i<jsons.length; i++){
-	loadJson(jsons[i], handleJson);
+	   loadJson(jsons[i], handleJson);
     }
 
 }
@@ -201,7 +202,7 @@ var loadJson = function(path, callback){
     xmlhttp.onreadystatechange = function(){
         if (xmlhttp.readyState==4 && xmlhttp.status==200){
             var result = JSON.parse(xmlhttp.responseText);
-            callback(result);
+            callback(result, path);
         }
     }
     xmlhttp.open("GET", path, true);
@@ -209,13 +210,21 @@ var loadJson = function(path, callback){
 }
 
 var loadAnimations = function(){
-    loadJsons([ "animations/carreQuiTourne.json"],function(results){
-        init(results[0]);
+    loadJsons([ "animations/carreQuiTourne.json","animations/copieBordSud.json"],function(results){
+        init(results);
     });
 }
 
-var init = function (cqt) {
-    var mkAnimationsDefinitions = [[mkAnimationTL, mkAnimationTM, mkAnimationTR],
+var addAnimationToCell = function(cell, animation){
+    addDrawToCell(cell, animation.draw);
+    addSetupToCell(cell, animation.setup);
+
+};
+
+var init = function (jsons) {
+    var cqt = jsons.carreQuiTourne;
+    var cbs = jsons.copieBordSud;
+    var mkAnimationsDefinitions = [[mkAnimationTL, 0, mkAnimationTR],
                                    [mkAnimationML, 0, mkAnimationMR],
                                    [mkAnimationBL, mkAnimationBM, mkAnimationBR]];
 
@@ -225,8 +234,8 @@ var init = function (cqt) {
         return  makeCell(context, mkAnimDef);
     });
 
-    addDrawToCell(cells[1][1], cqt.draw);
-    addSetupToCell(cells[1][1], cqt.setup);
+    addAnimationToCell(cells[0][1], cbs);
+    addAnimationToCell(cells[1][1], cqt);
 
     var textAreaSetup = document.getElementById("text_area_setup"),
         textAreaDraw = document.getElementById("text_area_draw");

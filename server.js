@@ -1,4 +1,4 @@
-var sys = require('sys'),
+	var sys = require('sys'),
     http = require('http'),
     fs = require('fs'),
     index,
@@ -38,8 +38,6 @@ var guessContentType = function(fileName){
 http.createServer(function(request, response) {
 	var pathname = "." + require('url').parse(request.url).pathname;
 	fetchFile(pathname, response);
-
-
 
 
 }).listen(8000);

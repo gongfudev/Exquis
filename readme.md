@@ -97,11 +97,25 @@ charger les définitions des animations via le serveur (json)
 session 20 septembre 2012
 -------------------------
 
-toutes les animations sous formes de json servies par le serveur
+annulé
+
+
+session 27 septembre 2012
+-------------------------
+
+(use nodemon to monitor code changes on node app: npm install nodemon -g)
+
+refactor du loading des jsons vers une version async.
+création du fichier animation "copieBordSud.json"
+
+
+session 4 octobre 2012
+----------------------
+
+continuer à traduire les animations sous formes de json servies par le serveur
 définir un assemblage d'animations sous forme de json sur le serveur.
 
 ...
 enregistrer les modifications au code d'animations
-
 
 
