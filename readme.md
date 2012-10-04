@@ -119,3 +119,10 @@ définir un assemblage d'animations sous forme de json sur le serveur.
 enregistrer les modifications au code d'animations
 
 
+session 11 octobre 2012
+-----------------------
+
+rendre possible l'édition des 9 cases.
+définir un assemblage d'animations sous forme de json sur le serveur.
+
+

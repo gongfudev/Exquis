@@ -32,9 +32,12 @@ var forEach2dArray = function(array2d, func) {
 };
 
 
-var makeCell = function(context, mkAnimation){
-    return {
-        animation : mkAnimation ? mkAnimation() : {},
+var makeCell = function(context, jsonAnimation){
+
+
+    var cell = {
+        animation : {},
+
         borders : function(){
             return {
                     north: context.getImageData(0, 0, context.canvas.width, 1),
@@ -57,110 +60,12 @@ var makeCell = function(context, mkAnimation){
         }
     };
 
+    addAnimationToCell(cell, jsonAnimation);
+
+    return cell;
+
 }
 
-
-var squareAnimation = {
-        setup: function(context){
-            this.toRadians = function(degrees){
-                return  degrees * Math.PI / 180; 
-            };
-            this.rotation = 0;
-            this.halfWidth = context.canvas.width / 2;
-            this.halfHeight = context.canvas.height / 2;
-        },
-        draw: function(context,borders) {
-            context.fillStyle = "rgb(0,0,0)";
-            context.fillRect(0, 0, context.canvas.width, context.canvas.height);
-
-            context.save();
-            context.translate(this.halfWidth, this.halfHeight);
-            context.scale(3, 3);
-            context.rotate(this.toRadians(this.rotation));
-
-            this.rotation = (this.rotation + 1) % 360;
-
-            context.fillStyle = "rgb(200,0,0)";
-            context.fillRect(-25, -25, 50, 50);
-
-            context.restore();
-        }
- };
-
-var makeSideCopyAnimation = function(side){
-
-    return {
-        setup: function(context){
-            this.imageCopyOrigin = { west: {x:1, y:0}, 
-                                    east: {x:-1, y:0},
-                                   north: {x:0, y:1},
-                                   south: {x:0, y:-1} };
-            this.borderOrigin = { west: {x:0, y:0}, 
-                                    east: {x:context.canvas.width - 1, y:0},
-                                   north: {x:0, y:0},
-                                   south: {x:0, y:context.canvas.height - 1} };
-
-        },
-        draw: function(context, borders){
-            // paste current image one pixel down
-            var currentImage = context.getImageData(0, 0, context.canvas.width, context.canvas.height);
-            var origin = this.imageCopyOrigin[side];
-            context.putImageData(currentImage, origin.x, origin.y);
-            // add new line
-            var borderO = this.borderOrigin[side];
-            context.putImageData(borders[side], borderO.x, borderO.y);
-        }
-
-    };
-};
-
-var makeSouthCopyAnimation = function(){
-
-    return {
-        setup: function(context){
-        },
-        draw: function(context, borders){
-            // paste current image one pixel down
-            var currentImage = context.getImageData(0, 0, context.canvas.width, context.canvas.height);
-            context.putImageData(currentImage, 0, -1);
-            // add new line
-            context.putImageData(borders.south, 0, context.canvas.height - 1);
-        }
-
-    };
-};
-
-var chainAnimations = function(animations){
-    return{
-        setup: function(context){
-           animations.forEach(function(animation){ 
-                    animation.setup(context);
-                  });
-        },
-        draw: function(context, borders) {
-           animations.forEach(function(animation){ 
-                                animation.draw(context, borders);
-                              });
-        }
-    }
-}
-
-var chainSideCopyAnimations = function (sides) {
-    var animations = sides.map(function(side){ 
-            return makeSideCopyAnimation(side);
-            });
-    return chainAnimations(animations);
-}
-
-var mkAnimationTL = function(context){return chainSideCopyAnimations( ['south', 'east']);},
-    mkAnimationTM = function(context){return  makeSouthCopyAnimation();}, 
-    mkAnimationTR = function(context){return  makeSideCopyAnimation('west');}, 
-    mkAnimationML = function(context){return  chainSideCopyAnimations(['south', 'east']);},
-    mkAnimationMM = function(context){return  makeSquareAnim();},
-    mkAnimationMR = function(context){return  makeSideCopyAnimation('west');}, 
-    mkAnimationBL = function(context){return  squareAnimation;},
-    mkAnimationBM = function(context){return  chainSideCopyAnimations(['west', 'north']);},
-    mkAnimationBR = function(context){return  makeSideCopyAnimation('north');};
 
 var relativeCoordinates = {
     north : {row: -1, col: 0, opposite: "south"},
@@ -210,7 +115,12 @@ var loadJson = function(path, callback){
 }
 
 var loadAnimations = function(){
-    loadJsons([ "animations/carreQuiTourne.json","animations/copieBordSud.json"],function(results){
+    loadJsons([ "animations/carreQuiTourne.json",
+                "animations/copieBordSud.json",
+                "animations/copieBordNord.json",
+                "animations/copieBordOuest.json",
+                "animations/copieBordNordOuest.json",
+                "animations/copieBordSudEst.json"],function(results){
         init(results);
     });
 }
@@ -222,20 +132,22 @@ var addAnimationToCell = function(cell, animation){
 };
 
 var init = function (jsons) {
-    var cqt = jsons.carreQuiTourne;
-    var cbs = jsons.copieBordSud;
-    var mkAnimationsDefinitions = [[mkAnimationTL, 0, mkAnimationTR],
-                                   [mkAnimationML, 0, mkAnimationMR],
-                                   [mkAnimationBL, mkAnimationBM, mkAnimationBR]];
 
-    var cells = map2dArray(mkAnimationsDefinitions,function(mkAnimDef,row,col){
+
+    var jsonAnimations = [[jsons.copieBordSudEst, jsons.copieBordSud, jsons.copieBordOuest],
+                          [jsons.copieBordSudEst, jsons.carreQuiTourne, jsons.copieBordOuest],
+                          [jsons.carreQuiTourne, jsons.copieBordNordOuest, jsons.copieBordNord]];
+
+    
+
+    var cells = map2dArray(jsonAnimations,function(jsonAnim,row,col){
         var canvas = makeCanvas("canvas-" + row + "-" + col); 
         var context = canvas.getContext("2d");
-        return  makeCell(context, mkAnimDef);
+        return  makeCell(context, jsonAnim);
     });
 
-    addAnimationToCell(cells[0][1], cbs);
-    addAnimationToCell(cells[1][1], cqt);
+
+   
 
     var textAreaSetup = document.getElementById("text_area_setup"),
         textAreaDraw = document.getElementById("text_area_draw");
