@@ -82,6 +82,9 @@ var addDrawToCell = function(targetCell, drawString){
     eval("targetCell.animation.draw = function(context, borders) {" + drawString + "};");
 }
 
+var bodyAsString = function(func){
+  return func.toString().replace(/function\s*\([\w\s,]*\)\s*{\n([\s\S]+)}/g,"$1").replace(/\n/g,"\\n");
+}
 var loadJsons = function(jsons, callback ){
 
     var results = {};
