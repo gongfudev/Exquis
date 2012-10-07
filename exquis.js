@@ -83,7 +83,7 @@ var addDrawToCell = function(targetCell, drawString){
 }
 
 var bodyAsString = function(func){
-  return func.toString().replace(/function\s*\([\w\s,]*\)\s*{\n([\s\S]+)}/g,"$1").replace(/\n/g,"\\n");
+  return func.toString().replace(/function\s*\([\w\s,]*\)\s*{\s*([\s\S]+)}/g,"$1").replace(/\n/g,"\\n");
 }
 var loadJsons = function(jsons, callback ){
 
