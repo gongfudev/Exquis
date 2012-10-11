@@ -23,31 +23,10 @@
 
         <div id="editor">
         <p>setup</p> 
-        <textarea id="text_area_setup" rows="15" cols="80">
-this.toRadians = function(degrees){
-    return  degrees * Math.PI / 180; 
-};
-this.rotation = 0;
-this.halfWidth = context.canvas.width / 2;
-this.halfHeight = context.canvas.height / 2;</textarea>
+        <textarea id="text_area_setup" rows="15" cols="80"></textarea>
 
         <p>draw</p>
-        <textarea id="text_area_draw" rows="20" cols="80" >
-context.fillStyle = "rgb(0,0,0)";
-context.fillRect(0, 0, context.canvas.width, context.canvas.height);
-
-context.save();
-context.translate(this.halfWidth, this.halfHeight);
-context.scale(3, 3);
-context.rotate(this.toRadians(this.rotation));
-
-this.rotation = (this.rotation + 1) % 360;
-
-context.fillStyle = "rgb(200,0,0)";
-context.fillRect(-25, -25, 50, 50);
-
-context.restore();
-        </textarea>
+        <textarea id="text_area_draw" rows="20" cols="80" ></textarea>
         </div>
     </div>
 </body>

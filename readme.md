@@ -123,6 +123,13 @@ session 11 octobre 2012
 -----------------------
 
 rendre possible l'édition des 9 cases.
-définir un assemblage d'animations sous forme de json sur le serveur.
+
+
+session 18 octobre 2012
+-----------------------
+
+définir un assemblage d'animations sous forme de json sur le serveur,
+et permettre la sauvegarde du code modifié en ligne.
+
 
 

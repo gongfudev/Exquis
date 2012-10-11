@@ -76,15 +76,19 @@ var relativeCoordinates = {
 
 var addSetupToCell = function(targetCell, setupString){
     eval("targetCell.animation.setup = function(context) {" + setupString + "};");
+    targetCell.animation.setupString = setupString;
 }
 
 var addDrawToCell = function(targetCell, drawString){
     eval("targetCell.animation.draw = function(context, borders) {" + drawString + "};");
+    targetCell.animation.drawString = drawString;
 }
 
-var bodyAsString = function(func){
-  return func.toString().replace(/function\s*\([\w\s,]*\)\s*{\s*([\s\S]+)}/g,"$1").replace(/\n/g,"\\n");
+var functionBodyAsString = function(func){
+  return func.toString().replace(/function\s*\([\w\s,]*\)\s*{\n?(\s*[\s\S]*)}/g,"$1");
+  //.replace(/\n/g,"\\n");
 }
+
 var loadJsons = function(jsons, callback ){
 
     var results = {};
@@ -134,6 +138,10 @@ var addAnimationToCell = function(cell, animation){
 
 };
 
+var makeEditable = function(){
+
+}
+
 var init = function (jsons) {
 
 
@@ -141,26 +149,31 @@ var init = function (jsons) {
                           [jsons.copieBordSudEst, jsons.carreQuiTourne, jsons.copieBordOuest],
                           [jsons.carreQuiTourne, jsons.copieBordNordOuest, jsons.copieBordNord]];
 
-    
-
-    var cells = map2dArray(jsonAnimations,function(jsonAnim,row,col){
-        var canvas = makeCanvas("canvas-" + row + "-" + col); 
-        var context = canvas.getContext("2d");
-        return  makeCell(context, jsonAnim);
-    });
-
-
-   
-
     var textAreaSetup = document.getElementById("text_area_setup"),
         textAreaDraw = document.getElementById("text_area_draw");
+
+    
+    var targetCell;
+
+    var cells = map2dArray(jsonAnimations,function(jsonAnim,row,col){
+        var canvas = makeCanvas("canvas-" + row + "-" + col), 
+            context = canvas.getContext("2d"), 
+            cell = makeCell(context, jsonAnim),
+            edit = function(){ 
+                textAreaSetup.value = cell.animation.setupString;
+                textAreaDraw.value = cell.animation.drawString;
+                targetCell = cell;
+            };
+
+        canvas.addEventListener('click', edit, false);
+        return  cell;
+    });
 
     textAreaDraw.className = "code_valid";
     textAreaSetup.className = "code_valid";
 
     textAreaSetup.onkeyup = function(){
-        var targetCell = cells[1][1];     
-
+             
         targetCell.updateSetup = function(){
             var setupString = textAreaSetup.value;
             try{
@@ -174,7 +187,7 @@ var init = function (jsons) {
     };
 
     textAreaDraw.onkeyup = function(){
-        var targetCell = cells[1][1];
+        //var targetCell = cells[1][1];
     
         targetCell.updateDraw = function(neighbouringBorders){
             var drawString = textAreaDraw.value,
