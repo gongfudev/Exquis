@@ -132,4 +132,14 @@ définir un assemblage d'animations sous forme de json sur le serveur,
 et permettre la sauvegarde du code modifié en ligne.
 
 
+session 25 octobre 2012
+-----------------------
+
+permettre la sauvegarde du code modifié en ligne.
+
+TODOs:
+onRollOver sur les cases on voit les limites des cases.
+onClick (sélection) sur une case, apparition des textArea si invisible et surbrillance sur l
+case pour indiquer son statut de case sélectionnée.
+onClick sur l'extérieur des cases, déactivation de la surbrillance et disparition des text areas.
 

@@ -107,14 +107,49 @@ var loadJsons = function(jsons, callback ){
 
 }
 
+var loadJsons2d = function(jsons, callback ){
+
+    var results = [];
+    var totalFileCount = 0;
+    for(var i=0; i<jsons.length; i++){
+      totalFileCount += jsons[i].length;
+    }
+
+    var loadedFileCount = 0;
+
+    var handleJson = function(result, path, position){
+            var name =  /animations\/(\w+)\.json/.exec(path)[1];
+            
+            if(results[position.row] === undefined){
+              results[position.row] = [];
+            }
+
+            results[position.row][position.col] = result;
+            loadedFileCount++;
+
+            if (loadedFileCount === totalFileCount){
+                callback(results);
+            }
+    }
+
+    for(var i=0; i<jsons.length; i++){
+      var lastrow = i == (jsons.length - 1);
+      for(var j=0; j<jsons[i].length; j++){
+         var position = {row: i, col: j};
+         loadJson(jsons[i][j], handleJson, position);
+      }
+    }
+
+}
+
 //TODO add an error handler callback
-var loadJson = function(path, callback){
+var loadJson = function(path, callback, callbackRestArgs){
 
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function(){
         if (xmlhttp.readyState==4 && xmlhttp.status==200){
             var result = JSON.parse(xmlhttp.responseText);
-            callback(result, path);
+            callback(result, path, callbackRestArgs);
         }
     }
     xmlhttp.open("GET", path, true);
@@ -122,13 +157,15 @@ var loadJson = function(path, callback){
 }
 
 var loadAnimations = function(){
-    loadJsons([ "animations/carreQuiTourne.json",
-                "animations/copieBordSud.json",
-                "animations/copieBordNord.json",
-                "animations/copieBordOuest.json",
-                "animations/copieBordNordOuest.json",
-                "animations/copieBordSudEst.json"],function(results){
-        init(results);
+
+    loadJson("assemblages/assemblageAvecCarres.json", function(assemblage){
+        
+        var animationNames = map2dArray(assemblage, makeJsonName);
+
+        loadJsons2d(animationNames, function(jsonAnimations){
+            init(jsonAnimations);
+        });
+        
     });
 }
 
@@ -138,16 +175,11 @@ var addAnimationToCell = function(cell, animation){
 
 };
 
-var makeEditable = function(){
-
+var makeJsonName = function(animationName){
+    return "animations/"+animationName+".json";
 }
 
-var init = function (jsons) {
-
-
-    var jsonAnimations = [[jsons.copieBordSudEst, jsons.copieBordSud, jsons.copieBordOuest],
-                          [jsons.copieBordSudEst, jsons.carreQuiTourne, jsons.copieBordOuest],
-                          [jsons.carreQuiTourne, jsons.copieBordNordOuest, jsons.copieBordNord]];
+var init = function (jsonAnimations) {
 
     var textAreaSetup = document.getElementById("text_area_setup"),
         textAreaDraw = document.getElementById("text_area_draw");

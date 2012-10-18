@@ -1,0 +1,3 @@
+[["copieBordSudEst", "copieBordSud", "copieBordOuest"],
+["copieBordSudEst", "carreQuiTourne", "copieBordOuest"],
+["carreQuiTourne", "copieBordNordOuest", "copieBordNord"]]
