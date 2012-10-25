@@ -36,8 +36,38 @@ var guessContentType = function(fileName){
 }
 
 http.createServer(function(request, response) {
+
 	var pathname = "." + require('url').parse(request.url).pathname;
-	fetchFile(pathname, response);
+
+	if (request.method === "GET"){
+		fetchFile(pathname, response);
+	}else if (request.method === "POST"){
+		var fullBody = '';
+
+		request.on('data', function(chunk) {
+			fullBody += chunk.toString();
+   		});
+    
+	    request.on('end', function() {
+			// empty 200 OK response for now
+			
+			fs.writeFile(pathname, decodeURIComponent(fullBody), function(err) {
+				if(err) {
+				    console.log(err);
+				   	response.writeHead(500, "OUPS", {'Content-Type': 'text/html'});
+		      		response.end();
+				} else {
+				    console.log("The file was saved!");
+				   	response.writeHead(200, "OK", {'Content-Type': 'text/html'});
+		      		response.end();
+				}
+			});
+
+
+	    });
+
+	}
+
 
 
 }).listen(8000);

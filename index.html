@@ -10,8 +10,9 @@
     	#dashboard { width: 450px; max-width: 450px; position: absolute;}
         #editor { position: absolute; left: 50%; }
     	canvas{ float: left; }
-        .code_invalid { border: solid rgb(255, 0, 0) }
-        .code_valid { border: solid rgb(25, 125, 255) }
+        .code_invalid { border: solid rgb(255, 0, 0); }
+        .code_valid { border: solid rgb(25, 125, 255); }
+        .invisible { display: none;}
     </style>
     <script type="text/javascript" src="exquis.js"></script>
 </head>
@@ -21,12 +22,14 @@
 
     	</div>
 
-        <div id="editor">
-        <p>setup</p> 
-        <textarea id="text_area_setup" rows="15" cols="80"></textarea>
+        <div class="invisible" id="editor">
+            <h3 id="animation_file_name"></h3> 
+            <p>setup</p> 
+            <textarea id="text_area_setup" rows="15" cols="80"></textarea>
 
-        <p>draw</p>
-        <textarea id="text_area_draw" rows="20" cols="80" ></textarea>
+            <p>draw</p>
+            <textarea id="text_area_draw" rows="20" cols="80" ></textarea>
+            <button id="save_button" type="button">save</button>
         </div>
     </div>
 </body>

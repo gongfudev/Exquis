@@ -37,6 +37,7 @@ var makeCell = function(context, jsonAnimation){
 
     var cell = {
         animation : {},
+        animationName: jsonAnimation.name,
 
         borders : function(){
             return {
@@ -60,7 +61,7 @@ var makeCell = function(context, jsonAnimation){
         }
     };
 
-    addAnimationToCell(cell, jsonAnimation);
+    addAnimationToCell(cell, jsonAnimation.animation);
 
     return cell;
 
@@ -124,7 +125,8 @@ var loadJsons2d = function(jsons, callback ){
               results[position.row] = [];
             }
 
-            results[position.row][position.col] = result;
+            results[position.row][position.col] = { animation: result,
+                                                    name: name };
             loadedFileCount++;
 
             if (loadedFileCount === totalFileCount){
@@ -156,6 +158,19 @@ var loadJson = function(path, callback, callbackRestArgs){
     xmlhttp.send();
 }
 
+var saveAnimation = function(cell, callback){
+    var path = "/animations/"+cell.animationName+".json",
+        JSONString = JSON.stringify({ setup: cell.animation.setupString,
+                                      draw : cell.animation.drawString }),
+        params = encodeURIComponent(JSONString), 
+        ajax = new XMLHttpRequest();;
+
+    ajax.open("POST", path, true);
+    ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+    ajax.onreadystatechange = callback;
+    ajax.send(params);
+}
+
 var loadAnimations = function(){
 
     loadJson("assemblages/assemblageAvecCarres.json", function(assemblage){
@@ -182,7 +197,11 @@ var makeJsonName = function(animationName){
 var init = function (jsonAnimations) {
 
     var textAreaSetup = document.getElementById("text_area_setup"),
-        textAreaDraw = document.getElementById("text_area_draw");
+        textAreaDraw = document.getElementById("text_area_draw"),
+        editor = document.getElementById("editor"),
+        body = document.getElementsByTagName("body")[0],
+        animation_file_name = document.getElementById("animation_file_name"),
+        saveButton = document.getElementById("save_button");
 
     
     var targetCell;
@@ -194,12 +213,34 @@ var init = function (jsonAnimations) {
             edit = function(){ 
                 textAreaSetup.value = cell.animation.setupString;
                 textAreaDraw.value = cell.animation.drawString;
+                animation_file_name.innerText = cell.animationName;
                 targetCell = cell;
             };
 
         canvas.addEventListener('click', edit, false);
         return  cell;
     });
+
+
+    var onBodyClick = function(event){
+       
+        if (event.target.id === ""){
+            // unselect edition
+            editor.className = "invisible";
+        }else{
+            editor.className = "";
+        }
+    }
+
+    document.addEventListener('click', onBodyClick, true);
+
+
+    var onSaveClick = function(event){
+        saveAnimation(targetCell);
+    }
+
+    saveButton.addEventListener('click', onSaveClick, true);
+
 
     textAreaDraw.className = "code_valid";
     textAreaSetup.className = "code_valid";
