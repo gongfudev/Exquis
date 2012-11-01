@@ -148,3 +148,15 @@ onClick (sélection) sur une case, apparition des textArea si invisible et surbr
 case pour indiquer son statut de case sélectionnée.
 onClick sur l'extérieur des cases, déactivation de la surbrillance et disparition des text areas.
 
+
+session 8 novembre 2012
+-----------------------
+
+continuer la réorganisation du code
+
+débuger le comportement du rollOver
+
+onClick (sélection) sur une case, apparition des textArea si invisible et surbrillance sur l
+case pour indiquer son statut de case sélectionnée.
+onClick sur l'extérieur des cases, déactivation de la surbrillance et disparition des text areas.
+

@@ -62,14 +62,9 @@ http.createServer(function(request, response) {
 		      		response.end();
 				}
 			});
-
-
 	    });
-
 	}
-
-
-
+	
 }).listen(8000);
 
 console.log("server on port 8000");

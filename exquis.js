@@ -1,12 +1,122 @@
 "use strict";
 
-var makeCanvas = function(id){
+var ajax = (function(){
+
+    var loadJsons = function(jsons, callback ){
+
+        var results = {};
+        var counter = 0;
+        var handleJson = function(result, path){
+                var name =  /animations\/(\w+)\.json/.exec(path)[1];
+                results[name] = result;
+                counter ++;
+                if (counter == jsons.length ){
+                    callback(results);
+                }
+        } 
+        for(var i=0; i<jsons.length; i++){
+           loadJson(jsons[i], handleJson);
+        }
+
+    }
+
+    var loadJsons2d = function(jsons, callback ){
+
+        var results = [];
+        var totalFileCount = 0;
+        for(var i=0; i<jsons.length; i++){
+          totalFileCount += jsons[i].length;
+        }
+
+        var loadedFileCount = 0;
+
+        var handleJson = function(result, path, position){
+                var name =  /animations\/(\w+)\.json/.exec(path)[1];
+                
+                if(results[position.row] === undefined){
+                  results[position.row] = [];
+                }
+
+                results[position.row][position.col] = { animation: result,
+                                                        name: name };
+                loadedFileCount++;
+
+                if (loadedFileCount === totalFileCount){
+                    callback(results);
+                }
+        }
+
+        for(var i=0; i<jsons.length; i++){
+          var lastrow = i == (jsons.length - 1);
+          for(var j=0; j<jsons[i].length; j++){
+             var position = {row: i, col: j};
+             loadJson(jsons[i][j], handleJson, position);
+          }
+        }
+
+    }
+
+    //TODO add an error handler callback
+    var loadJson = function(path, callback, callbackRestArgs){
+
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function(){
+            if (xmlhttp.readyState==4 && xmlhttp.status==200){
+                var result = JSON.parse(xmlhttp.responseText);
+                callback(result, path, callbackRestArgs);
+            }
+        }
+        xmlhttp.open("GET", path, true);
+        xmlhttp.send();
+    }
+
+    var saveAnimation = function(cell, callback){
+        var path = "/animations/"+cell.animationName+".json",
+            JSONString = JSON.stringify({ setup: cell.animation.setupString,
+                                          draw : cell.animation.drawString }),
+            params = encodeURIComponent(JSONString), 
+            ajax = new XMLHttpRequest();;
+
+        ajax.open("POST", path, true);
+        ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        ajax.onreadystatechange = callback;
+        ajax.send(params);
+    }
+
+    var loadAnimations = function(){
+
+        loadJson("assemblages/assemblageAvecCarres.json", function(assemblage){
+            
+            var animationNames = map2dArray(assemblage, makeJsonName);
+
+            loadJsons2d(animationNames, function(jsonAnimations){
+                init(jsonAnimations);
+            });
+            
+        });
+    }
+    return {saveAnimation: saveAnimation, loadAnimations: loadAnimations};
+})();
+
+
+var makeCanvasAndHint = function(row, col){
     var canvas = document.createElement('canvas');
-    canvas.id = id;
+    canvas.id = "canvas-" + row + "-" + col;
+    canvas.className = "cell";
     canvas.width = 150;
     canvas.height = 150;
+    canvas.style.top = (150*row)+"px";
+    canvas.style.left = (150*col)+"px";
 
     document.getElementById('dashboard').appendChild(canvas);
+
+    var gridHint = document.createElement('div');
+    gridHint.id = "hint-" + row + "-" + col;
+    gridHint.className = "hint";
+    gridHint.style.top = (150*row)+"px";
+    gridHint.style.left = (150*col)+"px";
+
+    document.getElementById('grid_hint').appendChild(gridHint);
     return canvas;
 }
 
@@ -90,100 +200,8 @@ var functionBodyAsString = function(func){
   //.replace(/\n/g,"\\n");
 }
 
-var loadJsons = function(jsons, callback ){
 
-    var results = {};
-    var counter = 0;
-    var handleJson = function(result, path){
-            var name =  /animations\/(\w+)\.json/.exec(path)[1];
-            results[name] = result;
-            counter ++;
-            if (counter == jsons.length ){
-                callback(results);
-            }
-    } 
-    for(var i=0; i<jsons.length; i++){
-	   loadJson(jsons[i], handleJson);
-    }
-
-}
-
-var loadJsons2d = function(jsons, callback ){
-
-    var results = [];
-    var totalFileCount = 0;
-    for(var i=0; i<jsons.length; i++){
-      totalFileCount += jsons[i].length;
-    }
-
-    var loadedFileCount = 0;
-
-    var handleJson = function(result, path, position){
-            var name =  /animations\/(\w+)\.json/.exec(path)[1];
-            
-            if(results[position.row] === undefined){
-              results[position.row] = [];
-            }
-
-            results[position.row][position.col] = { animation: result,
-                                                    name: name };
-            loadedFileCount++;
-
-            if (loadedFileCount === totalFileCount){
-                callback(results);
-            }
-    }
-
-    for(var i=0; i<jsons.length; i++){
-      var lastrow = i == (jsons.length - 1);
-      for(var j=0; j<jsons[i].length; j++){
-         var position = {row: i, col: j};
-         loadJson(jsons[i][j], handleJson, position);
-      }
-    }
-
-}
-
-//TODO add an error handler callback
-var loadJson = function(path, callback, callbackRestArgs){
-
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange = function(){
-        if (xmlhttp.readyState==4 && xmlhttp.status==200){
-            var result = JSON.parse(xmlhttp.responseText);
-            callback(result, path, callbackRestArgs);
-        }
-    }
-    xmlhttp.open("GET", path, true);
-    xmlhttp.send();
-}
-
-var saveAnimation = function(cell, callback){
-    var path = "/animations/"+cell.animationName+".json",
-        JSONString = JSON.stringify({ setup: cell.animation.setupString,
-                                      draw : cell.animation.drawString }),
-        params = encodeURIComponent(JSONString), 
-        ajax = new XMLHttpRequest();;
-
-    ajax.open("POST", path, true);
-    ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-    ajax.onreadystatechange = callback;
-    ajax.send(params);
-}
-
-var loadAnimations = function(){
-
-    loadJson("assemblages/assemblageAvecCarres.json", function(assemblage){
-        
-        var animationNames = map2dArray(assemblage, makeJsonName);
-
-        loadJsons2d(animationNames, function(jsonAnimations){
-            init(jsonAnimations);
-        });
-        
-    });
-}
-
+    
 var addAnimationToCell = function(cell, animation){
     addDrawToCell(cell, animation.draw);
     addSetupToCell(cell, animation.setup);
@@ -207,7 +225,7 @@ var init = function (jsonAnimations) {
     var targetCell;
 
     var cells = map2dArray(jsonAnimations,function(jsonAnim,row,col){
-        var canvas = makeCanvas("canvas-" + row + "-" + col), 
+        var canvas = makeCanvasAndHint(row, col), 
             context = canvas.getContext("2d"), 
             cell = makeCell(context, jsonAnim),
             edit = function(){ 
@@ -234,9 +252,24 @@ var init = function (jsonAnimations) {
 
     document.addEventListener('click', onBodyClick, true);
 
+    var showGridHint = function(show){
+
+        forEach2dArray(cells, function(cell, row,col){
+            var id = "hint-"+row+"-"+col,
+                gridHint = document.getElementById(id);
+            gridHint.style.display = show ? "block" : "none";
+
+        });
+    }
+
+    var onDashboardOver = function(){ showGridHint(true);};
+    var onDashboardOut = function(){ showGridHint(false);};
+
+    document.getElementById("dashboard").addEventListener("mouseover", onDashboardOver, true);
+    document.getElementById("dashboard").addEventListener("mouseout", onDashboardOut, true);
 
     var onSaveClick = function(event){
-        saveAnimation(targetCell);
+        ajax.saveAnimation(targetCell);
     }
 
     saveButton.addEventListener('click', onSaveClick, true);
@@ -317,4 +350,4 @@ var init = function (jsonAnimations) {
 
 };
 
-window.onload = loadAnimations;
+window.onload = ajax.loadAnimations;

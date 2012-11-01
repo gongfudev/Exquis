@@ -7,9 +7,11 @@
     <!-- Mobile viewport optimized: h5bp.com/viewport -->
     <meta name="viewport" content="width=device-width">
     <style>
-    	#dashboard { width: 450px; max-width: 450px; position: absolute;}
+    	.grid { width: 450px; max-width: 450px; position: absolute}
+        #grid_hint{z-index: 1}
         #editor { position: absolute; left: 50%; }
-    	canvas{ float: left; }
+    	.cell { width: 150px;  height: 150px; position:absolute}
+        .hint { width: 148px;  height: 148px; position:absolute; border: 1px solid white; display: none;}
         .code_invalid { border: solid rgb(255, 0, 0); }
         .code_valid { border: solid rgb(25, 125, 255); }
         .invisible { display: none;}
@@ -18,9 +20,8 @@
 </head>
 <body>
     <div id="container">
-        <div id="dashboard">
-
-    	</div>
+        <div id="dashboard" class="grid"></div>
+        <div id="grid_hint" class="grid"></div>
 
         <div class="invisible" id="editor">
             <h3 id="animation_file_name"></h3> 
