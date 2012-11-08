@@ -160,3 +160,13 @@ onClick (sélection) sur une case, apparition des textArea si invisible et surbr
 case pour indiquer son statut de case sélectionnée.
 onClick sur l'extérieur des cases, déactivation de la surbrillance et disparition des text areas.
 
+
+session 15 novembre 2012
+-----------------------
+
+continuer la réorganisation du code
+
+onClick (sélection) sur une case, apparition des textArea si invisible et surbrillance sur l
+case pour indiquer son statut de case sélectionnée.
+onClick sur l'extérieur des cases, déactivation de la surbrillance et disparition des text areas.
+
