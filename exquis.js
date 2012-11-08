@@ -116,7 +116,7 @@ var makeCanvasAndHint = function(row, col){
     gridHint.style.top = (150*row)+"px";
     gridHint.style.left = (150*col)+"px";
 
-    document.getElementById('grid_hint').appendChild(gridHint);
+    document.getElementById('dashboard').appendChild(gridHint);
     return canvas;
 }
 
@@ -262,11 +262,11 @@ var init = function (jsonAnimations) {
         });
     }
 
-    var onDashboardOver = function(){ showGridHint(true);};
-    var onDashboardOut = function(){ showGridHint(false);};
+    var onDashboardOver = function(e){  showGridHint(true);};
+    var onDashboardOut = function(e){ showGridHint(false);};
 
-    document.getElementById("dashboard").addEventListener("mouseover", onDashboardOver, true);
-    document.getElementById("dashboard").addEventListener("mouseout", onDashboardOut, true);
+    document.getElementById("dashboard").addEventListener("mouseover", onDashboardOver, false);
+    document.getElementById("dashboard").addEventListener("mouseout", onDashboardOut, false);
 
     var onSaveClick = function(event){
         ajax.saveAnimation(targetCell);
