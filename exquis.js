@@ -214,6 +214,7 @@ var makeHint = function(row, col, height, width){
     gridHint.style.left = (width * col)+"px";
 
     document.getElementById('dashboard').appendChild(gridHint);
+    return gridHint;
 };
 
 var addHintListeners = function(cells){
@@ -235,6 +236,18 @@ var addHintListeners = function(cells){
 
 }
 
+var addEditListeners = function (cells) {
+
+    var onDashboardClick = function(e){
+        console.log(e.target.id);
+    }
+
+    document.getElementById("dashboard").addEventListener("click", onDashboardClick, false);
+}
+
+
+
+var cells;
 
 var init = function (jsonAnimations) {
 
@@ -248,7 +261,7 @@ var init = function (jsonAnimations) {
     
     var targetCell;
 
-    var cells = map2dArray(jsonAnimations,function(jsonAnim,row,col){
+    cells = map2dArray(jsonAnimations,function(jsonAnim,row,col){
         var height = 150,
             width = 150,
             canvas = makeCanvas(row, col, height, width), 
@@ -259,11 +272,12 @@ var init = function (jsonAnimations) {
                 textAreaDraw.value = cell.animation.drawString;
                 animation_file_name.innerText = cell.animationName;
                 targetCell = cell;
-            };
-        makeHint(row, col, height, width);
-        canvas.addEventListener('click', edit, false);
+            },
+            hint = makeHint(row, col, height, width);
+        hint.addEventListener('click', edit, false);
         return  cell;
     });
+
 
 
     var onBodyClick = function(event){
