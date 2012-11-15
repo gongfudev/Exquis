@@ -166,7 +166,13 @@ session 15 novembre 2012
 
 continuer la réorganisation du code
 
-onClick (sélection) sur une case, apparition des textArea si invisible et surbrillance sur l
-case pour indiquer son statut de case sélectionnée.
-onClick sur l'extérieur des cases, déactivation de la surbrillance et disparition des text areas.
+bug fix
+
+
+session 22 novembre 2012
+-----------------------
+
+code reorganisation. cell renamed to canvasAnimation. new Cell object contains a canvasAnimation 
+and a hint. This is done to allow easier association of canvasAnimation and Hint for adding css classes
+on click handlers (edit and onBodyClick).
 

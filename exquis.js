@@ -157,6 +157,7 @@ var makeCell = function(context, jsonAnimation){
 }
 
 
+
 var relativeCoordinates = {
     north : {row: -1, col: 0, opposite: "south"},
     south : {row: 1, col: 0, opposite: "north"},
@@ -217,13 +218,24 @@ var makeHint = function(row, col, height, width){
     return gridHint;
 };
 
+var addClass = function(element, className){
+    console.log("addClass");
+    element.className += " "+className;
+}
+
+var removeClass = function(element, className){
+    console.log("removeClass");
+    element.className = element.className.replace(" "+className, "");
+}
+
 var addHintListeners = function(cells){
     var showGridHint = function(show){
 
         forEach2dArray(cells, function(cell, row,col){
             var id = "hint-"+row+"-"+col,
                 gridHint = document.getElementById(id);
-            gridHint.style.display = show ? "block" : "none";
+
+            (show ? addClass : removeClass)(gridHint, "visible-grid");
 
         });
     }
@@ -267,13 +279,13 @@ var init = function (jsonAnimations) {
             canvas = makeCanvas(row, col, height, width), 
             context = canvas.getContext("2d"), 
             cell = makeCell(context, jsonAnim),
+            hint = makeHint(row, col, height, width),
             edit = function(){ 
                 textAreaSetup.value = cell.animation.setupString;
                 textAreaDraw.value = cell.animation.drawString;
                 animation_file_name.innerText = cell.animationName;
                 targetCell = cell;
-            },
-            hint = makeHint(row, col, height, width);
+            };
         hint.addEventListener('click', edit, false);
         return  cell;
     });
