@@ -33,6 +33,11 @@ http.createServer(function(request, response) {
 
 	var pathname = "." + require('url').parse(request.url).pathname;
 
+	if (pathname === "./"){
+		pathname = "./index.html";
+	}
+		
+
 	if (request.method === "GET"){
 		fetchFile(pathname, response);
 	}else if (request.method === "POST"){
