@@ -124,7 +124,7 @@ var makeCell = function(row, col, height, width, jsonAnim){
     var canvas = makeCanvas(row, col, height, width), 
         context = canvas.getContext("2d"); 
     return {
-        canvasAnimation: makeCanvasAnimation(context, jsonAnim),
+        canvasAnim: makeCanvasAnimation(context, jsonAnim),
         hint: makeHint(row, col, height, width)
     };
 }
@@ -225,12 +225,10 @@ var makeHint = function(row, col, height, width){
 };
 
 var addClass = function(element, className){
-    console.log("addClass");
     element.className += " "+className;
 }
 
 var removeClass = function(element, className){
-    console.log("removeClass");
     element.className = element.className.replace(" "+className, "");
 }
 
@@ -283,15 +281,13 @@ var init = function (jsonAnimations) {
         var height = 150,
             width = 150,
             cell = makeCell(row, col, height, width, jsonAnim),
-            // canvas = makeCanvas(row, col, height, width), 
-            // context = canvas.getContext("2d"), 
-            // cell = makeCanvasAnimation(context, jsonAnim),
-            // hint = makeHint(row, col, height, width),
             edit = function(){ 
-                textAreaSetup.value = cell.canvasAnimation.animation.setupString;
-                textAreaDraw.value = cell.canvasAnimation.animation.drawString;
-                animation_file_name.innerText = cell.animationName;
+                textAreaSetup.value = cell.canvasAnim.animation.setupString;
+                textAreaDraw.value = cell.canvasAnim.animation.drawString;
+                animation_file_name.innerText = cell.canvasAnim.animationName;
+                if (targetCell) { removeClass(targetCell.hint, "visible-cell"); }
                 targetCell = cell;
+                addClass(targetCell.hint, "visible-cell");
             };
         cell.hint.addEventListener('click', edit, false);
         return  cell;
@@ -304,6 +300,7 @@ var init = function (jsonAnimations) {
         if (event.target.id === ""){
             // unselect edition
             editor.className = "invisible";
+            if (targetCell) { removeClass(targetCell.hint, "visible-cell"); }
         }else{
             editor.className = "";
         }
@@ -315,7 +312,7 @@ var init = function (jsonAnimations) {
     addHintListeners(cells);
 
     var onSaveClick = function(event){
-        ajax.saveAnimation(targetCell.canvasAnimation);
+        ajax.saveAnimation(targetCell.canvasAnim);
     }
 
     saveButton.addEventListener('click', onSaveClick, true);
@@ -326,9 +323,9 @@ var init = function (jsonAnimations) {
 
     textAreaSetup.onkeyup = function(){
              
-        targetCell.canvasAnimation.updateSetup = function(){
+        targetCell.canvasAnim.updateSetup = function(){
             var setupString = textAreaSetup.value,
-                canvasAnim = targetCell.canvasAnimation;
+                canvasAnim = targetCell.canvasAnim;
             try{
                 addSetupToCanvasAnim(canvasAnim, setupString);
                 canvasAnim.setup();
@@ -340,9 +337,9 @@ var init = function (jsonAnimations) {
     };
 
     textAreaDraw.onkeyup = function(){
-        targetCell.canvasAnimation.updateDraw = function(neighbouringBorders){
+        targetCell.canvasAnim.updateDraw = function(neighbouringBorders){
             var drawString = textAreaDraw.value,
-                canvasAnim = targetCell.canvasAnimation,
+                canvasAnim = targetCell.canvasAnim,
                 drawBackup = canvasAnim.animation.draw;
             try{
                 addDrawToCanvasAnim(canvasAnim, drawString);
@@ -362,11 +359,11 @@ var init = function (jsonAnimations) {
     var draw = function(){
 
         var allBorders = map2dArray(cells,function(cell){ 
-            return cell.canvasAnimation.borders();
+            return cell.canvasAnim.borders();
         });
         forEach2dArray(cells,function(cell, row, col){
             var neighbouringBorders = {},
-                canvasAnim = cell.canvasAnimation;
+                canvasAnim = cell.canvasAnim;
             ["north", "south", "east", "west"].forEach(function(side){
                 var offset = relativeCoordinates[side];
                 var siderow = (row + offset.row + cells.length) % cells.length;
@@ -389,7 +386,7 @@ var init = function (jsonAnimations) {
         });
     };
 
-    forEach2dArray(cells,function(cell){ cell.canvasAnimation.setup(); });
+    forEach2dArray(cells,function(cell){ cell.canvasAnim.setup(); });
     setInterval(draw, 50);
 
 };
