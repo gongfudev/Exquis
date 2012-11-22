@@ -70,12 +70,13 @@ var ajax = (function(){
         xmlhttp.send();
     }
 
-    var saveAnimation = function(cell, callback){
-        var path = "/animations/"+cell.animationName+".json",
+    var saveAnimation = function(cell, callback, fileName){
+        var name = fileName || cell.animationName,
+            path = "/animations/"+name+".json",
             JSONString = JSON.stringify({ setup: cell.animation.setupString,
                                           draw : cell.animation.drawString }),
             params = encodeURIComponent(JSONString), 
-            ajax = new XMLHttpRequest();;
+            ajax = new XMLHttpRequest();
 
         ajax.open("POST", path, true);
         ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");
@@ -272,7 +273,8 @@ var init = function (jsonAnimations) {
         editor = document.getElementById("editor"),
         body = document.getElementsByTagName("body")[0],
         animation_file_name = document.getElementById("animation_file_name"),
-        saveButton = document.getElementById("save_button");
+        saveButton = document.getElementById("save_button"),
+        saveAsButton = document.getElementById("save_as_button");
 
     
     var targetCell;
@@ -317,6 +319,17 @@ var init = function (jsonAnimations) {
 
     saveButton.addEventListener('click', onSaveClick, true);
 
+    var onSaveAsClick = function(){
+        var fileName = prompt("enter file name");
+
+        if (fileName){
+            ajax.saveAnimation(targetCell.canvasAnim, null, fileName);
+            animation_file_name.innerText = fileName;
+        }        
+       
+    }
+
+    saveAsButton.addEventListener('click', onSaveAsClick, true);
 
     textAreaDraw.className = "code_valid";
     textAreaSetup.className = "code_valid";

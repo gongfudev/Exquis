@@ -176,3 +176,8 @@ code reorganisation. cell renamed to canvasAnimation. new Cell object contains a
 and a hint. This is done to allow easier association of canvasAnimation and Hint for adding css classes
 on click handlers (edit and onBodyClick).
 
+session 29 novembre 2012
+------------------------
+
+code reorganisation. 
+have fun creating test animations.
