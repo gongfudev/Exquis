@@ -1,15 +1,9 @@
 	var sys = require('sys'),
     http = require('http'),
     fs = require('fs'),
-    index,
     exquis;
  
-fs.readFile('./index.html', function (err, data) {
-    if (err) {
-        throw err;
-    }
-    index = data;
-});
+
 
 var fetchFile = function(fileName, response) {
 	fs.readFile(fileName, function (err, data) {
