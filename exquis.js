@@ -120,11 +120,19 @@ var forEach2dArray = function(array2d, func) {
     };
 };
 
+var makeCell = function(row, col, height, width, jsonAnim){
+    var canvas = makeCanvas(row, col, height, width), 
+        context = canvas.getContext("2d"); 
+    return {
+        canvasAnimation: makeCanvasAnimation(context, jsonAnim),
+        hint: makeHint(row, col, height, width)
+    };
+}
 
-var makeCell = function(context, jsonAnimation){
+var makeCanvasAnimation = function(context, jsonAnimation){
 
 
-    var cell = {
+    var canvasAnim = {
         animation : {},
         animationName: jsonAnimation.name,
 
@@ -150,9 +158,9 @@ var makeCell = function(context, jsonAnimation){
         }
     };
 
-    addAnimationToCell(cell, jsonAnimation.animation);
+    addAnimationToCanvasAnim(canvasAnim, jsonAnimation.animation);
 
-    return cell;
+    return canvasAnim;
 
 }
 
@@ -165,26 +173,24 @@ var relativeCoordinates = {
     east : {row: 0, col: 1, opposite: "west"}
 };
 
-var addSetupToCell = function(targetCell, setupString){
-    eval("targetCell.animation.setup = function(context) {" + setupString + "};");
-    targetCell.animation.setupString = setupString;
+var addSetupToCanvasAnim = function(canvasAnim, setupString){
+    eval("canvasAnim.animation.setup = function(context) {" + setupString + "};");
+    canvasAnim.animation.setupString = setupString;
 }
 
-var addDrawToCell = function(targetCell, drawString){
-    eval("targetCell.animation.draw = function(context, borders) {" + drawString + "};");
-    targetCell.animation.drawString = drawString;
+var addDrawToCanvasAnim = function(canvasAnim, drawString){
+    eval("canvasAnim.animation.draw = function(context, borders) {" + drawString + "};");
+    canvasAnim.animation.drawString = drawString;
 }
 
 var functionBodyAsString = function(func){
   return func.toString().replace(/function\s*\([\w\s,]*\)\s*{\n?(\s*[\s\S]*)}/g,"$1");
   //.replace(/\n/g,"\\n");
 }
-
-
     
-var addAnimationToCell = function(cell, animation){
-    addDrawToCell(cell, animation.draw);
-    addSetupToCell(cell, animation.setup);
+var addAnimationToCanvasAnim = function(canvasAnim, animation){
+    addDrawToCanvasAnim(canvasAnim, animation.draw);
+    addSetupToCanvasAnim(canvasAnim, animation.setup);
 
 };
 
@@ -276,17 +282,18 @@ var init = function (jsonAnimations) {
     cells = map2dArray(jsonAnimations,function(jsonAnim,row,col){
         var height = 150,
             width = 150,
-            canvas = makeCanvas(row, col, height, width), 
-            context = canvas.getContext("2d"), 
-            cell = makeCell(context, jsonAnim),
-            hint = makeHint(row, col, height, width),
+            cell = makeCell(row, col, height, width, jsonAnim),
+            // canvas = makeCanvas(row, col, height, width), 
+            // context = canvas.getContext("2d"), 
+            // cell = makeCanvasAnimation(context, jsonAnim),
+            // hint = makeHint(row, col, height, width),
             edit = function(){ 
-                textAreaSetup.value = cell.animation.setupString;
-                textAreaDraw.value = cell.animation.drawString;
+                textAreaSetup.value = cell.canvasAnimation.animation.setupString;
+                textAreaDraw.value = cell.canvasAnimation.animation.drawString;
                 animation_file_name.innerText = cell.animationName;
                 targetCell = cell;
             };
-        hint.addEventListener('click', edit, false);
+        cell.hint.addEventListener('click', edit, false);
         return  cell;
     });
 
@@ -308,7 +315,7 @@ var init = function (jsonAnimations) {
     addHintListeners(cells);
 
     var onSaveClick = function(event){
-        ajax.saveAnimation(targetCell);
+        ajax.saveAnimation(targetCell.canvasAnimation);
     }
 
     saveButton.addEventListener('click', onSaveClick, true);
@@ -319,11 +326,12 @@ var init = function (jsonAnimations) {
 
     textAreaSetup.onkeyup = function(){
              
-        targetCell.updateSetup = function(){
-            var setupString = textAreaSetup.value;
+        targetCell.canvasAnimation.updateSetup = function(){
+            var setupString = textAreaSetup.value,
+                canvasAnim = targetCell.canvasAnimation;
             try{
-                addSetupToCell(targetCell, setupString);
-                targetCell.setup();
+                addSetupToCanvasAnim(canvasAnim, setupString);
+                canvasAnim.setup();
                 textAreaSetup.className = "code_valid";     
             }catch(e){
                 textAreaSetup.className = "code_invalid";     
@@ -332,20 +340,19 @@ var init = function (jsonAnimations) {
     };
 
     textAreaDraw.onkeyup = function(){
-        //var targetCell = cells[1][1];
-    
-        targetCell.updateDraw = function(neighbouringBorders){
+        targetCell.canvasAnimation.updateDraw = function(neighbouringBorders){
             var drawString = textAreaDraw.value,
-                drawBackup = targetCell.animation.draw;
+                canvasAnim = targetCell.canvasAnimation,
+                drawBackup = canvasAnim.animation.draw;
             try{
-                addDrawToCell(targetCell, drawString);
-                targetCell.draw(neighbouringBorders);
+                addDrawToCanvasAnim(canvasAnim, drawString);
+                canvasAnim.draw(neighbouringBorders);
                 textAreaDraw.className = "code_valid";     
             }catch(e){
                 throw e;
                 console.error(e);
-                targetCell.animation.draw = drawBackup;
-                targetCell.draw(neighbouringBorders);
+                canvasAnim.animation.draw = drawBackup;
+                canvasAnim.draw(neighbouringBorders);
                 textAreaDraw.className = "code_invalid";     
             }
         }
@@ -355,10 +362,11 @@ var init = function (jsonAnimations) {
     var draw = function(){
 
         var allBorders = map2dArray(cells,function(cell){ 
-            return cell.borders();
+            return cell.canvasAnimation.borders();
         });
         forEach2dArray(cells,function(cell, row, col){
-            var neighbouringBorders = {};
+            var neighbouringBorders = {},
+                canvasAnim = cell.canvasAnimation;
             ["north", "south", "east", "west"].forEach(function(side){
                 var offset = relativeCoordinates[side];
                 var siderow = (row + offset.row + cells.length) % cells.length;
@@ -367,24 +375,21 @@ var init = function (jsonAnimations) {
     
             });
 
-            if(cell.updateSetup){
-                cell.updateSetup();
-                delete(cell.updateSetup);
+            if(canvasAnim.updateSetup){
+                canvasAnim.updateSetup();
+                delete(canvasAnim.updateSetup);
             }
             
-            if(cell.updateDraw){
-                cell.updateDraw(neighbouringBorders);
-                delete(cell.updateDraw);
+            if(canvasAnim.updateDraw){
+                canvasAnim.updateDraw(neighbouringBorders);
+                delete(canvasAnim.updateDraw);
             }else{
-                cell.draw(neighbouringBorders);
+                canvasAnim.draw(neighbouringBorders);
             }
-
-
-
         });
     };
 
-    forEach2dArray(cells,function(cell){ cell.setup(); });
+    forEach2dArray(cells,function(cell){ cell.canvasAnimation.setup(); });
     setInterval(draw, 50);
 
 };
