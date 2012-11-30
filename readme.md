@@ -181,3 +181,12 @@ session 29 novembre 2012
 
 code reorganisation. 
 have fun creating test animations.
+
+
+session 6 décembre 2012
+-----------------------
+
+réorganisation de code.
+animation qui réagit à son voisin.
+permettre le chargement d'une animation à partir d'une liste provenant du serveur.
+permettre la sauvegarde d'un assemblage d'animations.

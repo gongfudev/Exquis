@@ -86,7 +86,7 @@ var ajax = (function(){
 
     var loadAnimations = function(){
 
-        loadJson("assemblages/assemblageAvecCarres.json", function(assemblage){
+        loadJson("assemblages/assemblageAvecSinus.json", function(assemblage){
             
             var animationNames = map2dArray(assemblage, makeJsonName);
 
