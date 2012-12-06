@@ -84,9 +84,10 @@ var ajax = (function(){
         ajax.send(params);
     };
 
-    var loadAnimations = function(){
-
-        loadJson("assemblages/assemblageAvecSinus.json", function(assemblage){
+    var loadAssemblage = function(name){
+	var assemblagePath = "/assemblages/"+ (name ? name: "assemblageAvecSinus") + ".json";
+	
+        loadJson(assemblagePath, function(assemblage){
             
             var animationNames = map2dArray(assemblage, makeJsonName);
 
@@ -96,6 +97,12 @@ var ajax = (function(){
             
         });
     };
+
+    var loadAnimations = function(){
+	var name = window.location.pathname.substr("/assemblage/".length);
+	loadAssemblage(name);
+    };
+
     return {saveAnimation: saveAnimation, loadAnimations: loadAnimations};
 })();
 
@@ -196,7 +203,7 @@ var addAnimationToCanvasAnim = function(canvasAnim, animation){
 };
 
 var makeJsonName = function(animationName){
-    return "animations/"+animationName+".json";
+    return "/animations/"+animationName+".json";
 };
 
 

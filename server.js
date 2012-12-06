@@ -12,8 +12,10 @@ var fetchFile = function(fileName, response) {
 		    response.writeHeader(404);
 		    response.write(err.toString());
 	    }else{
-		    response.writeHeader(200, guessContentType(fileName));
-		    response.write(data);
+		var contentType = guessContentType(fileName);
+		console.log(fileName+" "+contentType["Content-Type"]);
+		response.writeHeader(200, contentType);
+		response.write(data);
 	    }
 	    response.end();
 	});
@@ -31,39 +33,40 @@ var guessContentType = function(fileName){
 
 http.createServer(function(request, response) {
 
-	var pathname = "." + require('url').parse(request.url).pathname;
-
-	if (pathname === "./"){
-		pathname = "./index.html";
-	}
-		
-
-	if (request.method === "GET"){
-		fetchFile(pathname, response);
-	}else if (request.method === "POST"){
-		var fullBody = '';
-
-		request.on('data', function(chunk) {
-			fullBody += chunk.toString();
-   		});
+    var pathname = require('url').parse(request.url).pathname;
     
-	    request.on('end', function() {
-			// empty 200 OK response for now
-			
-			fs.writeFile(pathname, decodeURIComponent(fullBody), function(err) {
-				if(err) {
-				    console.log(err);
-				   	response.writeHead(500, "OUPS", {'Content-Type': 'text/html'});
-		      		response.end();
-				} else {
-				    console.log("The file was saved!");
-				   	response.writeHead(200, "OK", {'Content-Type': 'text/html'});
-		      		response.end();
-				}
-			});
-	    });
-	}
+    if (pathname === "/" || pathname.substr(0,12) === "/assemblage/"){
+	pathname = "/index.html";
+    }
+    
+    pathname = "." + pathname;
+
+    if (request.method === "GET"){
+	fetchFile(pathname, response);
+    }else if (request.method === "POST"){
+	var fullBody = '';
+
+	request.on('data', function(chunk) {
+	    fullBody += chunk.toString();
+   	});
 	
+	request.on('end', function() {
+	    // empty 200 OK response for now
+	    
+	    fs.writeFile(pathname, decodeURIComponent(fullBody), function(err) {
+		if(err) {
+		    console.log(err);
+		    response.writeHead(500, "OUPS", {'Content-Type': 'text/html'});
+		    response.end();
+		} else {
+		    console.log("The file was saved!");
+		    response.writeHead(200, "OK", {'Content-Type': 'text/html'});
+		    response.end();
+		}
+	    });
+	});
+    }
+    
 }).listen(8000);
 
 console.log("server on port 8000");
