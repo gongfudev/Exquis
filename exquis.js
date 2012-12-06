@@ -282,52 +282,9 @@ var makeSaveButtons = function(exquis, filename_display) {
     saveAsButton.addEventListener('click', saveAs, true);
 };
 
-var exquis = {};
-
-var init = function (jsonAnimations) {
-
+var makeTextAreas = function(exquis){
     var textAreaSetup = document.getElementById("text_area_setup"),
-        textAreaDraw = document.getElementById("text_area_draw"),
-        editor = document.getElementById("editor"),
-        body = document.getElementsByTagName("body")[0],
-        filename_display = document.getElementById("filename_display");
-            
-    exquis.cells = map2dArray(jsonAnimations,function(jsonAnim,row,col){
-        var height = 150,
-            width = 150,
-            cell = makeCell(row, col, height, width, jsonAnim),
-            edit = function(){ 
-                textAreaSetup.value = cell.canvasAnim.animation.setupString;
-                textAreaDraw.value = cell.canvasAnim.animation.drawString;
-                filename_display.innerText = cell.canvasAnim.animationName;
-                if (exquis.targetCell) { removeClass(exquis.targetCell.hint, "visible-cell"); }
-                exquis.targetCell = cell;
-                addClass(exquis.targetCell.hint, "visible-cell");
-            };
-        cell.hint.addEventListener('click', edit, false);
-        return  cell;
-    });
-
-
-
-    var onBodyClick = function(event){
-       
-        if (event.target.id === ""){
-            // unselect edition
-            editor.className = "invisible";
-            if (exquis.targetCell) { removeClass(exquis.targetCell.hint, "visible-cell"); }
-        }else{
-            editor.className = "";
-        }
-    };
-
-    document.addEventListener('click', onBodyClick, true);
-
-
-    addHintListeners(exquis.cells);
-
-    makeSaveButtons(exquis, filename_display);
-
+	textAreaDraw = document.getElementById("text_area_draw");
 
     textAreaDraw.className = "code_valid";
     textAreaSetup.className = "code_valid";
@@ -367,6 +324,56 @@ var init = function (jsonAnimations) {
         };
         
     };
+    return { textAreaSetup: textAreaSetup,
+	     textAreaDraw: textAreaDraw };
+};
+
+var exquis = {};
+
+var init = function (jsonAnimations) {
+
+    var textAreas = makeTextAreas(exquis),
+        editor = document.getElementById("editor"),
+        body = document.getElementsByTagName("body")[0],
+        filename_display = document.getElementById("filename_display");
+
+    exquis.cells = map2dArray(jsonAnimations,function(jsonAnim,row,col){
+        var height = 150,
+            width = 150,
+            cell = makeCell(row, col, height, width, jsonAnim),
+            edit = function(){ 
+                textAreas.textAreaSetup.value = cell.canvasAnim.animation.setupString;
+                textAreas.textAreaDraw.value = cell.canvasAnim.animation.drawString;
+                filename_display.innerText = cell.canvasAnim.animationName;
+                if (exquis.targetCell) { removeClass(exquis.targetCell.hint, "visible-cell"); }
+                exquis.targetCell = cell;
+                addClass(exquis.targetCell.hint, "visible-cell");
+            };
+        cell.hint.addEventListener('click', edit, false);
+        return  cell;
+    });
+
+
+
+    var onBodyClick = function(event){
+       
+        if (event.target.id === ""){
+            // unselect edition
+            editor.className = "invisible";
+            if (exquis.targetCell) { removeClass(exquis.targetCell.hint, "visible-cell"); }
+        }else{
+            editor.className = "";
+        }
+    };
+
+    document.addEventListener('click', onBodyClick, true);
+
+
+    addHintListeners(exquis.cells);
+
+    makeSaveButtons(exquis, filename_display);
+
+
 
     var draw = function(){
 
