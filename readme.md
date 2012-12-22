@@ -191,10 +191,16 @@ commencer animation qui réagit à son voisin.
 lire assemblage depuis l'url.
 
 
-session 13 décembre 2012
+session 22 décembre 2012
 ------------------------
 
 réorganisation de code.
 animation qui réagit à son voisin suite et fin.
+
+
+session 27 décembre 2012
+------------------------
+
+réorganisation de code.
 permettre le chargement d'une animation à partir d'une liste provenant du serveur.
 permettre la sauvegarde d'un assemblage d'animations.
