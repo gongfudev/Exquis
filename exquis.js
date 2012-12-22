@@ -269,89 +269,107 @@ var addEditListeners = function (cells) {
     document.getElementById("dashboard").addEventListener("click", onDashboardClick, false);
 };
 
-var makeSaveButtons = function(exquis, filename_display) {
-    var saveButton = document.getElementById("save_button"),
-    saveAsButton = document.getElementById("save_as_button");
-    
-    var save = function(){
-        ajax.saveAnimation(exquis.targetCell.canvasAnim);
+var makeEditor = function(exquis){
+    var makeSaveButtons = function(exquis, filename_display) {
+	var saveButton = document.getElementById("save_button"),
+	saveAsButton = document.getElementById("save_as_button");
+	
+	var save = function(){
+            ajax.saveAnimation(exquis.targetCell.canvasAnim);
+	};
+
+	saveButton.addEventListener('click', save, true);
+	
+	var saveAs = function(){
+            var fileName = prompt("enter file name");
+            if (fileName){
+		ajax.saveAnimation(exquis.targetCell.canvasAnim, null, fileName);
+		filename_display.innerText = fileName;
+            }        
+	};
+	saveAsButton.addEventListener('click', saveAs, true);
     };
 
-    saveButton.addEventListener('click', save, true);
-    
-    var saveAs = function(){
-        var fileName = prompt("enter file name");
-        if (fileName){
-	    ajax.saveAnimation(exquis.targetCell.canvasAnim, null, fileName);
-	    filename_display.innerText = fileName;
-        }        
-    };
-    saveAsButton.addEventListener('click', saveAs, true);
-};
-
-var makeTextAreas = function(exquis){
-    var textAreaSetup = document.getElementById("text_area_setup"),
+    var makeTextAreas = function(exquis){
+	var textAreaSetup = document.getElementById("text_area_setup"),
 	textAreaDraw = document.getElementById("text_area_draw");
 
-    textAreaDraw.className = "code_valid";
-    textAreaSetup.className = "code_valid";
+	textAreaDraw.className = "code_valid";
+	textAreaSetup.className = "code_valid";
 
-    textAreaSetup.onkeyup = function(){
-	var targetCell = exquis.targetCell;
-        targetCell.canvasAnim.updateSetup = function(){
-            var setupString = textAreaSetup.value,
+	textAreaSetup.onkeyup = function(){
+	    var targetCell = exquis.targetCell;
+            targetCell.canvasAnim.updateSetup = function(){
+		var setupString = textAreaSetup.value,
                 canvasAnim = targetCell.canvasAnim;
-            try{
-                addSetupToCanvasAnim(canvasAnim, setupString);
-                canvasAnim.setup();
-                textAreaSetup.className = "code_valid";     
-            }catch(e){
-                textAreaSetup.className = "code_invalid";     
-            }
-        };
-    };
+		try{
+                    addSetupToCanvasAnim(canvasAnim, setupString);
+                    canvasAnim.setup();
+                    textAreaSetup.className = "code_valid";     
+		}catch(e){
+                    textAreaSetup.className = "code_invalid";     
+		}
+            };
+	};
 
-    textAreaDraw.onkeyup = function(){
-	var targetCell = exquis.targetCell;
-        targetCell.canvasAnim.updateDraw = function(neighbouringBorders){
-            var drawString = textAreaDraw.value,
+	textAreaDraw.onkeyup = function(){
+	    var targetCell = exquis.targetCell;
+            targetCell.canvasAnim.updateDraw = function(neighbouringBorders){
+		var drawString = textAreaDraw.value,
                 canvasAnim = targetCell.canvasAnim,
                 drawBackup = canvasAnim.animation.draw;
-            try{
-                addDrawToCanvasAnim(canvasAnim, drawString);
-                canvasAnim.draw(neighbouringBorders);
-                textAreaDraw.className = "code_valid";     
-            }catch(e){
-                throw e;
-                console.error(e);
-                canvasAnim.animation.draw = drawBackup;
-                canvasAnim.draw(neighbouringBorders);
-                textAreaDraw.className = "code_invalid";     
-            }
-        };
-        
+		try{
+                    addDrawToCanvasAnim(canvasAnim, drawString);
+                    canvasAnim.draw(neighbouringBorders);
+                    textAreaDraw.className = "code_valid";     
+		}catch(e){
+                    throw e;
+                    console.error(e);
+                    canvasAnim.animation.draw = drawBackup;
+                    canvasAnim.draw(neighbouringBorders);
+                    textAreaDraw.className = "code_invalid";     
+		}
+            };
+            
+	};
+	return { textAreaSetup: textAreaSetup,
+		 textAreaDraw: textAreaDraw };
     };
-    return { textAreaSetup: textAreaSetup,
-	     textAreaDraw: textAreaDraw };
+
+    var textAreas = makeTextAreas(exquis),
+        editor = document.getElementById("editor"),
+        filename_display = document.getElementById("filename_display");
+    makeSaveButtons(exquis, filename_display);
+    
+    return {
+	editCanvasAnim: function(canvasAnim){
+            textAreas.textAreaSetup.value = canvasAnim.animation.setupString;
+            textAreas.textAreaDraw.value = canvasAnim.animation.drawString;
+            filename_display.innerText = canvasAnim.animationName;
+	},
+	show: function(){
+            editor.className = "";
+	},
+	hide: function(){
+            // unselect edition
+            editor.className = "invisible";
+	}};
+
 };
 
 var exquis = {};
 
 var init = function (jsonAnimations) {
 
-    var textAreas = makeTextAreas(exquis),
-        editor = document.getElementById("editor"),
-        body = document.getElementsByTagName("body")[0],
-        filename_display = document.getElementById("filename_display");
+    var editor = makeEditor(exquis),
+        body = document.getElementsByTagName("body")[0];
 
     exquis.cells = map2dArray(jsonAnimations,function(jsonAnim,row,col){
         var height = 150,
             width = 150,
             cell = makeCell(row, col, height, width, jsonAnim),
             edit = function(){ 
-                textAreas.textAreaSetup.value = cell.canvasAnim.animation.setupString;
-                textAreas.textAreaDraw.value = cell.canvasAnim.animation.drawString;
-                filename_display.innerText = cell.canvasAnim.animationName;
+		editor.editCanvasAnim(cell.canvasAnim);
                 if (exquis.targetCell) { removeClass(exquis.targetCell.hint, "visible-cell"); }
                 exquis.targetCell = cell;
                 addClass(exquis.targetCell.hint, "visible-cell");
@@ -360,16 +378,14 @@ var init = function (jsonAnimations) {
         return  cell;
     });
 
-
-
     var onBodyClick = function(event){
        
         if (event.target.id === ""){
             // unselect edition
-            editor.className = "invisible";
+	    editor.hide();
             if (exquis.targetCell) { removeClass(exquis.targetCell.hint, "visible-cell"); }
         }else{
-            editor.className = "";
+	    editor.show();
         }
     };
 
@@ -378,7 +394,6 @@ var init = function (jsonAnimations) {
 
     addHintListeners(exquis.cells);
 
-    makeSaveButtons(exquis, filename_display);
 
 
 
