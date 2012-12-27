@@ -31,40 +31,60 @@ var guessContentType = function(fileName){
 	}
 }
 
+
+var listAnimations = function(readCallback){
+    fs.readdir("./animations", readCallback);
+}
+
+var saveFile = function(request, pathname){
+    
+    var fullBody = '';
+    
+    request.on('data', function(chunk) {
+	fullBody += chunk.toString();
+    });
+    
+    request.on('end', function() {
+	// empty 200 OK response for now
+	
+	fs.writeFile(pathname, decodeURIComponent(fullBody), function(err) {
+	    if(err) {
+		console.log(err);
+		response.writeHead(500, "OUPS", {'Content-Type': 'text/html'});
+		response.end();
+	    } else {
+		console.log("The file was saved!");
+		response.writeHead(200, "OK", {'Content-Type': 'text/html'});
+		response.end();
+	    }
+	});
+    });
+}
+
 http.createServer(function(request, response) {
 
     var pathname = require('url').parse(request.url).pathname;
     
     if (pathname === "/" || pathname.substr(0,12) === "/assemblage/"){
 	pathname = "/index.html";
+    }else if(pathname === "/animations/"){
+	
+	listAnimations(function(err, files){
+	    console.log("here");
+	    response.writeHeader(200, {'Content-Type': 'application/json'});
+	    
+	    response.write(JSON.stringify(files));
+	    response.end();
+	});
     }
-    
+
     pathname = "." + pathname;
 
     if (request.method === "GET"){
 	fetchFile(pathname, response);
     }else if (request.method === "POST"){
-	var fullBody = '';
-
-	request.on('data', function(chunk) {
-	    fullBody += chunk.toString();
-   	});
+	saveFile(request, pathname);
 	
-	request.on('end', function() {
-	    // empty 200 OK response for now
-	    
-	    fs.writeFile(pathname, decodeURIComponent(fullBody), function(err) {
-		if(err) {
-		    console.log(err);
-		    response.writeHead(500, "OUPS", {'Content-Type': 'text/html'});
-		    response.end();
-		} else {
-		    console.log("The file was saved!");
-		    response.writeHead(200, "OK", {'Content-Type': 'text/html'});
-		    response.end();
-		}
-	    });
-	});
     }
     
 }).listen(8000);

@@ -10,6 +10,7 @@
     	.grid { width: 450px; max-width: 450px; position: absolute}
         #grid_hint{z-index: 1}
         #editor { position: absolute; left: 50%; }
+        #file-picker { position: absolute; left: 50%; top:15%; z-index: 1 }
     	.cell { width: 150px;  height: 150px; position:absolute}
         .hint { width: 148px;  height: 148px; position:absolute;border: 1px solid rgba(0,0,0,0);}
         .visible-grid, .visible-cell{ border: 1px solid white; }
@@ -31,10 +32,12 @@
             <p>draw</p>
             <textarea id="text_area_draw" rows="20" cols="80" ></textarea>
             <div id="editor-buttons">
+                <button id="load_button" type="button">save</button>
                 <button id="save_button" type="button">save</button>
                 <button id="save_as_button" type="button">save as</button>
             </div>
         </div>
+         <div class="" id="file-picker">sdfa</div>
     </div>
 </body>
 

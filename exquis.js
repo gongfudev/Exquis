@@ -103,7 +103,7 @@ var ajax = (function(){
 	loadAssemblage(name);
     };
 
-    return {saveAnimation: saveAnimation, loadAnimations: loadAnimations};
+    return {saveAnimation: saveAnimation, loadAnimations: loadAnimations, loadJson: loadJson};
 })();
 
 
@@ -244,11 +244,7 @@ var addHintListeners = function(cells){
     var showGridHint = function(show){
 
         forEach2dArray(cells, function(cell, row,col){
-            var id = "hint-"+row+"-"+col,
-                gridHint = document.getElementById(id);
-
-            (show ? addClass : removeClass)(gridHint, "visible-grid");
-
+            (show ? addClass : removeClass)(cell.hint, "visible-grid");
         });
     };
 
@@ -270,9 +266,21 @@ var addEditListeners = function (cells) {
 };
 
 var makeEditor = function(exquis){
-    var makeSaveButtons = function(exquis, filename_display) {
-	var saveButton = document.getElementById("save_button"),
-	saveAsButton = document.getElementById("save_as_button");
+    var makeEditorButtons = function(exquis, filename_display) {
+
+	var loadButton = document.getElementById("load_button"),
+	    saveButton = document.getElementById("save_button"),
+	    saveAsButton = document.getElementById("save_as_button");
+
+	var load = function(){
+	    console.log("youpie");
+	    	
+	    ajax.loadJson("/animations/", function(files){
+		console.log(files);
+	    });
+	};
+
+	loadButton.addEventListener('click', load, true);
 	
 	var save = function(){
             ajax.saveAnimation(exquis.targetCell.canvasAnim);
@@ -339,7 +347,7 @@ var makeEditor = function(exquis){
     var textAreas = makeTextAreas(exquis),
         editor = document.getElementById("editor"),
         filename_display = document.getElementById("filename_display");
-    makeSaveButtons(exquis, filename_display);
+    makeEditorButtons(exquis, filename_display);
     
     return {
 	editCanvasAnim: function(canvasAnim){
@@ -378,6 +386,8 @@ var init = function (jsonAnimations) {
         return  cell;
     });
 
+    addHintListeners(exquis.cells);
+
     var onBodyClick = function(event){
        
         if (event.target.id === ""){
@@ -390,12 +400,6 @@ var init = function (jsonAnimations) {
     };
 
     document.addEventListener('click', onBodyClick, true);
-
-
-    addHintListeners(exquis.cells);
-
-
-
 
     var draw = function(){
 
