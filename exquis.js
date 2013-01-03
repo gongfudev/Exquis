@@ -237,7 +237,7 @@ var addClass = function(element, className){
 };
 
 var removeClass = function(element, className){
-    element.className = element.className.replace(" "+className, "");
+    element.className = element.className.replace(RegExp(" *"+className), "");
 };
 
 var addHintListeners = function(cells){
@@ -270,13 +270,47 @@ var makeEditor = function(exquis){
 
 	var loadButton = document.getElementById("load_button"),
 	    saveButton = document.getElementById("save_button"),
-	    saveAsButton = document.getElementById("save_as_button");
+	    saveAsButton = document.getElementById("save_as_button"),
+	    modalFilePicker = document.getElementById("modal"),
+	    dialog = document.getElementById("dialog");
+	    
 
+
+	var populateFilePicker = function(files){
+
+	    var listElement = document.createElement("ul");
+
+	    dialog.innerHTML = '';
+
+	    dialog.appendChild(listElement);
+	    
+	    for(var i = 0; i < files.length; ++i){
+		var listItem = document.createElement("li");
+		listItem.innerHTML = files[i];
+
+		listItem.addEventListener('click', function(e){
+		    var chosenFile = e.target.innerHTML;
+
+		    ajax
+		});
+		
+		listElement.appendChild(listItem);
+	    }
+
+	    var cancelButton = document.createElement("button");
+	    cancelButton.innerHTML = "cancel";
+	    cancelButton.addEventListener('click', function() { addClass(modalFilePicker, "invisible"); });
+	    dialog.appendChild(cancelButton);
+		    
+	}
+	
 	var load = function(){
-	    console.log("youpie");
 	    	
 	    ajax.loadJson("/animations/", function(files){
 		console.log(files);
+		removeClass(modalFilePicker, "invisible");
+
+		populateFilePicker(files);
 	    });
 	};
 
@@ -305,7 +339,7 @@ var makeEditor = function(exquis){
 	textAreaDraw.className = "code_valid";
 	textAreaSetup.className = "code_valid";
 
-	textAreaSetup.onkeyup = function(){
+	var onEditorSetupChange = function(){
 	    var targetCell = exquis.targetCell;
             targetCell.canvasAnim.updateSetup = function(){
 		var setupString = textAreaSetup.value,
@@ -320,7 +354,7 @@ var makeEditor = function(exquis){
             };
 	};
 
-	textAreaDraw.onkeyup = function(){
+	var onEditorDrawChange = function(){
 	    var targetCell = exquis.targetCell;
             targetCell.canvasAnim.updateDraw = function(neighbouringBorders){
 		var drawString = textAreaDraw.value,
@@ -338,22 +372,43 @@ var makeEditor = function(exquis){
                     textAreaDraw.className = "code_invalid";     
 		}
             };
-            
+	    
 	};
+
+
+	textAreaSetup.onkeyup = onEditorSetupChange;
+	textAreaDraw.onkeyup = onEditorDrawChange; 
+
 	return { textAreaSetup: textAreaSetup,
-		 textAreaDraw: textAreaDraw };
+		 textAreaDraw: textAreaDraw,
+	         onEditorSetupChange: onEditorSetupChange,
+	         onEditorDrawChange: onEditorDrawChange
+	       };
     };
 
     var textAreas = makeTextAreas(exquis),
         editor = document.getElementById("editor"),
         filename_display = document.getElementById("filename_display");
-    makeEditorButtons(exquis, filename_display);
+        makeEditorButtons(exquis, filename_display);
+
+    var update = function(textAreas, setupString, drawString, animationName){
+	    setValues(textAreas, setupString, drawString, animationName);
+	    textAreas.onEditorSetupChange();
+	    textAreas.onEditorDrawChange();
+    };
+	
+    var setValues = function(textAreas, setupString, drawString, animationName){
+        textAreas.textAreaSetup.value = setupString;
+        textAreas.textAreaDraw.value = drawString;
+        filename_display.innerText = animationName;
+    }
     
     return {
 	editCanvasAnim: function(canvasAnim){
-            textAreas.textAreaSetup.value = canvasAnim.animation.setupString;
-            textAreas.textAreaDraw.value = canvasAnim.animation.drawString;
-            filename_display.innerText = canvasAnim.animationName;
+	    setValues(textAreas,
+		      canvasAnim.animation.setupString,
+		      canvasAnim.animation.drawString,
+		      canvasAnim.animationName);
 	},
 	show: function(){
             editor.className = "";
@@ -370,7 +425,7 @@ var exquis = {};
 var init = function (jsonAnimations) {
 
     var editor = makeEditor(exquis),
-        body = document.getElementsByTagName("body")[0];
+        container = document.getElementById("container");
 
     exquis.cells = map2dArray(jsonAnimations,function(jsonAnim,row,col){
         var height = 150,
@@ -389,8 +444,7 @@ var init = function (jsonAnimations) {
     addHintListeners(exquis.cells);
 
     var onBodyClick = function(event){
-       
-        if (event.target.id === ""){
+        if (event.target.tagName === "HTML"){
             // unselect edition
 	    editor.hide();
             if (exquis.targetCell) { removeClass(exquis.targetCell.hint, "visible-cell"); }
@@ -399,6 +453,7 @@ var init = function (jsonAnimations) {
         }
     };
 
+    
     document.addEventListener('click', onBodyClick, true);
 
     var draw = function(){

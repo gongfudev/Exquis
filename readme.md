@@ -204,3 +204,14 @@ session 27 décembre 2012
 réorganisation de code.
 permettre le chargement d'une animation à partir d'une liste provenant du serveur.
 permettre la sauvegarde d'un assemblage d'animations.
+
+
+session 3 janvier 2013
+----------------------
+
+filePicker modal gui.
+
+reste à charger l'animation sélectionnée (WIP)
+extraire les requêtes serveur de l'éditeur.
+
+

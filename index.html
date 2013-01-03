@@ -7,10 +7,17 @@
     <!-- Mobile viewport optimized: h5bp.com/viewport -->
     <meta name="viewport" content="width=device-width">
     <style>
-    	.grid { width: 450px; max-width: 450px; position: absolute}
+        .grid { width: 450px; max-width: 450px; position: absolute}
         #grid_hint{z-index: 1}
         #editor { position: absolute; left: 50%; }
-        #file-picker { position: absolute; left: 50%; top:15%; z-index: 1 }
+        #dialog {  position: absolute; left: 33%; top:120px; background-color: red } 
+        #modal { position: fixed;
+                 top: 0;
+                 right: 0;
+                 bottom: 0;
+                 left: 0;
+                 z-index: 999;
+	         background-color: rgba(100, 100, 100, 0.5); }
     	.cell { width: 150px;  height: 150px; position:absolute}
         .hint { width: 148px;  height: 148px; position:absolute;border: 1px solid rgba(0,0,0,0);}
         .visible-grid, .visible-cell{ border: 1px solid white; }
@@ -32,12 +39,14 @@
             <p>draw</p>
             <textarea id="text_area_draw" rows="20" cols="80" ></textarea>
             <div id="editor-buttons">
-                <button id="load_button" type="button">save</button>
+                <button id="load_button" type="button">load</button>
                 <button id="save_button" type="button">save</button>
                 <button id="save_as_button" type="button">save as</button>
             </div>
         </div>
-         <div class="" id="file-picker">sdfa</div>
+    </div>
+    <div class="invisible" id="modal">
+      <div id="dialog"></div>
     </div>
 </body>
 
