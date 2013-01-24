@@ -215,3 +215,15 @@ reste à charger l'animation sélectionnée (WIP)
 extraire les requêtes serveur de l'éditeur.
 
 
+session 24 février 2013
+----------------------
+finir le filepicker et la fonctionalité "load cell"
+
+
+session 7 février 2013
+----------------------
+
+refactoring.
+améliorer l'apparence.
+rendre possible la sauvegarde d'un assemblage d'animations.
+

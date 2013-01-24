@@ -166,7 +166,7 @@ var makeCanvasAnimation = function(context, jsonAnimation){
         }
     };
 
-    addAnimationToCanvasAnim(canvasAnim, jsonAnimation.animation);
+    addAnimationToCanvasAnim(jsonAnimation.animation, canvasAnim);
 
     return canvasAnim;
 
@@ -196,10 +196,9 @@ var functionBodyAsString = function(func){
   //.replace(/\n/g,"\\n");
 };
     
-var addAnimationToCanvasAnim = function(canvasAnim, animation){
+var addAnimationToCanvasAnim = function(animation, canvasAnim){
     addDrawToCanvasAnim(canvasAnim, animation.draw);
     addSetupToCanvasAnim(canvasAnim, animation.setup);
-
 };
 
 var makeJsonName = function(animationName){
@@ -256,15 +255,6 @@ var addHintListeners = function(cells){
 
 };
 
-var addEditListeners = function (cells) {
-
-    var onDashboardClick = function(e){
-        console.log(e.target.id);
-    };
-
-    document.getElementById("dashboard").addEventListener("click", onDashboardClick, false);
-};
-
 var makeEditor = function(exquis){
     var makeEditorButtons = function(exquis, filename_display) {
 
@@ -285,13 +275,22 @@ var makeEditor = function(exquis){
 	    dialog.appendChild(listElement);
 	    
 	    for(var i = 0; i < files.length; ++i){
-		var listItem = document.createElement("li");
-		listItem.innerHTML = files[i];
+		var listItem = document.createElement("li"),
+		    animationName = files[i].replace(/\.json$/, "");
+		listItem.innerHTML = "<a href='#'>"+animationName+"</a>";
 
 		listItem.addEventListener('click', function(e){
-		    var chosenFile = e.target.innerHTML;
-
-		    ajax
+		    var chosenAnimation = e.target.innerHTML;
+		    ajax.loadJson(makeJsonName(chosenAnimation), function(animation){
+			var canvasAnim = exquis.targetCell.canvasAnim;
+			addAnimationToCanvasAnim(animation, canvasAnim);
+			canvasAnim.animationName = chosenAnimation;
+			canvasAnim.setup();
+			exquis.editor.editCanvasAnim(canvasAnim);
+			// hide modal
+			addClass(modalFilePicker, "invisible"); 
+		    });
+		    
 		});
 		
 		listElement.appendChild(listItem);
@@ -302,12 +301,11 @@ var makeEditor = function(exquis){
 	    cancelButton.addEventListener('click', function() { addClass(modalFilePicker, "invisible"); });
 	    dialog.appendChild(cancelButton);
 		    
-	}
+	};
 	
 	var load = function(){
 	    	
 	    ajax.loadJson("/animations/", function(files){
-		console.log(files);
 		removeClass(modalFilePicker, "invisible");
 
 		populateFilePicker(files);
@@ -392,20 +390,20 @@ var makeEditor = function(exquis){
         makeEditorButtons(exquis, filename_display);
 
     var update = function(textAreas, setupString, drawString, animationName){
-	    setValues(textAreas, setupString, drawString, animationName);
+	    setEditorContent(textAreas, setupString, drawString, animationName);
 	    textAreas.onEditorSetupChange();
 	    textAreas.onEditorDrawChange();
     };
 	
-    var setValues = function(textAreas, setupString, drawString, animationName){
+    var setEditorContent = function(textAreas, setupString, drawString, animationName){
         textAreas.textAreaSetup.value = setupString;
         textAreas.textAreaDraw.value = drawString;
         filename_display.innerText = animationName;
-    }
+    };
     
     return {
 	editCanvasAnim: function(canvasAnim){
-	    setValues(textAreas,
+	    setEditorContent(textAreas,
 		      canvasAnim.animation.setupString,
 		      canvasAnim.animation.drawString,
 		      canvasAnim.animationName);
@@ -424,15 +422,16 @@ var exquis = {};
 
 var init = function (jsonAnimations) {
 
-    var editor = makeEditor(exquis),
-        container = document.getElementById("container");
+    var container = document.getElementById("container");
+
+    exquis.editor = makeEditor(exquis);
 
     exquis.cells = map2dArray(jsonAnimations,function(jsonAnim,row,col){
         var height = 150,
             width = 150,
             cell = makeCell(row, col, height, width, jsonAnim),
             edit = function(){ 
-		editor.editCanvasAnim(cell.canvasAnim);
+		exquis.editor.editCanvasAnim(cell.canvasAnim);
                 if (exquis.targetCell) { removeClass(exquis.targetCell.hint, "visible-cell"); }
                 exquis.targetCell = cell;
                 addClass(exquis.targetCell.hint, "visible-cell");
@@ -446,10 +445,10 @@ var init = function (jsonAnimations) {
     var onBodyClick = function(event){
         if (event.target.tagName === "HTML"){
             // unselect edition
-	    editor.hide();
+	    exquis.editor.hide();
             if (exquis.targetCell) { removeClass(exquis.targetCell.hint, "visible-cell"); }
         }else{
-	    editor.show();
+	    exquis.editor.show();
         }
     };
 
