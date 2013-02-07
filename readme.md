@@ -223,7 +223,14 @@ finir le filepicker et la fonctionalité "load cell"
 session 7 février 2013
 ----------------------
 
-refactoring.
+refactoring avec require.js
+
+
+session 14 février 2013
+-----------------------
+
+fix bug qui apparaît sur le click du bouton load
+
 améliorer l'apparence.
 rendre possible la sauvegarde d'un assemblage d'animations.
 
