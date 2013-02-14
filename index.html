@@ -10,7 +10,13 @@
         .grid { width: 450px; max-width: 450px; position: absolute}
         #grid_hint{z-index: 1}
         #editor { position: absolute; left: 50%; }
-        #dialog {  position: absolute; left: 33%; top:120px; background-color: red } 
+        #dialog {  position: absolute;
+                   left: 33%;
+	           top:120px;
+	           background-color: lightgrey;
+	           padding: 2%}
+	#dialog > p { padding: 2%; margin: 0}
+	#dialog > p:hover { background-color:darkgrey;}
         #modal { position: fixed;
                  top: 0;
                  right: 0;

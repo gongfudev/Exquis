@@ -13,18 +13,14 @@ define(["net", "csshelper", "evileval"], function(net, csshelper, evileval){
 
 	    var populateFilePicker = function(files){
 
-		var listElement = document.createElement("ul");
-
 		dialog.innerHTML = '';
-
-		dialog.appendChild(listElement);
 		
 		for(var i = 0; i < files.length; ++i){
-		    var listItem = document.createElement("li"),
+		    var paragraph = document.createElement("p"),
 			animationName = files[i].replace(/\.json$/, "");
-		    listItem.innerHTML = "<a href='#'>"+animationName+"</a>";
+		    paragraph.innerHTML = animationName;
 
-		    listItem.addEventListener('click', function(e){
+		    paragraph.addEventListener('click', function(e){
 			var chosenAnimation = e.target.innerHTML;
 			net.loadJson(net.makeJsonName(chosenAnimation), function(animation){
 			    var canvasAnim = exquis.targetCell.canvasAnim;
@@ -38,7 +34,7 @@ define(["net", "csshelper", "evileval"], function(net, csshelper, evileval){
 			
 		    });
 		    
-		    listElement.appendChild(listItem);
+		    dialog.appendChild(paragraph);
 		}
 
 		var cancelButton = document.createElement("button");
