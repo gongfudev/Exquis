@@ -1,6 +1,6 @@
 "use strict";
 
-define(["net", "iter2d", "editor", "csshelper"], function(net, iter2d, editor, csshelper){
+define(["net", "iter2d", "editor", "csshelper", "evileval"], function(net, iter2d, editor, csshelper, evileval){
     
 
 
@@ -42,7 +42,7 @@ define(["net", "iter2d", "editor", "csshelper"], function(net, iter2d, editor, c
             }
 	};
 
-	addAnimationToCanvasAnim(jsonAnimation.animation, canvasAnim);
+	evileval.addAnimationToCanvasAnim(jsonAnimation.animation, canvasAnim);
 
 	return canvasAnim;
 
@@ -56,28 +56,6 @@ define(["net", "iter2d", "editor", "csshelper"], function(net, iter2d, editor, c
 	west : {row: 0, col: -1, opposite: "east"},
 	east : {row: 0, col: 1, opposite: "west"}
     };
-
-    var addSetupToCanvasAnim = function(canvasAnim, setupString){
-	eval("canvasAnim.animation.setup = function(context) {" + setupString + "};");
-	canvasAnim.animation.setupString = setupString;
-    };
-
-    var addDrawToCanvasAnim = function(canvasAnim, drawString){
-	eval("canvasAnim.animation.draw = function(context, borders) {" + drawString + "};");
-	canvasAnim.animation.drawString = drawString;
-    };
-
-    var functionBodyAsString = function(func){
-	return func.toString().replace(/function\s*\([\w\s,]*\)\s*{\n?(\s*[\s\S]*)}/g,"$1");
-	//.replace(/\n/g,"\\n");
-    };
-    
-    var addAnimationToCanvasAnim = function(animation, canvasAnim){
-	addDrawToCanvasAnim(canvasAnim, animation.draw);
-	addSetupToCanvasAnim(canvasAnim, animation.setup);
-    };
-
-
 
 
     var makeCanvas = function(row, col, height, width){

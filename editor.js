@@ -1,4 +1,4 @@
-define(["net", "csshelper"], function(net, csshelper){
+define(["net", "csshelper", "evileval"], function(net, csshelper, evileval){
 
     var makeEditor = function(exquis){
 	var makeEditorButtons = function(exquis, filename_display) {
@@ -28,7 +28,7 @@ define(["net", "csshelper"], function(net, csshelper){
 			var chosenAnimation = e.target.innerHTML;
 			net.loadJson(net.makeJsonName(chosenAnimation), function(animation){
 			    var canvasAnim = exquis.targetCell.canvasAnim;
-			    addAnimationToCanvasAnim(animation, canvasAnim);
+			    evileval.addAnimationToCanvasAnim(animation, canvasAnim);
 			    canvasAnim.animationName = chosenAnimation;
 			    canvasAnim.setup();
 			    exquis.editor.editCanvasAnim(canvasAnim);
