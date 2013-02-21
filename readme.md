@@ -236,6 +236,13 @@ améliorer l'apparence: travail sur le dialogue modal.
 session 21 février 2013
 -----------------------
 
+bug fix
+mise en place de tests avec PhantomJS
+
+
+session 28 février 2013
+-----------------------
+
 fixer la largeur du hover sur le mot le plus long dans le dialog modal.
 améliorer l'apparence.
 rendre possible la sauvegarde d'un assemblage d'animations.
