@@ -1,6 +1,10 @@
 "use strict";
 
-define(["net", "iter2d", "editor", "csshelper", "evileval"], function(net, iter2d, editor, csshelper, evileval){
+define(["net",
+	"iter2d",
+	"editor",
+	"csshelper",
+	"evileval"], function(net, iter2d, editor, csshelper, evileval){
     
 
 

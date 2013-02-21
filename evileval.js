@@ -13,13 +13,16 @@ define([], function(){
 	functionBodyAsString = function(func){
 	    return func.toString().replace(/function\s*\([\w\s,]*\)\s*{\n?(\s*[\s\S]*)}/g,"$1");
 	    //.replace(/\n/g,"\\n");
+	},
+	addAnimationToCanvasAnim = function(animation, canvasAnim){
+	    addDrawToCanvasAnim(canvasAnim, animation.draw);
+	    addSetupToCanvasAnim(canvasAnim, animation.setup);
 	};
 	
     return {
-	addAnimationToCanvasAnim: function(animation, canvasAnim){
-	    addDrawToCanvasAnim(canvasAnim, animation.draw);
-	    addSetupToCanvasAnim(canvasAnim, animation.setup);
-	}
+	addAnimationToCanvasAnim: addAnimationToCanvasAnim,
+	addDrawToCanvasAnim: addDrawToCanvasAnim,
+	addSetupToCanvasAnim: addSetupToCanvasAnim
     };
 
 });

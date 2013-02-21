@@ -84,7 +84,7 @@ define(["net", "csshelper", "evileval"], function(net, csshelper, evileval){
 		    var setupString = textAreaSetup.value,
 			canvasAnim = targetCell.canvasAnim;
 		    try{
-			addSetupToCanvasAnim(canvasAnim, setupString);
+			evileval.addSetupToCanvasAnim(canvasAnim, setupString);
 			canvasAnim.setup();
 			textAreaSetup.className = "code_valid";     
 		    }catch(e){
@@ -100,7 +100,7 @@ define(["net", "csshelper", "evileval"], function(net, csshelper, evileval){
 			canvasAnim = targetCell.canvasAnim,
 			drawBackup = canvasAnim.animation.draw;
 		    try{
-			addDrawToCanvasAnim(canvasAnim, drawString);
+			evileval.addDrawToCanvasAnim(canvasAnim, drawString);
 			canvasAnim.draw(neighbouringBorders);
 			textAreaDraw.className = "code_valid";     
 		    }catch(e){

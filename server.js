@@ -36,7 +36,7 @@ var listAnimations = function(readCallback){
     fs.readdir("./animations", readCallback);
 }
 
-var saveFile = function(request, pathname){
+var saveFile = function(request, response, pathname){
     
     var fullBody = '';
     
@@ -83,7 +83,7 @@ http.createServer(function(request, response) {
     if (request.method === "GET"){
 	fetchFile(pathname, response);
     }else if (request.method === "POST"){
-	saveFile(request, pathname);
+	saveFile(request, response, pathname);
 	
     }
     

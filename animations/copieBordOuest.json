@@ -1,4 +1,1 @@
-{
-	"setup": "",
-	"draw": "// paste current image one pixel down\nvar currentImage = context.getImageData(0, 0, context.canvas.width, context.canvas.height);\ncontext.putImageData(currentImage, 1, 0);\n// add new line\ncontext.putImageData(borders.west, 0, 0);"
-}
+{"setup":"","draw":"// paste current image one pixel down\nvar currentImage = context.getImageData(0, 0, context.canvas.width, context.canvas.height);\ncontext.putImageData(currentImage, 1, 0);\n// add new line\ncontext.putImageData(borders.west, 0, 0);"}
