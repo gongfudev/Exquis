@@ -53,15 +53,7 @@ if (system.args.length < 2) {
 */
 
 
-var assert = function(assertion){
-    if (!assertion[0]){
-	console.log("test failure");
-	console.log(assertion[1]);
-    };
-    return assertion[0];
-};
-
-
+ 
 page.open(encodeURI("http://127.0.0.1:8000/index.html"), function (status) {
   
     // Check for page load success
@@ -71,18 +63,22 @@ page.open(encodeURI("http://127.0.0.1:8000/index.html"), function (status) {
         // Execute some DOM inspection within the page context
 	setTimeout(function(){
 
-	    var assertions = page.evaluate(function() {
+	    page.injectJs("test_helpers.js");
+
+	    page.evaluate(function() {
 		var listOfCanvases = document.getElementsByTagName('canvas'),
-		    assertions = [[listOfCanvases.length == 9, "we should have nine canvas elements"]];
-		return assertions;
+		    editor = document.getElementById('editor'),
+		    assertions = [];
+		assertions.push([hasClass(editor, "invisible"), "the editor should be invisible"]);
+		assertions.push([listOfCanvases.length == 9, "we should have nine canvas elements"]);
+		var hint = document.getElementById('hint-2-1');
+		simulateClick(hint);
+		assertions.push([!hasClass(editor, "invisible"), "the editor should be visible"]);
+		runAssertions(assertions);
+
+
+		
 	    });
-	    var failure = false;
-	    assertions.forEach(function(assertion){
-		failure = failure || !assert(assertion);
-	    });
-	    if(!failure){
-		console.log("all tests have passed");
-	    }
 	    phantom.exit();
 	}, 1000);
     }

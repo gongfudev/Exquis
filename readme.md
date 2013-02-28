@@ -243,6 +243,14 @@ mise en place de tests avec PhantomJS
 session 28 février 2013
 -----------------------
 
+rajout tests fonctionnels
+
+
+session 7 mars 2013
+-------------------
+
+tester la sauvegarde
+
 fixer la largeur du hover sur le mot le plus long dans le dialog modal.
 améliorer l'apparence.
 rendre possible la sauvegarde d'un assemblage d'animations.
