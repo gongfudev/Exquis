@@ -62,6 +62,35 @@ describe('Test editor', function(){
     });
 });
 
+describe('test saving', function(){
+
+    before(function(done) {
+        client.init().url('http://127.0.0.1:8000/index.html', done);
+    });
+    
+    describe('saving should work', function(){
+        var codeString = "context.fillStyle = 'green'; context.fillRect(10, 10, 10, 10);";
+        it('', function(done){
+            client.pause(500)
+                .click("#hint-2-1")
+                .setValue("#text_area_draw", codeString)
+                .click("#save_as_button");
+
+            expect(true).to.be.false;
+
+            done();
+            
+        });
+
+    });
+    
+    after(function(done) {
+        client.end();
+        done();
+    });
+
+});
+
 // to do
 // click on #hint-2-1
 // insert following string in update
@@ -71,3 +100,4 @@ describe('Test editor', function(){
 // click on load button
 // select "test" file
 // check that string in update matches string input previously
+// delete test file after test

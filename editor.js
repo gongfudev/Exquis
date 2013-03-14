@@ -6,7 +6,7 @@ define(["net", "csshelper", "evileval"], function(net, csshelper, evileval){
 	    var loadButton = document.getElementById("load_button"),
 		saveButton = document.getElementById("save_button"),
 		saveAsButton = document.getElementById("save_as_button"),
-		modalFilePicker = document.getElementById("modal"),
+		modalScreen = document.getElementById("modal"),
 		dialog = document.getElementById("dialog");
 	    
 
@@ -29,7 +29,7 @@ define(["net", "csshelper", "evileval"], function(net, csshelper, evileval){
 			    canvasAnim.setup();
 			    exquis.editor.editCanvasAnim(canvasAnim);
 			    // hide modal
-			    csshelper.addClass(modalFilePicker, "invisible"); 
+			    csshelper.addClass(modalScreen, "invisible"); 
 			});
 			
 		    });
@@ -37,17 +37,44 @@ define(["net", "csshelper", "evileval"], function(net, csshelper, evileval){
 		    dialog.appendChild(paragraph);
 		}
 
-		var cancelButton = document.createElement("button");
-		cancelButton.innerHTML = "cancel";
-		cancelButton.addEventListener('click', function() { csshelper.addClass(modalFilePicker, "invisible"); });
-		dialog.appendChild(cancelButton);
+                dialog.appendChild(makeCancelButton(modalScreen));
 		
 	    };
-	    
+
+            var makeCancelButton = function(modalScreen){
+                var cancelButton = document.createElement("button");
+		cancelButton.innerHTML = "cancel";
+		cancelButton.addEventListener('click', function() { csshelper.addClass(modalScreen, "invisible"); });
+                return cancelButton;
+            };
+            
+            var buildPrompt = function(promptText, onAccept){
+                var textArea = document.createElement("textarea"),
+                    promptParagraph = document.createElement("p"),
+                    buttonRow = document.createElement("div");
+                
+                promptParagraph.innerHTML = promptText;
+                dialog.appendChild(promptParagraph);
+                dialog.appendChild(textArea);
+                dialog.appendChild(buttonRow);
+
+                textArea.setAttribute("id", "prompt_text_area");
+    
+                var okButton = document.createElement("button");
+		okButton.innerHTML = "ok";
+		okButton.addEventListener('click', function(){
+                    onAccept(textArea.value);
+		    csshelper.addClass(modalScreen, "invisible");
+                });
+                buttonRow.appendChild(okButton);
+                buttonRow.appendChild(makeCancelButton(modalScreen));
+		csshelper.removeClass(modalScreen, "invisible");
+            };
+            
 	    var load = function(){
 	    	
 		net.loadJson("/animations/", function(files){
-		    csshelper.removeClass(modalFilePicker, "invisible");
+		    csshelper.removeClass(modalScreen, "invisible");
 
 		    populateFilePicker(files);
 		});
@@ -60,13 +87,17 @@ define(["net", "csshelper", "evileval"], function(net, csshelper, evileval){
 	    };
 
 	    saveButton.addEventListener('click', save, true);
-	    
+
+
+            
+            
 	    var saveAs = function(){
-		var fileName = prompt("enter file name");
-		if (fileName){
-		    net.saveAnimation(exquis.targetCell.canvasAnim, null, fileName);
-		    filename_display.innerText = fileName;
-		}        
+                buildPrompt("enter file name",function(fileName){
+		    if (fileName){
+		        net.saveAnimation(exquis.targetCell.canvasAnim, null, fileName);
+		        filename_display.innerText = fileName;
+		    }
+                });
 	    };
 	    saveAsButton.addEventListener('click', saveAs, true);
 	};

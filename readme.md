@@ -255,6 +255,11 @@ découvert mocha et chai
 session 14 mars 2013
 --------------------
 
+pour faciliter les test fonctionnels:
+conversion du "prompt" window en dialog modal implémenter dans le dom
+
+session 21 mars 2013
+--------------------
 tester la sauvegarde
 
 fixer la largeur du hover sur le mot le plus long dans le dialog modal.
