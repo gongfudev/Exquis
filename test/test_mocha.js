@@ -45,6 +45,15 @@ describe('Test editor', function(){
     });
  
     describe('on canvas click', function(){
+        /*
+        it('should see the correct title 2' , function(done) {
+            client.getTitle(function(title){
+                expect(title).to.have.string('Exquis');
+                done();
+            });
+        });
+         */
+
         it('should make the editor visible', function(done) {
 
             client.pause(500)
@@ -61,21 +70,32 @@ describe('Test editor', function(){
         done();
     });
 });
-
+/*
 describe('test saving', function(){
 
     before(function(done) {
         client.init().url('http://127.0.0.1:8000/index.html', done);
     });
     
-    describe('saving should work', function(){
-        var codeString = "context.fillStyle = 'green'; context.fillRect(10, 10, 10, 10);";
+        
         it('', function(done){
             client.pause(500)
-                .click("#hint-2-1")
-                .setValue("#text_area_draw", codeString)
-                .click("#save_as_button");
-
+                .click("#hint-2-1");
+            done();
+                //.setValue("#text_area_draw", codeString)
+                // .click("#save_as_button")
+                // .setValue("#prompt_text_area", testFileName)
+                // .click("#ok_button")
+                // .click("#hint-1-1")
+                //.getValue("#text_area_draw", function(value){
+                    //console.log(value);
+                    //done();
+                //expect(value).not.to.be(codeString);
+                //});
+           /*
+            client.click("#load_button")
+                .click(testFileName);
+            
             expect(true).to.be.false;
 
             done();
@@ -90,6 +110,7 @@ describe('test saving', function(){
     });
 
 });
+    */
 
 // to do
 // click on #hint-2-1

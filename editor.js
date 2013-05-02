@@ -19,6 +19,7 @@ define(["net", "csshelper", "evileval"], function(net, csshelper, evileval){
 		    var paragraph = document.createElement("p"),
 			animationName = files[i].replace(/\.json$/, "");
 		    paragraph.innerHTML = animationName;
+                    paragraph.id = animationName;
 
 		    paragraph.addEventListener('click', function(e){
 			var chosenAnimation = e.target.innerHTML;
@@ -62,6 +63,7 @@ define(["net", "csshelper", "evileval"], function(net, csshelper, evileval){
     
                 var okButton = document.createElement("button");
 		okButton.innerHTML = "ok";
+                okButton.id = "ok_button";
 		okButton.addEventListener('click', function(){
                     onAccept(textArea.value);
 		    csshelper.addClass(modalScreen, "invisible");

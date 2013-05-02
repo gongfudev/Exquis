@@ -258,12 +258,21 @@ session 14 mars 2013
 pour faciliter les test fonctionnels:
 conversion du "prompt" window en dialog modal implémenter dans le dom
 
-session 21 mars 2013
---------------------
+
+session 2 mai 2013
+------------------
+échec de la mise en place des tests fonctionnels avec webdriverjs
+
+session 9 mai 2013
+-------------------
+changer la stratégie pour les tests fonctionnels:
+i.e. réaliser les tests in situ dans le browser.
+une méthode "test" essaye d'injecter un tag script comportant
+le code des tests. Un flag côté serveur délivre le fichier si
+un flag debug est présent.
+
 tester la sauvegarde
 
 fixer la largeur du hover sur le mot le plus long dans le dialog modal.
 améliorer l'apparence.
 rendre possible la sauvegarde d'un assemblage d'animations.
-
-

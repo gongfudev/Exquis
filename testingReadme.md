@@ -9,8 +9,8 @@ selenium server  (download jar)
 phantomjs (see site for instructions)
 
 mocha (npm -g install mocha)
-chai (add to package.json)
-webdriverjs (add to package.json)
+chai (add to package.json and run npm install afterwards)
+webdriverjs (add to package.json run npm install afterwards)
 
 
 
