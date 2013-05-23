@@ -61,32 +61,41 @@ var saveFile = function(request, response, pathname){
     });
 }
 
-http.createServer(function(request, response) {
+var startServer = function (allowTests){
+    http.createServer(function(request, response) {
 
-    var pathname = require('url').parse(request.url).pathname;
-    
-    if (pathname === "/" || pathname.substr(0,12) === "/assemblage/"){
-	pathname = "/index.html";
-    }else if(pathname === "/animations/"){
-	
-	listAnimations(function(err, files){
-	    console.log("here");
-	    response.writeHeader(200, {'Content-Type': 'application/json'});
-	    
-	    response.write(JSON.stringify(files));
+        var pathname = require('url').parse(request.url).pathname;
+
+        if( !allowTests && pathname.substr(0,7) === "/tests/"){
+            response.writeHeader(403);
 	    response.end();
-	});
-    }
-
-    pathname = "." + pathname;
-
-    if (request.method === "GET"){
-	fetchFile(pathname, response);
-    }else if (request.method === "POST"){
-	saveFile(request, response, pathname);
-	
-    }
+        }
     
-}).listen(8000);
+        if (pathname === "/" || pathname.substr(0,12) === "/assemblage/"){
+	    pathname = "/index.html";
+        }else if(pathname === "/animations/"){
+	
+	    listAnimations(function(err, files){
+	        response.writeHeader(200, {'Content-Type': 'application/json'});
+	    
+	        response.write(JSON.stringify(files));
+	        response.end();
+	    });
+        }
 
-console.log("server on port 8000");
+        pathname = "." + pathname;
+
+        if (request.method === "GET"){
+	    fetchFile(pathname, response);
+        }else if (request.method === "POST"){
+	    saveFile(request, response, pathname);
+	
+        }
+    
+    }).listen(8000);
+
+    console.log("server on port 8000");
+};
+
+var allowTests = process.argv.indexOf("test") > 0;
+startServer(allowTests);
