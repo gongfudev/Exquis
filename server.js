@@ -62,6 +62,10 @@ var saveFile = function(request, response, pathname){
 };
 
 var startServer = function (allowTests){
+    if (allowTests){
+        console.log("server started in testing mode");
+    }
+
     http.createServer(function(request, response) {
 
         var pathname = require('url').parse(request.url).pathname;
@@ -98,7 +102,4 @@ var startServer = function (allowTests){
 };
 
 var allowTests = process.argv.indexOf("test") > 0;
-if (allowTests){
-    console.log("server started in testing mode");
-}
 startServer(allowTests);

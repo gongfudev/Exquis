@@ -271,6 +271,17 @@ une méthode "test" essaye d'injecter un tag script comportant
 le code des tests. Un flag côté serveur délivre le fichier si
 un flag debug est présent.
 
+
+
+session 6 juin 2013
+-------------------
+premiers tests
+mise en place d'un mock pour les sauvegardes (module net)
+
+
+session 13 juin 2013
+-------------------
+
 tester la sauvegarde
 
 fixer la largeur du hover sur le mot le plus long dans le dialog modal.
