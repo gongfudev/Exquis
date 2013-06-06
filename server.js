@@ -19,7 +19,7 @@ var fetchFile = function(fileName, response) {
 	    }
 	    response.end();
 	});
-}
+};
 
 var guessContentType = function(fileName){
 	if(/.+\.js$/.test(fileName)){
@@ -29,12 +29,12 @@ var guessContentType = function(fileName){
 	}else{
 		return {"Content-Type": "text/html"};
 	}
-}
+};
 
 
 var listAnimations = function(readCallback){
     fs.readdir("./animations", readCallback);
-}
+};
 
 var saveFile = function(request, response, pathname){
     
@@ -59,7 +59,7 @@ var saveFile = function(request, response, pathname){
 	    }
 	});
     });
-}
+};
 
 var startServer = function (allowTests){
     http.createServer(function(request, response) {
@@ -98,4 +98,7 @@ var startServer = function (allowTests){
 };
 
 var allowTests = process.argv.indexOf("test") > 0;
+if (allowTests){
+    console.log("server started in testing mode");
+}
 startServer(allowTests);
