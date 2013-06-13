@@ -6,8 +6,11 @@ var main = function(net, exquis){
     window.test = function(){
         require(["tests/clientTest"],
                 function(clientTest){
-                    net.saveAnimation = function(){ alert ("coucou");};
-                    clientTest.test();
+                    try{
+                        clientTest.test(net);
+                    }catch(e){
+                        console.error(e.stack);
+                    }
                 },
                 function(err){
                     console.log(err);
@@ -15,7 +18,6 @@ var main = function(net, exquis){
                 });
     }; 
     window.load();
-    window.test();
 };
 
 require(["net", "exquis", "domReady!"], main);

@@ -284,6 +284,16 @@ session 13 juin 2013
 
 tester la sauvegarde
 
+exploration des promesses pour permettre un test dont l'assertion est asynchrone
+
+
+session 20 juin 2013
+-------------------
+
+tester la sauvegarde
+
+utiliser la librairie Q pour permettre des tests asynchrone
+
 fixer la largeur du hover sur le mot le plus long dans le dialog modal.
 améliorer l'apparence.
 rendre possible la sauvegarde d'un assemblage d'animations.
