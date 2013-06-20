@@ -2,13 +2,12 @@
 
 
 
-define(["lib/jquery-2.0.2.min.js", "lib/q.min.js"], function(jq, Q){
+define(["lib/jquery-2.0.2.min.js", "lib/async.js"], function(jq, async){
     var isFunction = function(functionToCheck) {
         var getType = {};
         return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
     };
 
-    console.log(Q);
     var testsDefinitions = [
         { name : "checkHomepage",
           message: "The title should be Exquis",
@@ -33,42 +32,43 @@ define(["lib/jquery-2.0.2.min.js", "lib/q.min.js"], function(jq, Q){
             $("#editor").addClass("invisible");
 
             return results;
-        },
-        function(net){
+        }
+    ];
+
+    var asyncTests = [
+        function(done, net){
+
             var savedAnimation,
-                fileName;
-            
+                fileName,
+                originalNetSaveAnimation = net.saveAnimation; 
             net.saveAnimation = function(cell, callback, _fileName){
                 savedAnimation = cell.animation.drawString;
                 fileName = _fileName;
+                net.saveAnimation = originalNetSaveAnimation;
             };
             var codeString = "var i = 0;";
             $("#hint-2-1").click();
             $("#text_area_draw").val(codeString);
             $('#text_area_draw').keyup();
-            $("#save_as_button").click();
-            $("#prompt_text_area").val("welcome");
-            $("#ok_button").click();
-            
+            setTimeout(function(){
+                $("#save_as_button").click();
+                $("#prompt_text_area").val("welcome");
+                $("#ok_button").click();
 
-
-           var results = [
-               {name : "onSaveAsClick",
-                message: codeString + " != " + savedAnimation,
-                assertion: codeString === savedAnimation
-                },
-               {name: "onSaveAsClick2",
-                message: "net.saveAnimation should be called with name of file",
-                assertion: fileName === "welcome"
-               }              
-           ];
-
-           return results;
-            
-
+                var result = [{name : "onSaveAsClick",
+                              message: codeString + " != " + savedAnimation,
+                              assertion: codeString === savedAnimation
+                             },
+                             {name: "onSaveAsClick2",
+                              message: "net.saveAnimation should be called with name of file",
+                              assertion: fileName === "welcome"
+                             }];
+                done(null, result);
+            }, 1000);
+                      
         }
+        
     ];
-
 
 
 
@@ -76,8 +76,6 @@ define(["lib/jquery-2.0.2.min.js", "lib/q.min.js"], function(jq, Q){
         var failureCount = 0,
             testCount = 0,
             tests;
-
-        
 
 
         tests = testsDefinitions.reduce(function(accum, nextValue){
@@ -91,17 +89,31 @@ define(["lib/jquery-2.0.2.min.js", "lib/q.min.js"], function(jq, Q){
             return accum;
         }, []);
 
-            
-        tests.forEach(function(test){
-            testCount ++;
 
-            if (!test.assertion){
-                failureCount ++;
-                console.log(test.message);
-            };
+        
+        async.mapSeries(asyncTests, function(val, cb){
+            val(cb, net);
+        }, function(err, results){
+            var flatResults = results.reduce(function(a, b) {
+                return a.concat(b);
+            });
+            
+            var allResults = tests.concat(flatResults);
+            
+            allResults.forEach(function(test){
+                
+                testCount ++;
+
+                if (!test.assertion){
+                    failureCount ++;
+                    console.log(test.message);
+                };
+            });
+
+            console.log(failureCount + " failures out of " +testCount + " tests.");
         });
         
-        console.log(failureCount + " failures out of " +testCount + " tests.");
+        
     };
 
     
