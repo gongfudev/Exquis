@@ -3,9 +3,9 @@ define(["net", "csshelper", "evileval"], function(net, csshelper, evileval){
     var makeEditor = function(exquis){
 	var makeEditorButtons = function(exquis, filename_display) {
 
-	    var loadButton = document.getElementById("load_button"),
-		saveButton = document.getElementById("save_button"),
-		saveAsButton = document.getElementById("save_as_button"),
+	    var loadButton = document.getElementById("animation_load_button"),
+		saveButton = document.getElementById("animation_save_button"),
+		saveAsButton = document.getElementById("animation_save_as_button"),
 		modalScreen = document.getElementById("modal"),
 		dialog = document.getElementById("dialog");
 	    

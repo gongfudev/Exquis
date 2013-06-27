@@ -297,3 +297,7 @@ utiliser la librairie Q pour permettre des tests asynchrone
 fixer la largeur du hover sur le mot le plus long dans le dialog modal.
 améliorer l'apparence.
 rendre possible la sauvegarde d'un assemblage d'animations.
+
+
+session 27 juin 2013
+--------------------
