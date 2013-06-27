@@ -104,10 +104,13 @@ define(["net",
 
     var exquis = {};
 
-    var init = function (jsonAnimations) {
+            
+    var init = function (assName, jsonAnimations) {
 
         var container = document.getElementById("container");
 
+        exquis.assName = assName;
+        
         exquis.editor = editor(exquis);
 
         exquis.cells = iter2d.map2dArray(jsonAnimations,function(jsonAnim,row,col){
@@ -125,6 +128,14 @@ define(["net",
         });
 
         addHintListeners(exquis.cells);
+        
+        exquis.assemblageJson = function(){
+            var animationNames = iter2d.map2dArray(this.cells, function(cell, row, col){
+                return cell.canvasAnim.animationName;
+            });
+
+            return JSON.stringify(animationNames);
+        };
 
         var onBodyClick = function(event){
             if (event.target.tagName === "HTML"){

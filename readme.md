@@ -301,3 +301,12 @@ rendre possible la sauvegarde d'un assemblage d'animations.
 
 session 27 juin 2013
 --------------------
+
+rajout des boutons pour gérer la sauvegarde des assemblages.
+
+
+session 4 juillet 2013
+----------------------
+
+unifier saveAssemblage + saveAnimation
+

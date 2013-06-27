@@ -1,11 +1,25 @@
 define(["net", "csshelper", "evileval"], function(net, csshelper, evileval){
 
-    var makeEditor = function(exquis){
-	var makeEditorButtons = function(exquis, filename_display) {
+       var makeEditor = function(exquis){
+	   var makeAssemblageButtons = function(exquis){
+ 	       var assemblageLoadButton = document.getElementById("assemblage_load_button"),
+	           assemblageSaveButton = document.getElementById("assemblage_save_button"),
+	           assemblageSaveAsButton = document.getElementById("assemblage_save_as_button"),
+	           modalScreen = document.getElementById("modal"),
+	           dialog = document.getElementById("dialog");
 
-	    var loadButton = document.getElementById("animation_load_button"),
-		saveButton = document.getElementById("animation_save_button"),
-		saveAsButton = document.getElementById("animation_save_as_button"),
+               var assemblageSave = function(){
+                   net.saveAssemblage(exquis.assName, exquis.assemblageJson());
+               };
+
+               assemblageSaveButton.addEventListener('click', assemblageSave, true);
+          };
+        
+       var makeEditorButtons = function(exquis, filename_display) {
+
+	    var animLoadButton = document.getElementById("animation_load_button"),
+		animSaveButton = document.getElementById("animation_save_button"),
+		animSaveAsButton = document.getElementById("animation_save_as_button"),
 		modalScreen = document.getElementById("modal"),
 		dialog = document.getElementById("dialog");
 	    
@@ -73,7 +87,7 @@ define(["net", "csshelper", "evileval"], function(net, csshelper, evileval){
 		csshelper.removeClass(modalScreen, "invisible");
             };
             
-	    var load = function(){
+	    var animLoad = function(){
 	    	
 		net.loadJson("/animations/", function(files){
 		    csshelper.removeClass(modalScreen, "invisible");
@@ -82,18 +96,15 @@ define(["net", "csshelper", "evileval"], function(net, csshelper, evileval){
 		});
 	    };
 
-	    loadButton.addEventListener('click', load, true);
+	    animLoadButton.addEventListener('click', animLoad, true);
 	    
-	    var save = function(){
+	    var animSave = function(){
 		net.saveAnimation(exquis.targetCell.canvasAnim);
 	    };
 
-	    saveButton.addEventListener('click', save, true);
+	    animSaveButton.addEventListener('click', animSave, true);
 
-
-            
-            
-	    var saveAs = function(){
+	    var animSaveAs = function(){
                 buildPrompt("enter file name",function(fileName){
 		    if (fileName){
 		        net.saveAnimation(exquis.targetCell.canvasAnim, null, fileName);
@@ -101,7 +112,7 @@ define(["net", "csshelper", "evileval"], function(net, csshelper, evileval){
 		    }
                 });
 	    };
-	    saveAsButton.addEventListener('click', saveAs, true);
+	    animSaveAsButton.addEventListener('click', animSaveAs, true);
 	};
 
 	var makeTextAreas = function(exquis){
@@ -162,6 +173,7 @@ define(["net", "csshelper", "evileval"], function(net, csshelper, evileval){
             editor = document.getElementById("editor"),
             filename_display = document.getElementById("filename_display");
         makeEditorButtons(exquis, filename_display);
+        makeAssemblageButtons(exquis);
 
 	var update = function(textAreas, setupString, drawString, animationName){
 	    setEditorContent(textAreas, setupString, drawString, animationName);

@@ -89,18 +89,22 @@ define(["iter2d"], function(iter2d){
 	return "/animations/"+animationName+".json";
     };
 
-    var loadAssemblage = function(name, handleJsonAnimations){
-	var assemblagePath = "/assemblages/"+ (name ? name: "assemblageAvecSinus") + ".json";
+    var loadAssemblage = function(assName, handleJsonAnimations){
+	var assemblagePath = "/assemblages/"+ (assName ? assName: "assemblageAvecSinus") + ".json";
 	
         loadJson(assemblagePath, function(assemblage){
             
             var animationNames = iter2d.map2dArray(assemblage, makeJsonName);
 
             loadJsons2d(animationNames, function(jsonAnimations){
-                handleJsonAnimations(jsonAnimations);
+                handleJsonAnimations(assName, jsonAnimations);
             });
             
         });
+    };
+
+    var saveAssemblage = function(assName, assemblageJson){
+        
     };
 
     var loadAnimations = function(handleJsonAnimations){

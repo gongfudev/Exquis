@@ -51,7 +51,7 @@ define(["lib/jquery-2.0.2.min.js", "lib/async.js"], function(jq, async){
             $("#text_area_draw").val(codeString);
             $('#text_area_draw').keyup();
             setTimeout(function(){
-                $("#save_as_button").click();
+                $("#animation_save_as_button").click();
                 $("#prompt_text_area").val("welcome");
                 $("#ok_button").click();
 
