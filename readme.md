@@ -305,8 +305,13 @@ session 27 juin 2013
 rajout des boutons pour gérer la sauvegarde des assemblages.
 
 
-session 4 juillet 2013
+session 18 juillet 2013
 ----------------------
 
-unifier saveAssemblage + saveAnimation
+saveAssemblage, saveAssemblageAs
 
+session 25 juillet 2013
+-----------------------
+
+loadAssemblage, focus sur ecran modal
+créer une nouvelle animation

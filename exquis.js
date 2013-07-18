@@ -129,12 +129,12 @@ define(["net",
 
         addHintListeners(exquis.cells);
         
-        exquis.assemblageJson = function(){
+        exquis.assemblage = function(){
             var animationNames = iter2d.map2dArray(this.cells, function(cell, row, col){
                 return cell.canvasAnim.animationName;
             });
 
-            return JSON.stringify(animationNames);
+            return animationNames;
         };
 
         var onBodyClick = function(event){

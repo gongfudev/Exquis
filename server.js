@@ -53,7 +53,7 @@ var saveFile = function(request, response, pathname){
 		response.writeHead(500, "OUPS", {'Content-Type': 'text/html'});
 		response.end();
 	    } else {
-		console.log("The file was saved!");
+		console.log("The file was saved!" + pathname);
 		response.writeHead(200, "OK", {'Content-Type': 'text/html'});
 		response.end();
 	    }

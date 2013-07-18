@@ -1,21 +1,66 @@
 define(["net", "csshelper", "evileval"], function(net, csshelper, evileval){
 
-       var makeEditor = function(exquis){
-	   var makeAssemblageButtons = function(exquis){
- 	       var assemblageLoadButton = document.getElementById("assemblage_load_button"),
-	           assemblageSaveButton = document.getElementById("assemblage_save_button"),
-	           assemblageSaveAsButton = document.getElementById("assemblage_save_as_button"),
-	           modalScreen = document.getElementById("modal"),
-	           dialog = document.getElementById("dialog");
+    var modalScreen = document.getElementById("modal"),
+	dialog = document.getElementById("dialog");
+    
+    var makeCancelButton = function(modalScreen){
+        var cancelButton = document.createElement("button");
+	cancelButton.innerHTML = "cancel";
+	cancelButton.addEventListener('click', function() { csshelper.addClass(modalScreen, "invisible"); });
+        return cancelButton;
+    };
 
-               var assemblageSave = function(){
-                   net.saveAssemblage(exquis.assName, exquis.assemblageJson());
-               };
-
-               assemblageSaveButton.addEventListener('click', assemblageSave, true);
-          };
+    var buildPrompt = function(promptText, onAccept){
+        var textArea = document.createElement("textarea"),
+            promptParagraph = document.createElement("p"),
+            buttonRow = document.createElement("div");
         
-       var makeEditorButtons = function(exquis, filename_display) {
+        promptParagraph.innerHTML = promptText;
+        dialog.innerHTML = "";
+        dialog.appendChild(promptParagraph);
+        dialog.appendChild(textArea);
+        dialog.appendChild(buttonRow);
+
+        textArea.setAttribute("id", "prompt_text_area");
+        
+        var okButton = document.createElement("button");
+	okButton.innerHTML = "ok";
+        okButton.id = "ok_button";
+	okButton.addEventListener('click', function(){
+            onAccept(textArea.value);
+	    csshelper.addClass(modalScreen, "invisible");
+        });
+        buttonRow.appendChild(okButton);
+        buttonRow.appendChild(makeCancelButton(modalScreen));
+	csshelper.removeClass(modalScreen, "invisible");
+    };
+    
+    var makeEditor = function(exquis){
+	var makeAssemblageButtons = function(exquis){
+ 	    var assemblageLoadButton = document.getElementById("assemblage_load_button"),
+	        assemblageSaveButton = document.getElementById("assemblage_save_button"),
+	        assemblageSaveAsButton = document.getElementById("assemblage_save_as_button");
+
+            var assemblageSave = function(){
+                net.saveAssemblage(exquis.assName, exquis.assemblage());
+            };
+
+            var assemblageSaveAs = function(){
+                buildPrompt("enter file name",function(fileName){
+		    if (fileName){
+		        net.saveAssemblage(fileName, exquis.assemblage());
+                        exquis.assName = fileName;
+                        // TODO: display new name of assemblage in interface
+                        history.pushState({},"...", fileName);
+		    }
+                });
+            };
+
+            assemblageSaveButton.addEventListener('click', assemblageSave, true);
+            assemblageSaveAsButton.addEventListener('click', assemblageSaveAs, true);
+        };
+        
+        var makeEditorButtons = function(exquis, filename_display) {
 
 	    var animLoadButton = document.getElementById("animation_load_button"),
 		animSaveButton = document.getElementById("animation_save_button"),
@@ -56,36 +101,7 @@ define(["net", "csshelper", "evileval"], function(net, csshelper, evileval){
 		
 	    };
 
-            var makeCancelButton = function(modalScreen){
-                var cancelButton = document.createElement("button");
-		cancelButton.innerHTML = "cancel";
-		cancelButton.addEventListener('click', function() { csshelper.addClass(modalScreen, "invisible"); });
-                return cancelButton;
-            };
             
-            var buildPrompt = function(promptText, onAccept){
-                var textArea = document.createElement("textarea"),
-                    promptParagraph = document.createElement("p"),
-                    buttonRow = document.createElement("div");
-                
-                promptParagraph.innerHTML = promptText;
-                dialog.appendChild(promptParagraph);
-                dialog.appendChild(textArea);
-                dialog.appendChild(buttonRow);
-
-                textArea.setAttribute("id", "prompt_text_area");
-    
-                var okButton = document.createElement("button");
-		okButton.innerHTML = "ok";
-                okButton.id = "ok_button";
-		okButton.addEventListener('click', function(){
-                    onAccept(textArea.value);
-		    csshelper.addClass(modalScreen, "invisible");
-                });
-                buttonRow.appendChild(okButton);
-                buttonRow.appendChild(makeCancelButton(modalScreen));
-		csshelper.removeClass(modalScreen, "invisible");
-            };
             
 	    var animLoad = function(){
 	    	
