@@ -32,9 +32,6 @@ var guessContentType = function(fileName){
 };
 
 
-var listAnimations = function(readCallback){
-    fs.readdir("./animations", readCallback);
-};
 
 var saveFile = function(request, response, pathname){
     
@@ -75,15 +72,23 @@ var startServer = function (allowTests){
 	    response.end();
         }
     
+        var dirRegex = /^\/(animations|assemblages)\/$/,
+            matchingDir = pathname.match(dirRegex);
+        
         if (pathname === "/" || pathname.substr(0,12) === "/assemblage/"){
 	    pathname = "/index.html";
-        }else if(pathname === "/animations/"){
+        }else if(matchingDir){
 	
-	    listAnimations(function(err, files){
-	        response.writeHeader(200, {'Content-Type': 'application/json'});
-	    
-	        response.write(JSON.stringify(files));
-	        response.end();
+            fs.readdir("./"+ matchingDir[0], function(err, files){
+                if(err) {
+		    console.log(err);
+		    response.writeHead(500, "OUPS", {'Content-Type': 'text/html'});
+		    response.end();
+	        } else {
+	            response.writeHeader(200, {'Content-Type': 'application/json'});
+	            response.write(JSON.stringify(files));
+	            response.end();
+                }	
 	    });
         }
 

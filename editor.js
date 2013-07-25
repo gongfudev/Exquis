@@ -33,14 +33,77 @@ define(["net", "csshelper", "evileval"], function(net, csshelper, evileval){
         buttonRow.appendChild(okButton);
         buttonRow.appendChild(makeCancelButton(modalScreen));
 	csshelper.removeClass(modalScreen, "invisible");
+        textArea.focus();
     };
-    
+     var populateFilePicker0 = function(files){
+
+	dialog.innerHTML = '';
+	
+	for(var i = 0; i < files.length; ++i){
+	    var paragraph = document.createElement("p"),
+		animationName = files[i].replace(/\.json$/, "");
+	    paragraph.innerHTML = animationName;
+            paragraph.id = animationName;
+
+	    paragraph.addEventListener('click', function(e){
+		var chosenAnimation = e.target.innerHTML;
+		net.loadJson(net.makeJsonName(chosenAnimation), function(animation){
+		    var canvasAnim = exquis.targetCell.canvasAnim;
+		    evileval.addAnimationToCanvasAnim(animation, canvasAnim);
+		    canvasAnim.animationName = chosenAnimation;
+		    canvasAnim.setup();
+		    exquis.editor.editCanvasAnim(canvasAnim);
+		    // hide modal
+		    csshelper.addClass(modalScreen, "invisible"); 
+		});
+		
+	    });
+	    
+	    dialog.appendChild(paragraph);
+	}
+
+        dialog.appendChild(makeCancelButton(modalScreen));
+	
+    };
+
+   
+    var populateFilePicker = function(files, clickHandler){
+	dialog.innerHTML = '';
+	
+	for(var i = 0; i < files.length; ++i){
+	    var paragraph = document.createElement("p"),
+		animationName = files[i].replace(/\.json$/, "");
+	    paragraph.innerHTML = animationName;
+            paragraph.id = animationName;
+
+	    paragraph.addEventListener('click', clickHandler);
+	    
+	    dialog.appendChild(paragraph);
+	}
+
+        dialog.appendChild(makeCancelButton(modalScreen));
+	
+    };
+
     var makeEditor = function(exquis){
 	var makeAssemblageButtons = function(exquis){
  	    var assemblageLoadButton = document.getElementById("assemblage_load_button"),
 	        assemblageSaveButton = document.getElementById("assemblage_save_button"),
 	        assemblageSaveAsButton = document.getElementById("assemblage_save_as_button");
 
+            var pickAssemblage = function(e){
+		var chosenAssemblage = e.target.innerHTML;
+                document.location = "/assemblage/" + chosenAssemblage;
+            };
+            
+            var assemblageLoad = function(){
+		net.loadJson("/assemblages/", function(files){
+		    csshelper.removeClass(modalScreen, "invisible");
+
+                    populateFilePicker(files, pickAssemblage);		
+		});
+            };
+            
             var assemblageSave = function(){
                 net.saveAssemblage(exquis.assName, exquis.assemblage());
             };
@@ -56,7 +119,8 @@ define(["net", "csshelper", "evileval"], function(net, csshelper, evileval){
                 });
             };
 
-            assemblageSaveButton.addEventListener('click', assemblageSave, true);
+            assemblageLoadButton.addEventListener('click', assemblageLoad, true);
+            assemblageSaveAsButton.addEventListener('click', assemblageSaveAs, true);
             assemblageSaveAsButton.addEventListener('click', assemblageSaveAs, true);
         };
         
@@ -64,51 +128,27 @@ define(["net", "csshelper", "evileval"], function(net, csshelper, evileval){
 
 	    var animLoadButton = document.getElementById("animation_load_button"),
 		animSaveButton = document.getElementById("animation_save_button"),
-		animSaveAsButton = document.getElementById("animation_save_as_button"),
-		modalScreen = document.getElementById("modal"),
-		dialog = document.getElementById("dialog");
-	    
+		animSaveAsButton = document.getElementById("animation_save_as_button");
 
-
-	    var populateFilePicker = function(files){
-
-		dialog.innerHTML = '';
-		
-		for(var i = 0; i < files.length; ++i){
-		    var paragraph = document.createElement("p"),
-			animationName = files[i].replace(/\.json$/, "");
-		    paragraph.innerHTML = animationName;
-                    paragraph.id = animationName;
-
-		    paragraph.addEventListener('click', function(e){
-			var chosenAnimation = e.target.innerHTML;
-			net.loadJson(net.makeJsonName(chosenAnimation), function(animation){
-			    var canvasAnim = exquis.targetCell.canvasAnim;
-			    evileval.addAnimationToCanvasAnim(animation, canvasAnim);
-			    canvasAnim.animationName = chosenAnimation;
-			    canvasAnim.setup();
-			    exquis.editor.editCanvasAnim(canvasAnim);
-			    // hide modal
-			    csshelper.addClass(modalScreen, "invisible"); 
-			});
-			
-		    });
-		    
-		    dialog.appendChild(paragraph);
-		}
-
-                dialog.appendChild(makeCancelButton(modalScreen));
-		
-	    };
-
-            
+            var pickAnimation = function(e){
+		var chosenAnimation = e.target.innerHTML;
+		net.loadJson(net.makeJsonName(chosenAnimation), function(animation){
+		    var canvasAnim = exquis.targetCell.canvasAnim;
+		    evileval.addAnimationToCanvasAnim(animation, canvasAnim);
+		    canvasAnim.animationName = chosenAnimation;
+		    canvasAnim.setup();
+		    exquis.editor.editCanvasAnim(canvasAnim);
+		    // hide modal
+		    csshelper.addClass(modalScreen, "invisible"); 
+		});
+            };
             
 	    var animLoad = function(){
 	    	
 		net.loadJson("/animations/", function(files){
 		    csshelper.removeClass(modalScreen, "invisible");
 
-		    populateFilePicker(files);
+		    populateFilePicker(files, pickAnimation);
 		});
 	    };
 
