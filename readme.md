@@ -314,4 +314,9 @@ session 25 juillet 2013
 -----------------------
 
 loadAssemblage, focus sur ecran modal
+
+
+session 1 aout 2013
+-------------------
+
 créer une nouvelle animation

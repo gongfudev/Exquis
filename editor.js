@@ -1,90 +1,8 @@
-define(["net", "csshelper", "evileval"], function(net, csshelper, evileval){
+define(["net", "evileval", "ui"], function(net, evileval, ui){
 
-    var modalScreen = document.getElementById("modal"),
-	dialog = document.getElementById("dialog");
+    //TODO move this into ui.js
+    var modalScreen = document.getElementById("modal");
     
-    var makeCancelButton = function(modalScreen){
-        var cancelButton = document.createElement("button");
-	cancelButton.innerHTML = "cancel";
-	cancelButton.addEventListener('click', function() { csshelper.addClass(modalScreen, "invisible"); });
-        return cancelButton;
-    };
-
-    var buildPrompt = function(promptText, onAccept){
-        var textArea = document.createElement("textarea"),
-            promptParagraph = document.createElement("p"),
-            buttonRow = document.createElement("div");
-        
-        promptParagraph.innerHTML = promptText;
-        dialog.innerHTML = "";
-        dialog.appendChild(promptParagraph);
-        dialog.appendChild(textArea);
-        dialog.appendChild(buttonRow);
-
-        textArea.setAttribute("id", "prompt_text_area");
-        
-        var okButton = document.createElement("button");
-	okButton.innerHTML = "ok";
-        okButton.id = "ok_button";
-	okButton.addEventListener('click', function(){
-            onAccept(textArea.value);
-	    csshelper.addClass(modalScreen, "invisible");
-        });
-        buttonRow.appendChild(okButton);
-        buttonRow.appendChild(makeCancelButton(modalScreen));
-	csshelper.removeClass(modalScreen, "invisible");
-        textArea.focus();
-    };
-     var populateFilePicker0 = function(files){
-
-	dialog.innerHTML = '';
-	
-	for(var i = 0; i < files.length; ++i){
-	    var paragraph = document.createElement("p"),
-		animationName = files[i].replace(/\.json$/, "");
-	    paragraph.innerHTML = animationName;
-            paragraph.id = animationName;
-
-	    paragraph.addEventListener('click', function(e){
-		var chosenAnimation = e.target.innerHTML;
-		net.loadJson(net.makeJsonName(chosenAnimation), function(animation){
-		    var canvasAnim = exquis.targetCell.canvasAnim;
-		    evileval.addAnimationToCanvasAnim(animation, canvasAnim);
-		    canvasAnim.animationName = chosenAnimation;
-		    canvasAnim.setup();
-		    exquis.editor.editCanvasAnim(canvasAnim);
-		    // hide modal
-		    csshelper.addClass(modalScreen, "invisible"); 
-		});
-		
-	    });
-	    
-	    dialog.appendChild(paragraph);
-	}
-
-        dialog.appendChild(makeCancelButton(modalScreen));
-	
-    };
-
-   
-    var populateFilePicker = function(files, clickHandler){
-	dialog.innerHTML = '';
-	
-	for(var i = 0; i < files.length; ++i){
-	    var paragraph = document.createElement("p"),
-		animationName = files[i].replace(/\.json$/, "");
-	    paragraph.innerHTML = animationName;
-            paragraph.id = animationName;
-
-	    paragraph.addEventListener('click', clickHandler);
-	    
-	    dialog.appendChild(paragraph);
-	}
-
-        dialog.appendChild(makeCancelButton(modalScreen));
-	
-    };
-
     var makeEditor = function(exquis){
 	var makeAssemblageButtons = function(exquis){
  	    var assemblageLoadButton = document.getElementById("assemblage_load_button"),
@@ -98,9 +16,8 @@ define(["net", "csshelper", "evileval"], function(net, csshelper, evileval){
             
             var assemblageLoad = function(){
 		net.loadJson("/assemblages/", function(files){
-		    csshelper.removeClass(modalScreen, "invisible");
-
-                    populateFilePicker(files, pickAssemblage);		
+                    ui.showDialog(true);
+                    ui.populateFilePicker(files, pickAssemblage);		
 		});
             };
             
@@ -109,7 +26,7 @@ define(["net", "csshelper", "evileval"], function(net, csshelper, evileval){
             };
 
             var assemblageSaveAs = function(){
-                buildPrompt("enter file name",function(fileName){
+                ui.buildPrompt("enter file name",function(fileName){
 		    if (fileName){
 		        net.saveAssemblage(fileName, exquis.assemblage());
                         exquis.assName = fileName;
@@ -138,17 +55,15 @@ define(["net", "csshelper", "evileval"], function(net, csshelper, evileval){
 		    canvasAnim.animationName = chosenAnimation;
 		    canvasAnim.setup();
 		    exquis.editor.editCanvasAnim(canvasAnim);
-		    // hide modal
-		    csshelper.addClass(modalScreen, "invisible"); 
+                    ui.showDialog(false);
 		});
             };
             
 	    var animLoad = function(){
 	    	
 		net.loadJson("/animations/", function(files){
-		    csshelper.removeClass(modalScreen, "invisible");
-
-		    populateFilePicker(files, pickAnimation);
+                    ui.showDialog(true);
+		    ui.populateFilePicker(files, pickAnimation);
 		});
 	    };
 
@@ -161,7 +76,7 @@ define(["net", "csshelper", "evileval"], function(net, csshelper, evileval){
 	    animSaveButton.addEventListener('click', animSave, true);
 
 	    var animSaveAs = function(){
-                buildPrompt("enter file name",function(fileName){
+                ui.buildPrompt("enter file name",function(fileName){
 		    if (fileName){
 		        net.saveAnimation(exquis.targetCell.canvasAnim, null, fileName);
 		        filename_display.innerText = fileName;
