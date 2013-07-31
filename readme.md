@@ -316,7 +316,18 @@ session 25 juillet 2013
 loadAssemblage, focus sur ecran modal
 
 
-session 1 aout 2013
+session 31 juillet 2013
 -------------------
 
 créer une nouvelle animation
+
+créer todo.org
+
+session 8 aout 2013
+-------------------
+
+fixer le bug "reference error"
+
+refactorer Readme.md
+
+

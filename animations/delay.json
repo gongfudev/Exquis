@@ -1,0 +1,1 @@
+{"setup":"","draw":"var count = Math.floor((new Date() - this.start) / 1000);\nif(count % 2 == 0){\n   pipo;\n}\n"}
