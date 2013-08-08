@@ -7,5 +7,3 @@ par exemple en mettant les boutons de l'animation à coté de son nom, ou les me
 * bugs
 ** editeur: le rouge qui entoure le code qui ne compile pas reste rouge quand on passe à une animation qui marche
 ** editeur: l'éditeur refuse du code qui se termine par un commentaire //
-** ReferenceError quand on utilise une variable globale non définie dans une animation
-voir bug.json. Solution: attraper cette exception en avale.

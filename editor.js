@@ -119,7 +119,6 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
 			canvasAnim.draw(neighbouringBorders);
 			textAreaDraw.className = "code_valid";     
 		    }catch(e){
-			throw e;
 			console.error(e);
 			canvasAnim.animation.draw = drawBackup;
 			canvasAnim.draw(neighbouringBorders);
@@ -146,12 +145,6 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
         makeEditorButtons(exquis, filename_display);
         makeAssemblageButtons(exquis);
 
-	var update = function(textAreas, setupString, drawString, animationName){
-	    setEditorContent(textAreas, setupString, drawString, animationName);
-	    textAreas.onEditorSetupChange();
-	    textAreas.onEditorDrawChange();
-	};
-	
 	var setEditorContent = function(textAreas, setupString, drawString, animationName){
             textAreas.textAreaSetup.value = setupString;
             textAreas.textAreaDraw.value = drawString;
