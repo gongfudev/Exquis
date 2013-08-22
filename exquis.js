@@ -137,7 +137,7 @@ define(["net",
             return animationNames;
         };
 
-        var onBodyClick = function(event){
+        var toggleEditor = function(event){
             if (event.target.tagName === "HTML"){
                 // unselect edition
                 exquis.editor.hide();
@@ -148,7 +148,7 @@ define(["net",
         };
 
         
-        document.addEventListener('click', onBodyClick, true);
+        document.addEventListener('click', toggleEditor, true);
 
         var draw = function(){
 
