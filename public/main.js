@@ -20,4 +20,4 @@ var main = function(net, exquis){
     window.load();
 };
 
-require(["net", "exquis", "domReady!"], main);
+require(["net", "exquis", "lib/domReady!"], main);

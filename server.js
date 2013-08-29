@@ -1,7 +1,8 @@
 var sys = require('sys'),
     http = require('http'),
     fs = require('fs'),
-    exquis;
+    exquis,
+    rootStaticFiles = './public/';
  
 
 
@@ -79,7 +80,7 @@ var startServer = function (allowTests){
 	    pathname = "/index.html";
         }else if(matchingDir){
 	
-            fs.readdir("./"+ matchingDir[0], function(err, files){
+            fs.readdir(rootStaticFiles + matchingDir[0], function(err, files){
                 if(err) {
 		    console.log(err);
 		    response.writeHead(500, "OUPS", {'Content-Type': 'text/html'});
@@ -92,7 +93,7 @@ var startServer = function (allowTests){
 	    });
         }
 
-        pathname = "." + pathname;
+        pathname = rootStaticFiles + pathname;
 
         if (request.method === "GET"){
 	    fetchFile(pathname, response);
