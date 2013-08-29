@@ -1,6 +1,3 @@
-* directory structure
-** keep our code by itself in one source directory
-** keep external libs somewhere else, require.js and domready.js too.
 * editor
 ** mettre le titre de l'assemblage a coté des boutons pour le modifier
 ** rendre le role des boutons plus clair
