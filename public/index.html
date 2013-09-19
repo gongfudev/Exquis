@@ -6,6 +6,7 @@
     <!-- Mobile viewport optimized: h5bp.com/viewport -->
     <meta name="viewport" content="width=device-width">
     <style>
+        h2, h3 { display: inline;}
         .grid { width: 450px; max-width: 450px; position: absolute}
         #grid_hint{z-index: 1}
         #editor { position: absolute; left: 50%; }
@@ -48,16 +49,16 @@
           
           <div id="animation_editor">
             <h3 id="filename_display"></h3> 
-            <p>setup</p> 
-            <textarea id="text_area_setup" rows="15" cols="80" spellcheck="false"></textarea>
-            <p>draw</p>
-            <textarea id="text_area_draw" rows="20" cols="80" spellcheck="false"></textarea>
             <div id="editor-buttons">
               <button id="animation_load_button" type="button">load</button>
               <button id="animation_save_button" type="button">save</button>
               <button id="animation_save_as_button" type="button">save as</button>
             </div>
-          </div>
+            <p>setup</p> 
+            <textarea id="text_area_setup" rows="15" cols="80" spellcheck="false"></textarea>
+            <p>draw</p>
+            <textarea id="text_area_draw" rows="20" cols="80" spellcheck="false"></textarea>
+         </div>
         </div>
     </div>
     <div class="invisible" id="modal">

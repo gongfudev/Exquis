@@ -2,6 +2,11 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
 
     //TODO move this into ui.js
     var modalScreen = document.getElementById("modal");
+
+    var displayAssemblageName = function(name){
+        var domElement = document.getElementById("assemblage_name");
+        domElement.innerHTML = name;
+    };
     
     var makeEditor = function(exquis){
 	var makeAssemblageButtons = function(exquis){
@@ -30,6 +35,7 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
 		    if (fileName){
 		        net.saveAssemblage(fileName, exquis.assemblage());
                         exquis.assName = fileName;
+                        displayAssemblageName(exquis.assName);
                         // TODO: display new name of assemblage in interface
                         history.pushState({},"...", fileName);
 		    }
@@ -144,6 +150,7 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
             filename_display = document.getElementById("filename_display");
         makeEditorButtons(exquis, filename_display);
         makeAssemblageButtons(exquis);
+        displayAssemblageName(exquis.assName);
 
 	var setEditorContent = function(textAreas, setupString, drawString, animationName){
             textAreas.textAreaSetup.value = setupString;
