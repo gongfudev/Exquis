@@ -16,10 +16,12 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
 
             var pickAssemblage = function(e){
 		var chosenAssemblage = e.target.innerHTML;
+                //TODO put this in a function in a controller module
                 document.location = "/assemblage/" + chosenAssemblage;
             };
             
             var assemblageLoad = function(){
+                //TODO hide net in a controller function
 		net.loadJson("/assemblages/", function(files){
                     ui.showDialog(true);
                     ui.populateFilePicker(files, pickAssemblage);		
@@ -27,12 +29,14 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
             };
             
             var assemblageSave = function(){
+                //TODO put this in a function in a controller module
                 net.saveAssemblage(exquis.assName, exquis.assemblage());
             };
 
             var assemblageSaveAs = function(){
                 ui.buildPrompt("enter file name",function(fileName){
 		    if (fileName){
+                        //TODO hide net and exquis in controller function
 		        net.saveAssemblage(fileName, exquis.assemblage());
                         exquis.assName = fileName;
                         displayAssemblageName(exquis.assName);
