@@ -5,7 +5,7 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
 
     var displayAssemblageName = function(name){
         var domElement = document.getElementById("assemblage_name");
-        domElement.innerHTML = name;
+        domElement.textContent = name;
     };
     
     var makeEditor = function(exquis){
@@ -15,7 +15,7 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
 	        assemblageSaveAsButton = document.getElementById("assemblage_save_as_button");
 
             var pickAssemblage = function(e){
-		var chosenAssemblage = e.target.innerHTML;
+		var chosenAssemblage = e.target.textContent;
                 //TODO put this in a function in a controller module
                 document.location = "/assemblage/" + chosenAssemblage;
             };
@@ -58,7 +58,7 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
 		animSaveAsButton = document.getElementById("animation_save_as_button");
 
             var pickAnimation = function(e){
-		var chosenAnimation = e.target.innerHTML;
+		var chosenAnimation = e.target.textContent;
 		net.loadJson(net.makeJsonName(chosenAnimation), function(animation){
 		    var canvasAnim = exquis.targetCell.canvasAnim;
 		    evileval.addAnimationToCanvasAnim(animation, canvasAnim);
@@ -89,7 +89,7 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
                 ui.buildPrompt("enter file name",function(fileName){
 		    if (fileName){
 		        net.saveAnimation(exquis.targetCell.canvasAnim, null, fileName);
-		        filename_display.innerText = fileName;
+		        filename_display.textContent = fileName;
 		    }
                 });
 	    };
@@ -159,7 +159,7 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
 	var setEditorContent = function(textAreas, setupString, drawString, animationName){
             textAreas.textAreaSetup.value = setupString;
             textAreas.textAreaDraw.value = drawString;
-            filename_display.innerText = animationName;
+            filename_display.textContent = animationName;
 	};
 	
 	return {

@@ -6,7 +6,7 @@ define(["csshelper"], function( csshelper){
     
     var makeCancelButton = function(modalScreen){
         var cancelButton = document.createElement("button");
-	cancelButton.innerHTML = "cancel";
+	cancelButton.textContent = "cancel";
 	cancelButton.addEventListener('click', function() { csshelper.addClass(modalScreen, "invisible"); });
         return cancelButton;
     };
@@ -16,7 +16,7 @@ define(["csshelper"], function( csshelper){
             promptParagraph = document.createElement("p"),
             buttonRow = document.createElement("div");
         
-        promptParagraph.innerHTML = promptText;
+        promptParagraph.textContent = promptText;
         dialog.innerHTML = "";
         dialog.appendChild(promptParagraph);
         dialog.appendChild(textArea);
@@ -25,7 +25,7 @@ define(["csshelper"], function( csshelper){
         textArea.setAttribute("id", "prompt_text_area");
         
         var okButton = document.createElement("button");
-	okButton.innerHTML = "ok";
+	okButton.textContent = "ok";
         okButton.id = "ok_button";
 	okButton.addEventListener('click', function(){
             onAccept(textArea.value);
@@ -43,7 +43,7 @@ define(["csshelper"], function( csshelper){
 	for(var i = 0; i < files.length; ++i){
 	    var paragraph = document.createElement("p"),
 		animationName = files[i].replace(/\.json$/, "");
-	    paragraph.innerHTML = animationName;
+	    paragraph.textContent = animationName;
             paragraph.id = animationName;
 
 	    paragraph.addEventListener('click', clickHandler);
