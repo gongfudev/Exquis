@@ -160,16 +160,13 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
             textAreas.textAreaSetup.value = setupString;
             textAreas.textAreaDraw.value = drawString;
             filename_display.textContent = animationName;
+	    textAreas.textAreaSetup.className = "code_valid";     
+	    textAreas.textAreaDraw.className = "code_valid";     
 	};
 	
 	return {
-	    editCanvasAnim: function(canvasAnim){
-		setEditorContent(textAreas,
-				 canvasAnim.animation.setupString,
-				 canvasAnim.animation.drawString,
-				 canvasAnim.animationName);
-                textAreas.onEditorSetupChange();
-                textAreas.onEditorDrawChange(); 
+	    editCanvasAnim: function(setupString,drawString,animationName){
+		setEditorContent(textAreas, setupString, drawString, animationName);
 	    },
 	    show: function(){
 		editor.className = "";
