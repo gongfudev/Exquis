@@ -156,7 +156,7 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
         makeAssemblageButtons(exquis);
         displayAssemblageName(exquis.assName);
 
-	var setEditorContent = function(textAreas, setupString, drawString, animationName){
+	var setEditorContent = function(setupString, drawString, animationName){
             textAreas.textAreaSetup.value = setupString;
             textAreas.textAreaDraw.value = drawString;
             filename_display.textContent = animationName;
@@ -165,9 +165,7 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
 	};
 	
 	return {
-	    editCanvasAnim: function(setupString,drawString,animationName){
-		setEditorContent(textAreas, setupString, drawString, animationName);
-	    },
+	    editCanvasAnim: setEditorContent,
 	    show: function(){
 		editor.className = "";
 	    },
