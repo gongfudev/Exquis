@@ -7,4 +7,3 @@ par exemple en mettant les boutons de l'animation à coté de son nom, ou les me
 ** separer l'editeur en view et controller
 Lorsque l'utilisateur écrit ou clique sur la vue, elle appelle des fonctions sur le controller, qui modifie le code des animations, ou l'assemblage, lit ou enregistre sur le serveur.  La valeur de retour des fonctions du controller informe la vue du succès des operations (compilation, enregistrement etc...)
 * bugs
-** editeur: le rouge qui entoure le code qui ne compile pas reste rouge quand on passe à une animation qui marche

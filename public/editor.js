@@ -168,6 +168,8 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
 				 canvasAnim.animation.setupString,
 				 canvasAnim.animation.drawString,
 				 canvasAnim.animationName);
+                textAreas.onEditorSetupChange();
+                textAreas.onEditorDrawChange(); 
 	    },
 	    show: function(){
 		editor.className = "";

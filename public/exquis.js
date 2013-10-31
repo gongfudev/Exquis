@@ -118,10 +118,10 @@ define(["net",
                 width = 150,
                 cell = makeCell(row, col, height, width, jsonAnim),
                 edit = function(){ 
-                    exquis.editor.editCanvasAnim(cell.canvasAnim);
                     if (exquis.targetCell) { csshelper.removeClass(exquis.targetCell.hint, "visible-cell"); }
                     exquis.targetCell = cell;
                     csshelper.addClass(exquis.targetCell.hint, "visible-cell");
+                    exquis.editor.editCanvasAnim(cell.canvasAnim);
                 };
             cell.hint.addEventListener('click', edit, false);
             return  cell;
