@@ -1,12 +1,12 @@
 define([], function(){
 
 	var addSetupToCanvasAnim = function(canvasAnim, setupString){
-	    eval("canvasAnim.animation.setup = function(context) {" + setupString + "};");
+	    eval("canvasAnim.animation.setup = function(context) {" + setupString + "\n};");
 	    canvasAnim.animation.setupString = setupString;
 	},
 
 	addDrawToCanvasAnim = function(canvasAnim, drawString){
-	    eval("canvasAnim.animation.draw = function(context, borders) {" + drawString + "};");
+	    eval("canvasAnim.animation.draw = function(context, borders) {" + drawString + "\n};");
 	    canvasAnim.animation.drawString = drawString;
 	},
 
