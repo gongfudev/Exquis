@@ -1,7 +1,7 @@
 define(["net", "evileval", "ui"], function(net, evileval, ui){
-    var makeController = function(exquis){
+    var makeAssemblageController = function(exquis){
         var controller = {
-            loadAssemblage: function(pickAssemblageCallback){
+            load: function(pickAssemblageCallback){
                 var pickAssemblage = function(e){
 		    var chosenAssemblage = e.target.textContent;
                     document.location = "/assemblage/" + chosenAssemblage;
@@ -12,10 +12,10 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
                     ui.populateFilePicker(files, pickAssemblage);		
 	        });
             },
-            saveAssemblage: function(){
+            save: function(){
                 net.saveAssemblage(exquis.assName, exquis.assemblage());
             },
-            saveAssemblageAs: function(displayAssemblageNameCallback){
+            saveAs: function(displayAssemblageNameCallback){
                 
                 ui.buildPrompt("enter file name",function(fileName){
 		    if (fileName){
@@ -31,6 +31,44 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
         };
         return controller;
     };
+
+    var makeAnimationController = function(exquis){
+
+        var controller = {
+            load: function(){
+                var pickAnimation = function(e){
+		    var chosenAnimation = e.target.textContent;
+		    net.loadJson(net.makeJsonName(chosenAnimation), function(animation){
+		        var canvasAnim = exquis.targetCell.canvasAnim;
+		        evileval.addAnimationToCanvasAnim(animation, canvasAnim);
+		        canvasAnim.animationName = chosenAnimation;
+		        canvasAnim.setup();
+		        exquis.editor.editCanvasAnim(animation.setup, animation.draw, chosenAnimation);
+                        ui.showDialog(false);
+		    });
+                };
+		net.loadJson("/animations/", function(files){
+                    ui.showDialog(true);
+		    ui.populateFilePicker(files, pickAnimation);
+		});
+            },
+
+            save: function(){
+		net.saveAnimation(exquis.targetCell.canvasAnim);
+            },
+	    saveAs: function(displayAnimationNameCallback){
+                ui.buildPrompt("enter file name",function(fileName){
+		    if (fileName){
+		        net.saveAnimation(exquis.targetCell.canvasAnim, null, fileName);
+                        displayAnimationNameCallback(fileName);
+		    }
+                });
+	    }
+        };
+
+        return controller;
+    };
+    
     
     var displayAssemblageName = function(name){
         var domElement = document.getElementById("assemblage_name");
@@ -38,28 +76,21 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
     };
     
     var makeEditor = function(exquis){
-        var controller = makeController(exquis);
+        var assController = makeAssemblageController(exquis),
+            animController = makeAnimationController(exquis);
         
 	var makeAssemblageButtons = function(exquis){
  	    var assemblageLoadButton = document.getElementById("assemblage_load_button"),
 	        assemblageSaveButton = document.getElementById("assemblage_save_button"),
 	        assemblageSaveAsButton = document.getElementById("assemblage_save_as_button");
 
-            var assemblageLoad = function(){
-                controller.loadAssemblage();
-            };
-            
-            var assemblageSave = function(){
-                controller.saveAssemblage();
-            };
-
             var assemblageSaveAs = function(){
-                controller.saveAssemblageAs(displayAssemblageName);
+                assController.saveAs(displayAssemblageName);
             };
                 
 
-            assemblageLoadButton.addEventListener('click', assemblageLoad, true);
-            assemblageSaveButton.addEventListener('click', assemblageSave, true);
+            assemblageLoadButton.addEventListener('click', assController.load, true);
+            assemblageSaveButton.addEventListener('click', assController.save, true);
             assemblageSaveAsButton.addEventListener('click', assemblageSaveAs, true);
         };
         
@@ -69,40 +100,13 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
 		animSaveButton = document.getElementById("animation_save_button"),
 		animSaveAsButton = document.getElementById("animation_save_as_button");
 
-            var pickAnimation = function(e){
-		var chosenAnimation = e.target.textContent;
-		net.loadJson(net.makeJsonName(chosenAnimation), function(animation){
-		    var canvasAnim = exquis.targetCell.canvasAnim;
-		    evileval.addAnimationToCanvasAnim(animation, canvasAnim);
-		    canvasAnim.animationName = chosenAnimation;
-		    canvasAnim.setup();
-		    exquis.editor.editCanvasAnim(animation.setup, animation.draw, chosenAnimation);
-                    ui.showDialog(false);
-		});
-            };
             
-	    var animLoad = function(){
-	    	
-		net.loadJson("/animations/", function(files){
-                    ui.showDialog(true);
-		    ui.populateFilePicker(files, pickAnimation);
-		});
-	    };
-
-	    animLoadButton.addEventListener('click', animLoad, true);
-	    
-	    var animSave = function(){
-		net.saveAnimation(exquis.targetCell.canvasAnim);
-	    };
-
-	    animSaveButton.addEventListener('click', animSave, true);
+	    animLoadButton.addEventListener('click', animController.load, true);
+	    animSaveButton.addEventListener('click', animController.save, true);
 
 	    var animSaveAs = function(){
-                ui.buildPrompt("enter file name",function(fileName){
-		    if (fileName){
-		        net.saveAnimation(exquis.targetCell.canvasAnim, null, fileName);
-		        filename_display.textContent = fileName;
-		    }
+                animController.saveAs(function(fileName){
+                    filename_display.textContent = fileName;
                 });
 	    };
 	    animSaveAsButton.addEventListener('click', animSaveAs, true);
@@ -112,10 +116,11 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
 	    var textAreaSetup = document.getElementById("text_area_setup"),
 		textAreaDraw = document.getElementById("text_area_draw");
 
-	    textAreaDraw.className = "code_valid";
-	    textAreaSetup.className = "code_valid";
+            textAreaDraw.className = "code_valid";
+            textAreaSetup.className = "code_valid";
 
 	    var onEditorSetupChange = function(){
+                // TODO extract in a controller
 		var targetCell = exquis.targetCell;
 		targetCell.canvasAnim.updateSetup = function(){
 		    var setupString = textAreaSetup.value,
@@ -131,6 +136,7 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
 	    };
 
 	    var onEditorDrawChange = function(){
+                // TODO extract in a controller
 		var targetCell = exquis.targetCell;
 		targetCell.canvasAnim.updateDraw = function(neighbouringBorders){
 		    var drawString = textAreaDraw.value,
