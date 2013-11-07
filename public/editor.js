@@ -1,50 +1,62 @@
 define(["net", "evileval", "ui"], function(net, evileval, ui){
-
-    //TODO move this into ui.js
-    var modalScreen = document.getElementById("modal");
-
+    var makeController = function(exquis){
+        var controller = {
+            loadAssemblage: function(pickAssemblageCallback){
+                var pickAssemblage = function(e){
+		    var chosenAssemblage = e.target.textContent;
+                    document.location = "/assemblage/" + chosenAssemblage;
+                };
+            
+	        net.loadJson("/assemblages/", function(files){
+                    ui.showDialog(true);
+                    ui.populateFilePicker(files, pickAssemblage);		
+	        });
+            },
+            saveAssemblage: function(){
+                net.saveAssemblage(exquis.assName, exquis.assemblage());
+            },
+            saveAssemblageAs: function(displayAssemblageNameCallback){
+                
+                ui.buildPrompt("enter file name",function(fileName){
+		    if (fileName){
+                        //TODO hide net and exquis in controller function
+		        net.saveAssemblage(fileName, exquis.assemblage());
+                        exquis.assName = fileName;
+                        displayAssemblageNameCallback(exquis.assName);
+                        // TODO: display new name of assemblage in interface
+                        history.pushState({},"...", fileName);
+		    }
+                });
+            }
+        };
+        return controller;
+    };
+    
     var displayAssemblageName = function(name){
         var domElement = document.getElementById("assemblage_name");
         domElement.textContent = name;
     };
     
     var makeEditor = function(exquis){
+        var controller = makeController(exquis);
+        
 	var makeAssemblageButtons = function(exquis){
  	    var assemblageLoadButton = document.getElementById("assemblage_load_button"),
 	        assemblageSaveButton = document.getElementById("assemblage_save_button"),
 	        assemblageSaveAsButton = document.getElementById("assemblage_save_as_button");
 
-            var pickAssemblage = function(e){
-		var chosenAssemblage = e.target.textContent;
-                //TODO put this in a function in a controller module
-                document.location = "/assemblage/" + chosenAssemblage;
-            };
-            
             var assemblageLoad = function(){
-                //TODO hide net in a controller function
-		net.loadJson("/assemblages/", function(files){
-                    ui.showDialog(true);
-                    ui.populateFilePicker(files, pickAssemblage);		
-		});
+                controller.loadAssemblage();
             };
             
             var assemblageSave = function(){
-                //TODO put this in a function in a controller module
-                net.saveAssemblage(exquis.assName, exquis.assemblage());
+                controller.saveAssemblage();
             };
 
             var assemblageSaveAs = function(){
-                ui.buildPrompt("enter file name",function(fileName){
-		    if (fileName){
-                        //TODO hide net and exquis in controller function
-		        net.saveAssemblage(fileName, exquis.assemblage());
-                        exquis.assName = fileName;
-                        displayAssemblageName(exquis.assName);
-                        // TODO: display new name of assemblage in interface
-                        history.pushState({},"...", fileName);
-		    }
-                });
+                controller.saveAssemblageAs(displayAssemblageName);
             };
+                
 
             assemblageLoadButton.addEventListener('click', assemblageLoad, true);
             assemblageSaveAsButton.addEventListener('click', assemblageSaveAs, true);
