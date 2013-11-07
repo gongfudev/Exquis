@@ -59,7 +59,7 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
                 
 
             assemblageLoadButton.addEventListener('click', assemblageLoad, true);
-            assemblageSaveAsButton.addEventListener('click', assemblageSaveAs, true);
+            assemblageSaveButton.addEventListener('click', assemblageSave, true);
             assemblageSaveAsButton.addEventListener('click', assemblageSaveAs, true);
         };
         
