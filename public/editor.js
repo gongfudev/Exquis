@@ -103,17 +103,18 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
         return controller;
     };
     
-    var displayAssemblageName = function(name){
-        var domElement = document.getElementById("assemblage_name");
-        domElement.textContent = name;
-    };
-    
     var makeEditor = function(exquis){
         var assController = makeAssemblageController(exquis),
             animController = makeAnimationController(exquis),
             textAreaController = makeTextAreaController(exquis);
         
-	var makeAssemblageButtons = function(exquis){
+        var makeTextContentSetter = function(domElement){
+            return function(name){
+                domElement.textContent = name;
+            };
+        };
+
+	var makeAssemblageButtons = function(exquis, displayAssemblageName){
  	    var assemblageLoadButton = document.getElementById("assemblage_load_button"),
 	        assemblageSaveButton = document.getElementById("assemblage_save_button"),
 	        assemblageSaveAsButton = document.getElementById("assemblage_save_as_button");
@@ -121,14 +122,13 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
             var assemblageSaveAs = function(){
                 assController.saveAs(displayAssemblageName);
             };
-                
 
             assemblageLoadButton.addEventListener('click', assController.load, true);
             assemblageSaveButton.addEventListener('click', assController.save, true);
             assemblageSaveAsButton.addEventListener('click', assemblageSaveAs, true);
         };
         
-        var makeEditorButtons = function(exquis, filename_display) {
+        var makeAnimationButtons = function(exquis, displayAnimationName) {
 
 	    var animLoadButton = document.getElementById("animation_load_button"),
 		animSaveButton = document.getElementById("animation_save_button"),
@@ -139,58 +139,50 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
 	    animSaveButton.addEventListener('click', animController.save, true);
 
 	    var animSaveAs = function(){
-                animController.saveAs(function(fileName){
-                    filename_display.textContent = fileName;
-                });
+                animController.saveAs(displayAnimationName);
 	    };
 	    animSaveAsButton.addEventListener('click', animSaveAs, true);
 	};
 
-	var makeTextAreas = function(exquis){
-	    var textAreaSetup = document.getElementById("text_area_setup"),
-		textAreaDraw = document.getElementById("text_area_draw");
-
-            var makeDisplayCodeValidity = function(textArea){
-                return function(valid){
-                    textArea.className = valid ? "code_valid" : "code_invalid";
-                };
+        var makeDisplayCodeValidity = function(textArea){
+            return function(valid){
+                textArea.className = valid ? "code_valid" : "code_invalid";
             };
-            var displayDrawValidity = makeDisplayCodeValidity(textAreaDraw); 
-            var displaySetupValidity = makeDisplayCodeValidity(textAreaSetup); 
-            displayDrawValidity(true);
+        };
+
+        var addSetupListener = function(textAreaSetup, displaySetupValidity){
             displaySetupValidity(true);
-            
-	    var onEditorSetupChange = function(){
+            textAreaSetup.onkeyup = function(){
                 textAreaController.onEditorSetupChange(textAreaSetup.value, displaySetupValidity);
 	    };
-
-	    var onEditorDrawChange = function(){
+        };
+        
+        var addDrawListener = function(textAreaDraw, displayDrawValidity){
+            displayDrawValidity(true);
+            textAreaDraw.onkeyup = function(){
                 textAreaController.onEditorDrawChange(textAreaDraw.value, displayDrawValidity);
 	    };
-
-	    textAreaSetup.onkeyup = onEditorSetupChange;
-	    textAreaDraw.onkeyup = onEditorDrawChange; 
-
-	    return { textAreaSetup: textAreaSetup,
-		     textAreaDraw: textAreaDraw,
-	             onEditorSetupChange: onEditorSetupChange,
-	             onEditorDrawChange: onEditorDrawChange
-		   };
-	};
-
-	var textAreas = makeTextAreas(exquis),
-            editor = document.getElementById("editor"),
-            filename_display = document.getElementById("filename_display");
-        makeEditorButtons(exquis, filename_display);
-        makeAssemblageButtons(exquis);
+        };
+        
+	var editor = document.getElementById("editor"),
+            displayAssemblageName = makeTextContentSetter(document.getElementById("assemblage_name")),
+            displayAnimationName = makeTextContentSetter(document.getElementById("filename_display")),
+            textAreaSetup = document.getElementById("text_area_setup"),
+	    textAreaDraw = document.getElementById("text_area_draw"),
+            displaySetupValidity = makeDisplayCodeValidity(textAreaSetup), 
+            displayDrawValidity = makeDisplayCodeValidity(textAreaDraw); 
+        addSetupListener(textAreaSetup, displaySetupValidity);
+        addDrawListener(textAreaDraw, displayDrawValidity);
+        makeAnimationButtons(exquis, displayAnimationName);
+        makeAssemblageButtons(exquis, displayAssemblageName);
         displayAssemblageName(exquis.assName);
 
 	var setEditorContent = function(setupString, drawString, animationName){
-            textAreas.textAreaSetup.value = setupString;
-            textAreas.textAreaDraw.value = drawString;
-            filename_display.textContent = animationName;
-	    textAreas.textAreaSetup.className = "code_valid";     
-	    textAreas.textAreaDraw.className = "code_valid";     
+            textAreaSetup.value = setupString;
+            textAreaDraw.value = drawString;
+            displayAnimationName(animationName);
+	    displaySetupValidity(true);
+	    displayDrawValidity(true);
 	};
 	
 	return {
