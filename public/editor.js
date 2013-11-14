@@ -19,11 +19,9 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
                 
                 ui.buildPrompt("enter file name",function(fileName){
 		    if (fileName){
-                        //TODO hide net and exquis in controller function
 		        net.saveAssemblage(fileName, exquis.assemblage());
                         exquis.assName = fileName;
                         displayAssemblageNameCallback(exquis.assName);
-                        // TODO: display new name of assemblage in interface
                         history.pushState({},"...", fileName);
 		    }
                 });
@@ -68,7 +66,42 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
 
         return controller;
     };
-    
+
+    var makeTextAreaController = function(exquis){
+        var controller = {
+            onEditorSetupChange: function(setupString, displaySetupValidity){
+		var targetCell = exquis.targetCell;
+		targetCell.canvasAnim.updateSetup = function(){
+		    var canvasAnim = targetCell.canvasAnim;
+		    try{
+			evileval.addSetupToCanvasAnim(canvasAnim, setupString);
+			canvasAnim.setup();
+			displaySetupValidity(true);
+		    }catch(e){
+			displaySetupValidity(false);
+		    }
+		};
+            },
+            onEditorDrawChange: function(drawString, displayDrawValidity){
+		var targetCell = exquis.targetCell;
+		targetCell.canvasAnim.updateDraw = function(neighbouringBorders){
+		    var canvasAnim = targetCell.canvasAnim,
+			drawBackup = canvasAnim.animation.draw;
+		    try{
+			evileval.addDrawToCanvasAnim(canvasAnim, drawString);
+			canvasAnim.draw(neighbouringBorders);
+			displayDrawValidity(true);
+		    }catch(e){
+			console.error(e);
+			canvasAnim.animation.draw = drawBackup;
+			canvasAnim.draw(neighbouringBorders);
+			displayDrawValidity(false);
+		    }
+		};
+            }
+        };
+        return controller;
+    };
     
     var displayAssemblageName = function(name){
         var domElement = document.getElementById("assemblage_name");
@@ -77,7 +110,8 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
     
     var makeEditor = function(exquis){
         var assController = makeAssemblageController(exquis),
-            animController = makeAnimationController(exquis);
+            animController = makeAnimationController(exquis),
+            textAreaController = makeTextAreaController(exquis);
         
 	var makeAssemblageButtons = function(exquis){
  	    var assemblageLoadButton = document.getElementById("assemblage_load_button"),
@@ -116,46 +150,23 @@ define(["net", "evileval", "ui"], function(net, evileval, ui){
 	    var textAreaSetup = document.getElementById("text_area_setup"),
 		textAreaDraw = document.getElementById("text_area_draw");
 
-            textAreaDraw.className = "code_valid";
-            textAreaSetup.className = "code_valid";
-
+            var makeDisplayCodeValidity = function(textArea){
+                return function(valid){
+                    textArea.className = valid ? "code_valid" : "code_invalid";
+                };
+            };
+            var displayDrawValidity = makeDisplayCodeValidity(textAreaDraw); 
+            var displaySetupValidity = makeDisplayCodeValidity(textAreaSetup); 
+            displayDrawValidity(true);
+            displaySetupValidity(true);
+            
 	    var onEditorSetupChange = function(){
-                // TODO extract in a controller
-		var targetCell = exquis.targetCell;
-		targetCell.canvasAnim.updateSetup = function(){
-		    var setupString = textAreaSetup.value,
-			canvasAnim = targetCell.canvasAnim;
-		    try{
-			evileval.addSetupToCanvasAnim(canvasAnim, setupString);
-			canvasAnim.setup();
-			textAreaSetup.className = "code_valid";     
-		    }catch(e){
-			textAreaSetup.className = "code_invalid";     
-		    }
-		};
+                textAreaController.onEditorSetupChange(textAreaSetup.value, displaySetupValidity);
 	    };
 
 	    var onEditorDrawChange = function(){
-                // TODO extract in a controller
-		var targetCell = exquis.targetCell;
-		targetCell.canvasAnim.updateDraw = function(neighbouringBorders){
-		    var drawString = textAreaDraw.value,
-			canvasAnim = targetCell.canvasAnim,
-			drawBackup = canvasAnim.animation.draw;
-		    try{
-			evileval.addDrawToCanvasAnim(canvasAnim, drawString);
-			canvasAnim.draw(neighbouringBorders);
-			textAreaDraw.className = "code_valid";     
-		    }catch(e){
-			console.error(e);
-			canvasAnim.animation.draw = drawBackup;
-			canvasAnim.draw(neighbouringBorders);
-			textAreaDraw.className = "code_invalid";     
-		    }
-		};
-		
+                textAreaController.onEditorDrawChange(textAreaDraw.value, displayDrawValidity);
 	    };
-
 
 	    textAreaSetup.onkeyup = onEditorSetupChange;
 	    textAreaDraw.onkeyup = onEditorDrawChange; 
