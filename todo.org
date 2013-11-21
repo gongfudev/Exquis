@@ -4,6 +4,9 @@
 par exemple en mettant les boutons de l'animation à coté de son nom, ou les mettre dans un bloc visuel
 ** collapsing textareas
 ** mecanisme pour signaler les animations à enregistrer
-** separer l'editeur en view et controller
-Lorsque l'utilisateur écrit ou clique sur la vue, elle appelle des fonctions sur le controller, qui modifie le code des animations, ou l'assemblage, lit ou enregistre sur le serveur.  La valeur de retour des fonctions du controller informe la vue du succès des operations (compilation, enregistrement etc...)
+* exquis
+** remplacer setInterval par requestAnimation
+* controller
+** le controller ne devrait pas connaitre l'editor autrement que par des callbacks.
+ voir le TODO dans le code
 * bugs

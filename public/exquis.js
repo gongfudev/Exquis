@@ -2,9 +2,10 @@
 
 define(["net",
         "iter2d",
-        "editor",
+        "editorView",
+        "editorController",
         "csshelper",
-        "evileval"], function(net, iter2d, editor, csshelper, evileval){
+        "evileval"], function(net, iter2d, editorView, editorController, csshelper, evileval){
     
 
 
@@ -102,8 +103,8 @@ define(["net",
 
     };
 
-    var exquis = {};
 
+    var exquis = {};
             
     var init = function (assName, jsonAnimations) {
 
@@ -111,7 +112,7 @@ define(["net",
 
         exquis.assName = assName;
         
-        exquis.editor = editor(exquis);
+        exquis.editorView = editorView(editorController(exquis));
 
         exquis.cells = iter2d.map2dArray(jsonAnimations,function(jsonAnim,row,col){
             var height = 150,
@@ -121,7 +122,7 @@ define(["net",
                     if (exquis.targetCell) { csshelper.removeClass(exquis.targetCell.hint, "visible-cell"); }
                     exquis.targetCell = cell;
                     csshelper.addClass(exquis.targetCell.hint, "visible-cell");
-                    exquis.editor.editCanvasAnim(
+                    exquis.editorView.editCanvasAnim(
 			cell.canvasAnim.animation.setupString,
 			cell.canvasAnim.animation.drawString,
 			cell.canvasAnim.animationName);
@@ -140,18 +141,18 @@ define(["net",
             return animationNames;
         };
 
-        var toggleEditor = function(event){
+        var toggleEditorView = function(event){
             if (event.target.tagName === "HTML"){
                 // unselect edition
-                exquis.editor.hide();
+                exquis.editorView.hide();
                 if (exquis.targetCell) { csshelper.removeClass(exquis.targetCell.hint, "visible-cell"); }
             }else{
-                exquis.editor.show();
+                exquis.editorView.show();
             }
         };
 
         
-        document.addEventListener('click', toggleEditor, true);
+        document.addEventListener('click', toggleEditorView, true);
 
         var draw = function(){
 

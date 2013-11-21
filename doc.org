@@ -1,0 +1,6 @@
+
+* bootstrap mechanism
+main.js calls net.loadAnimations with exquis.init as argument
+exquis.init is called with all the loaded animations as argument
+exquis.init creates an exquis object and calls makeEditor(exquis)b
+
