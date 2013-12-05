@@ -6,7 +6,16 @@ par exemple en mettant les boutons de l'animation à coté de son nom, ou les me
 ** mecanisme pour signaler les animations à enregistrer
 * exquis
 ** remplacer setInterval par requestAnimation
-* controller
-** le controller ne devrait pas connaitre l'editor autrement que par des callbacks.
- voir le TODO dans le code
+* editorController
+** editorController et editorView se connaissent mutuellement
+*** construction 
+le controller devient une usine de controller.
+l'usine est créé avec exquis en argument.
+la view est créée avec l'usine de controller en argument.
+elle crée le controller en se donnant en argument a l'usine.
+
+*** virer tous les callbacks donnés par la vue
+En ce moment (presque) toutes les actions du controller se font par callbacks.
+Remplacer ça par des appels aux méthodes de la vue
+
 * bugs

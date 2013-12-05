@@ -44,7 +44,6 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
 		        evileval.addAnimationToCanvasAnim(animation, canvasAnim);
 		        canvasAnim.animationName = chosenAnimation;
 		        canvasAnim.setup();
-                        //TODO remplacer ça par un callback donné par editor
 		        exquis.editor.editCanvasAnim(animation.setup, animation.draw, chosenAnimation);
                         ui.showDialog(false);
 		    });
