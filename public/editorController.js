@@ -44,7 +44,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
 		        evileval.addAnimationToCanvasAnim(animation, canvasAnim);
 		        canvasAnim.animationName = chosenAnimation;
 		        canvasAnim.setup();
-		        exquis.editor.editCanvasAnim(animation.setup, animation.draw, chosenAnimation);
+		        exquis.editorView.editCanvasAnim(animation.setup, animation.draw, chosenAnimation);
                         ui.showDialog(false);
 		    });
                 };
