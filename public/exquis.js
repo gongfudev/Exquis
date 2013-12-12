@@ -36,13 +36,13 @@ define(["net",
 
             draw : function(borders){ 
                 // force reset matrix
-                context.setTransform(1, 0, 0, 1, 0, 0);
+                //context.setTransform(1, 0, 0, 1, 0, 0);
                 this.animation.draw(context, borders);
             },
 
             setup : function(){ 
                 // force reset matrix
-                context.setTransform(1, 0, 0, 1, 0, 0);
+                //context.setTransform(1, 0, 0, 1, 0, 0);
                 this.animation.setup(context);
             }
         };
