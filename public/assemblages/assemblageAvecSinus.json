@@ -1,1 +1,1 @@
-[["copieBordSudEst","copieBordSud","carreQuiTourne"],["copieBordSudEst","carreSinus","accel"],["carreSinus","copieBordNordOuest","copieBordOuest"]]
+[["copieBordSudEst","copieBordSud","carreQuiTourne"],["copieBordSudEst","copieBordSudEst","accel"],["carreSinus","rot","copieBordOuest"]]
