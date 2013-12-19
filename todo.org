@@ -20,6 +20,4 @@ Remplacer ça par des appels aux méthodes de la vue
 * new animations
 ** rotate canvas ? -> http://jsfiddle.net/loktar/GctQu/
 * bugs
-** quand on saveAs une anim foo en bar, si on clique sur une autre case et on revient, le nom de l'anim revient à foo.
-** le save après un save as ne sauve pas le bon fichier voir bug précédent
 

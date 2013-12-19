@@ -62,6 +62,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
 		    if (fileName){
 		        net.saveAnimation(exquis.targetCell.canvasAnim, null, fileName);
                         displayAnimationNameCallback(fileName);
+                        exquis.targetCell.canvasAnim.animationName = fileName;
 		    }
                 });
 	    }
