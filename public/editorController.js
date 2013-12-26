@@ -41,6 +41,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
 		    var chosenAnimation = e.target.textContent;
 		    net.loadJson(net.makeJsonName(chosenAnimation), function(animation){
 		        var canvasAnim = exquis.targetCell.canvasAnim;
+                        //TODO add libs
 		        evileval.addAnimationToCanvasAnim(animation, canvasAnim);
 		        canvasAnim.animationName = chosenAnimation;
 		        canvasAnim.setup();
@@ -73,6 +74,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
 
     var makeTextAreaController = function(exquis){
         var controller = {
+            //TODO onEditorLibsChange
             onEditorSetupChange: function(setupString, displaySetupValidity){
 		var targetCell = exquis.targetCell;
 		targetCell.canvasAnim.updateSetup = function(){

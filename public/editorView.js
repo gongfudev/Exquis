@@ -46,6 +46,8 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
             };
         };
 
+        //TODO addLibsListener, add textAreaLibs
+        
         var addSetupListener = function(textAreaSetup, displaySetupValidity){
             displaySetupValidity(true);
             textAreaSetup.onkeyup = function(){

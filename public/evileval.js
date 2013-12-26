@@ -1,6 +1,10 @@
 define([], function(){
 
-	var addSetupToCanvasAnim = function(canvasAnim, setupString){
+        var addLibsToCanvasAnim = function(canvasAnim, jsonString){
+           //TODO
+        },
+    
+        addSetupToCanvasAnim = function(canvasAnim, setupString){
 	    eval("canvasAnim.animation.setup = function(context) {" + setupString + "\n};");
 	    canvasAnim.animation.setupString = setupString;
 	},
@@ -20,6 +24,7 @@ define([], function(){
 	};
 	
     return {
+        addLibsToCanvasAnim: addLibsToCanvasAnim, 
 	addAnimationToCanvasAnim: addAnimationToCanvasAnim,
 	addDrawToCanvasAnim: addDrawToCanvasAnim,
 	addSetupToCanvasAnim: addSetupToCanvasAnim

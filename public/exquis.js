@@ -6,8 +6,10 @@ define(["net",
         "editorController",
         "csshelper",
         "evileval"], function(net, iter2d, editorView, editorController, csshelper, evileval){
-    
-
+            
+    var include = function(name, as, destination){
+        require([name], function(lib){ destination[as] = lib;});
+    };
 
     var makeCell = function(row, col, height, width, jsonAnim){
         var canvas = makeCanvas(row, col, height, width), 
@@ -40,7 +42,12 @@ define(["net",
                 this.animation.draw(context, borders);
             },
 
-            setup : function(){ 
+            setup : function(){
+                //TODO call require with libs of the animation
+                // in the callback given to require:
+                //add the libs to the animation object
+                // then call setup as a callback to require 
+
                 // force reset matrix
                 context.setTransform(1, 0, 0, 1, 0, 0);
                 this.animation.setup(context);

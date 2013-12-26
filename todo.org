@@ -18,6 +18,16 @@ elle crée le controller en se donnant en argument a l'usine.
 En ce moment (presque) toutes les actions du controller se font par callbacks.
 Remplacer ça par des appels aux méthodes de la vue
 * new animations
-** rotate canvas ? -> http://jsfiddle.net/loktar/GctQu/
 * bugs
+* implement blockly interface https://code.google.com/p/blockly/
+* explore library integration via require.js
+* allow usage of files from external urls (github.com, pastebin, etc)
+define a assemblage file with urls
+
+* refactor dashboard so it can be included in a jsfiddle
+so that jsfiddle's javascript editor can be used to write animations or assemblages
+* preparer quelque chose à présenter à infolipo
+* faire en sorte que ça tourne sans serveur (ni internet?)
+avoir des animations par defaut dans des fichiers javascripts chargés par index.html
+
 
