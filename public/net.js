@@ -71,7 +71,8 @@ define(["iter2d"], function(iter2d){
     };
 
     var saveAnimation = function(cell, callback, fileName){
-        var JSONString = JSON.stringify({ setup: cell.animation.setupString,
+        var JSONString = JSON.stringify({ libs: cell.animation.libsString,
+					  setup: cell.animation.setupString,
                                           draw : cell.animation.drawString }),
             dirName = "animations",
             name = (fileName || cell.animationName) + ".json";

@@ -41,11 +41,10 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
 		    var chosenAnimation = e.target.textContent;
 		    net.loadJson(net.makeJsonName(chosenAnimation), function(animation){
 		        var canvasAnim = exquis.targetCell.canvasAnim;
-                        //TODO add libs
 		        evileval.addAnimationToCanvasAnim(animation, canvasAnim);
 		        canvasAnim.animationName = chosenAnimation;
 		        canvasAnim.setup();
-		        exquis.editorView.editCanvasAnim(animation.setup, animation.draw, chosenAnimation);
+		        exquis.editorView.editCanvasAnim(animation.libs, animation.setup, animation.draw, chosenAnimation);
                         ui.showDialog(false);
 		    });
                 };
@@ -74,7 +73,17 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
 
     var makeTextAreaController = function(exquis){
         var controller = {
-            //TODO onEditorLibsChange
+            onEditorLibsChange: function(libsString, displayLibsValidity){
+		var targetCell = exquis.targetCell,
+		    canvasAnim = targetCell.canvasAnim,
+		    setupString = canvasAnim.animation.setupString;
+		try{
+		    evileval.addLibsToCanvasAnim(canvasAnim,libsString);
+		    displayLibsValidity(true);
+		}catch(e){
+		    displayLibsValidity(false);
+		}
+	    },
             onEditorSetupChange: function(setupString, displaySetupValidity){
 		var targetCell = exquis.targetCell;
 		targetCell.canvasAnim.updateSetup = function(){

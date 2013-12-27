@@ -46,8 +46,13 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
             };
         };
 
-        //TODO addLibsListener, add textAreaLibs
-        
+        var addLibsListener = function(textAreaLibs, displayLibsValidity){
+            displayLibsValidity(true);
+            textAreaLibs.onkeyup = function(){
+                textAreaController.onEditorLibsChange(textAreaLibs.value, displayLibsValidity);
+	    };
+        };
+      
         var addSetupListener = function(textAreaSetup, displaySetupValidity){
             displaySetupValidity(true);
             textAreaSetup.onkeyup = function(){
@@ -67,15 +72,19 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
             displayAnimationName = makeTextContentSetter(document.getElementById("filename_display")),
             textAreaSetup = document.getElementById("text_area_setup"),
 	    textAreaDraw = document.getElementById("text_area_draw"),
+	    textAreaLibs = document.getElementById("text_area_libs"),
+            displayLibsValidity = makeDisplayCodeValidity(textAreaLibs), 
             displaySetupValidity = makeDisplayCodeValidity(textAreaSetup), 
             displayDrawValidity = makeDisplayCodeValidity(textAreaDraw); 
+        addLibsListener(textAreaLibs, displayLibsValidity);
         addSetupListener(textAreaSetup, displaySetupValidity);
         addDrawListener(textAreaDraw, displayDrawValidity);
         makeAnimationButtons(displayAnimationName);
         makeAssemblageButtons(displayAssemblageName);
         displayAssemblageName(assController.getAssemblageName());
 
-	var setEditorContent = function(setupString, drawString, animationName){
+	var setEditorContent = function(libsString, setupString, drawString, animationName){
+            textAreaLibs.value = libsString;
             textAreaSetup.value = setupString;
             textAreaDraw.value = drawString;
             displayAnimationName(animationName);

@@ -1,7 +1,31 @@
 define([], function(){
 
-        var addLibsToCanvasAnim = function(canvasAnim, jsonString){
-           //TODO
+        var addLibsToCanvasAnim = function(canvasAnim, libsString, callback){
+	    if(typeof libsString == "undefined"){
+		return;
+	    }
+						 
+	    var libs = JSON.parse(libsString),
+		addresses = [],
+		aliases = [];
+	    
+	    for(var name in libs){
+		if(libs.hasOwnProperty(name)){
+		    addresses.push(name);
+		    aliases.push(libs[name]);
+		}
+	    }
+	    
+            require(addresses, function(lib){
+		for(var i=0; i<addresses.length; i++){
+		  console.log(i);
+		    canvasAnim.animation[aliases[i]] = arguments[i];
+		}
+		canvasAnim.animation.libsString = libsString;
+		if(typeof callback != "undefined"){
+		    callback();
+		}
+	    });
         },
     
         addSetupToCanvasAnim = function(canvasAnim, setupString){
@@ -19,8 +43,13 @@ define([], function(){
 	    //.replace(/\n/g,"\\n");
 	},
 	addAnimationToCanvasAnim = function(animation, canvasAnim){
-	    addDrawToCanvasAnim(canvasAnim, animation.draw);
-	    addSetupToCanvasAnim(canvasAnim, animation.setup);
+            var that = this;
+	    
+	    addLibsToCanvasAnim(canvasAnim, animation.libs, function(){
+	        addSetupToCanvasAnim.call(that, canvasAnim, animation.setup);
+	        addDrawToCanvasAnim.call(that, canvasAnim, animation.draw);
+		canvasAnim.setup();
+	    });
 	};
 	
     return {

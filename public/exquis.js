@@ -36,18 +36,13 @@ define(["net",
                 };
             },
 
-            draw : function(borders){ 
+            draw : function(borders){
                 // force reset matrix
                 context.setTransform(1, 0, 0, 1, 0, 0);
                 this.animation.draw(context, borders);
             },
 
             setup : function(){
-                //TODO call require with libs of the animation
-                // in the callback given to require:
-                //add the libs to the animation object
-                // then call setup as a callback to require 
-
                 // force reset matrix
                 context.setTransform(1, 0, 0, 1, 0, 0);
                 this.animation.setup(context);
@@ -130,6 +125,7 @@ define(["net",
                     exquis.targetCell = cell;
                     csshelper.addClass(exquis.targetCell.hint, "visible-cell");
                     exquis.editorView.editCanvasAnim(
+			cell.canvasAnim.animation.libsString,
 			cell.canvasAnim.animation.setupString,
 			cell.canvasAnim.animation.drawString,
 			cell.canvasAnim.animationName);
@@ -179,20 +175,19 @@ define(["net",
                 });
 
                 if(canvasAnim.updateSetup){
-                    canvasAnim.updateSetup();
-                    delete(canvasAnim.updateSetup);
+		    canvasAnim.updateSetup();
+		    delete(canvasAnim.updateSetup);
                 }
                 
                 if(canvasAnim.updateDraw){
-                    canvasAnim.updateDraw(neighbouringBorders);
-                    delete(canvasAnim.updateDraw);
+		    canvasAnim.updateDraw(neighbouringBorders);
+		    delete(canvasAnim.updateDraw);
                 }else{
-                    canvasAnim.draw(neighbouringBorders);
+		    canvasAnim.draw(neighbouringBorders);
                 }
             });
         };
 
-        iter2d.forEach2dArray(exquis.cells,function(cell){ cell.canvasAnim.setup(); });
         setInterval(draw, 50);
 
     };
