@@ -1,0 +1,11 @@
+- assemblage rien
+- carreQuiTourne en haut à droite
+- copieBordNord au milieu à droite
+- copieBordNordOuest en bas à droite
+- copieBordSudEst au milieu au milieu
+- copieBordSud en haut au milieu
+
+- charger l'assemblage demo1
+- jouer avec la vitesse et le scale
+- carreSinus en bas à gauche
+- carreVoisin en haut à droite
