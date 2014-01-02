@@ -75,7 +75,7 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
 	    textAreaLibs = document.getElementById("text_area_libs"),
             displayLibsValidity = makeDisplayCodeValidity(textAreaLibs), 
             displaySetupValidity = makeDisplayCodeValidity(textAreaSetup), 
-            displayDrawValidity = makeDisplayCodeValidity(textAreaDraw); 
+            displayDrawValidity = makeDisplayCodeValidity(textAreaDraw);
         addLibsListener(textAreaLibs, displayLibsValidity);
         addSetupListener(textAreaSetup, displaySetupValidity);
         addDrawListener(textAreaDraw, displayDrawValidity);
@@ -90,6 +90,7 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
             displayAnimationName(animationName);
 	    displaySetupValidity(true);
 	    displayDrawValidity(true);
+            displayLibsValidity(true);
 	};
 	
 	return {

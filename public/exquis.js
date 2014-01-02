@@ -7,9 +7,6 @@ define(["net",
         "csshelper",
         "evileval"], function(net, iter2d, editorView, editorController, csshelper, evileval){
             
-    var include = function(name, as, destination){
-        require([name], function(lib){ destination[as] = lib;});
-    };
 
     var makeCell = function(row, col, height, width, jsonAnim){
         var canvas = makeCanvas(row, col, height, width), 
