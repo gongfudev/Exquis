@@ -24,14 +24,14 @@ define({
     };
 
     var isPositionInCollection = function(position, collection){
-      var found = false
-      collection.forEach(function(p){
-        if (isEqualPosition(p, position)){
-          found = true;
-        }
-      });
+      var size = collection.length;
 
-      return found;
+      for(var i = 0; i < size; i++){
+        if (isEqualPosition(collection[i], position)){
+          return  true;
+        }
+      }
+      return false;
     };
 
     var partitionNeighbors = function(neighborPositions, livingCellsCollection){
@@ -103,6 +103,17 @@ define({
       result.push({
         x: Math.floor(Math.random() * width), 
         y: Math.floor(Math.random() * height)});
+    }
+
+    return result;
+  },
+
+  makeGliderNoise: function(width, height, count){
+    var result = [];
+
+    for (var i = 0; i < count; i++) {
+      result = result.concat(this.makeGlider(Math.floor(Math.random() * width - 1), 
+                                             Math.floor(Math.random() * height - 1)));
     }
 
     return result;
