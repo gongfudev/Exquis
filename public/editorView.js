@@ -55,23 +55,25 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
       
         var addSetupListener = function(textAreaSetup, displaySetupValidity){
             displaySetupValidity(true);
-            textAreaSetup.onkeyup = function(){
-                textAreaController.onEditorSetupChange(textAreaSetup.value, displaySetupValidity);
-	    };
+        
+            textAreaSetup.getSession().on('change', function(e) {
+                textAreaController.onEditorSetupChange(textAreaSetup.getValue(), displaySetupValidity)
+            });
         };
         
         var addDrawListener = function(textAreaDraw, displayDrawValidity){
             displayDrawValidity(true);
-            textAreaDraw.onkeyup = function(){
-                textAreaController.onEditorDrawChange(textAreaDraw.value, displayDrawValidity);
-	    };
+ 
+            textAreaDraw.getSession().on('change', function(e) {
+                textAreaController.onEditorDrawChange(textAreaDraw.getValue(), displaySetupValidity)
+            });
         };
         
 	var editor = document.getElementById("editor"),
             displayAssemblageName = makeTextContentSetter(document.getElementById("assemblage_name")),
             displayAnimationName = makeTextContentSetter(document.getElementById("filename_display")),
-            textAreaSetup = document.getElementById("text_area_setup"),
-	    textAreaDraw = document.getElementById("text_area_draw"),
+            textAreaSetup = ace.edit("text_area_setup"),
+	    textAreaDraw =  ace.edit("text_area_draw"),
 	    textAreaLibs = document.getElementById("text_area_libs"),
             displayLibsValidity = makeDisplayCodeValidity(textAreaLibs), 
             displaySetupValidity = makeDisplayCodeValidity(textAreaSetup), 
@@ -83,10 +85,17 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
         makeAssemblageButtons(displayAssemblageName);
         displayAssemblageName(assController.getAssemblageName());
 
+
+        // textAreaSetup.setTheme("ace/theme/monokai");
+        textAreaSetup.getSession().setMode("ace/mode/javascript");
+        textAreaDraw.getSession().setMode("ace/mode/javascript");
+        textAreaSetup.renderer.setShowGutter(false); 
+        textAreaDraw.renderer.setShowGutter(false); 
+
 	var setEditorContent = function(libsString, setupString, drawString, animationName){
             textAreaLibs.value = libsString;
-            textAreaSetup.value = setupString;
-            textAreaDraw.value = drawString;
+            textAreaSetup.setValue(setupString);
+            textAreaDraw.setValue(drawString);
             displayAnimationName(animationName);
 	    displaySetupValidity(true);
 	    displayDrawValidity(true);

@@ -30,12 +30,28 @@
         .code_invalid { border: solid rgb(255, 0, 0); }
         .code_valid { border: solid rgb(25, 125, 255); }
         .invisible { display: none;}
+
+  #text_area_setup { 
+        position: relative;
+        height: 300px;
+        font-size: 15px;
+  }
+
+  #text_area_draw { 
+      position: relative;
+      height: 300px;
+      font-size: 15px;
+  }
     </style>
     <script data-main="/main.js" src="/lib/require.js"></script>
+    <script src="/lib/ace/ace.js" type="text/javascript" charset="utf-8"></script>
 </head>
 <body>
+
+
     <div id="container">
         <div id="dashboard" class="grid"></div>
+
     
         <div class="invisible" id="editor">
          <div id="assemblage">
@@ -57,9 +73,9 @@
             <p>libs</p> 
             <textarea id="text_area_libs" rows="1" cols="80" spellcheck="false"></textarea>
             <p>setup</p> 
-            <textarea id="text_area_setup" rows="15" cols="80" spellcheck="false"></textarea>
+            <div id="text_area_setup"></div>
             <p>draw</p>
-            <textarea id="text_area_draw" rows="20" cols="80" spellcheck="false"></textarea>
+            <div id="text_area_draw"></div>
          </div>
         </div>
     </div>
