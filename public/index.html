@@ -31,16 +31,9 @@
         .code_valid { border: solid rgb(25, 125, 255); }
         .invisible { display: none;}
 
-  #text_area_setup { 
-        position: relative;
-        height: 300px;
-        font-size: 15px;
-  }
-
-  #text_area_draw { 
+  .ace_editor { 
       position: relative;
       height: 300px;
-      font-size: 15px;
   }
     </style>
     <script data-main="/main.js" src="/lib/require.js"></script>
@@ -73,9 +66,9 @@
             <p>libs</p> 
             <textarea id="text_area_libs" rows="1" cols="80" spellcheck="false"></textarea>
             <p>setup</p> 
-            <div id="text_area_setup"></div>
+            <div id="text_area_setup" class="ace_editor"></div>
             <p>draw</p>
-            <div id="text_area_draw"></div>
+            <div id="text_area_draw" class="ace_editor"></div>
          </div>
         </div>
     </div>

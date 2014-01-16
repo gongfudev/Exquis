@@ -46,6 +46,13 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
             };
         };
 
+        var makeDisplayCodeValidityForAce = function(aceEditor){
+            return function(valid){
+                 aceEditor.setStyle( valid ? "code_valid" : "code_invalid");
+                 aceEditor.unsetStyle( !valid ? "code_valid" : "code_invalid");
+            };
+        };
+
         var addLibsListener = function(textAreaLibs, displayLibsValidity){
             displayLibsValidity(true);
             textAreaLibs.onkeyup = function(){
@@ -57,7 +64,7 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
             displaySetupValidity(true);
         
             textAreaSetup.getSession().on('change', function(e) {
-                textAreaController.onEditorSetupChange(textAreaSetup.getValue(), displaySetupValidity)
+                textAreaController.onEditorSetupChange(textAreaSetup.getValue(), displaySetupValidity);
             });
         };
         
@@ -65,7 +72,7 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
             displayDrawValidity(true);
  
             textAreaDraw.getSession().on('change', function(e) {
-                textAreaController.onEditorDrawChange(textAreaDraw.getValue(), displaySetupValidity)
+                textAreaController.onEditorDrawChange(textAreaDraw.getValue(), displayDrawValidity);
             });
         };
         
@@ -76,8 +83,8 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
 	    textAreaDraw =  ace.edit("text_area_draw"),
 	    textAreaLibs = document.getElementById("text_area_libs"),
             displayLibsValidity = makeDisplayCodeValidity(textAreaLibs), 
-            displaySetupValidity = makeDisplayCodeValidity(textAreaSetup), 
-            displayDrawValidity = makeDisplayCodeValidity(textAreaDraw);
+            displaySetupValidity = makeDisplayCodeValidityForAce(textAreaSetup), 
+            displayDrawValidity = makeDisplayCodeValidityForAce(textAreaDraw);
         addLibsListener(textAreaLibs, displayLibsValidity);
         addSetupListener(textAreaSetup, displaySetupValidity);
         addDrawListener(textAreaDraw, displayDrawValidity);
@@ -86,11 +93,14 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
         displayAssemblageName(assController.getAssemblageName());
 
 
-        // textAreaSetup.setTheme("ace/theme/monokai");
+        textAreaSetup.setTheme("ace/theme/KatzenMilch");
         textAreaSetup.getSession().setMode("ace/mode/javascript");
+        textAreaSetup.renderer.setShowGutter(false);
+        textAreaSetup.setFontSize("14px");
+        textAreaDraw.setTheme("ace/theme/KatzenMilch");
         textAreaDraw.getSession().setMode("ace/mode/javascript");
-        textAreaSetup.renderer.setShowGutter(false); 
         textAreaDraw.renderer.setShowGutter(false); 
+        textAreaDraw.setFontSize("14px");
 
 	var setEditorContent = function(libsString, setupString, drawString, animationName){
             textAreaLibs.value = libsString;
