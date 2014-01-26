@@ -15,11 +15,11 @@ define([], function(){
 		    aliases.push(libs[name]);
 		}
 	    }
-	    
+	    // all libraries are reloaded, leave the old ones to the garbage collector
+	    canvasAnim.animation.lib = {};
             require(addresses, function(lib){
 		for(var i=0; i<addresses.length; i++){
-		  console.log(i);
-		    canvasAnim.animation[aliases[i]] = arguments[i];
+		    canvasAnim.animation.lib[aliases[i]] = arguments[i];
 		}
 		canvasAnim.animation.libsString = libsString;
 		if(typeof callback != "undefined"){
