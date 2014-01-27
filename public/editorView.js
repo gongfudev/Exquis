@@ -100,14 +100,19 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
             editor.setFontSize("14px");
         });
 	var setEditorContent = function(libsString, setupString, drawString, animationName){
-            textAreaLibs.value = libsString;
-            textAreaSetup.setValue(setupString);
-            textAreaDraw.setValue(drawString);
-            displayAnimationName(animationName);
-	    displaySetupValidity(true);
-	    displayDrawValidity(true);
-            displayLibsValidity(true);
-	};
+        textAreaLibs.value = libsString;
+
+        textAreaSetup.setValue(setupString);
+        textAreaSetup.getSession().selection.clearSelection();
+        
+        textAreaDraw.setValue(drawString);
+        textAreaDraw.getSession().selection.clearSelection();
+        
+        displayAnimationName(animationName);
+        displaySetupValidity(true);
+        displayDrawValidity(true);
+        displayLibsValidity(true);
+    };
 	
 	return {
 	    editCanvasAnim: setEditorContent,
