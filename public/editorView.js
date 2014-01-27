@@ -93,15 +93,12 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
         displayAssemblageName(assController.getAssemblageName());
 
 
-        textAreaSetup.setTheme("ace/theme/katzenmilch");
-        textAreaSetup.getSession().setMode("ace/mode/javascript");
-        textAreaSetup.renderer.setShowGutter(false);
-        textAreaSetup.setFontSize("14px");
-        textAreaDraw.setTheme("ace/theme/katzenmilch");
-        textAreaDraw.getSession().setMode("ace/mode/javascript");
-        textAreaDraw.renderer.setShowGutter(false); 
-        textAreaDraw.setFontSize("14px");
-
+        [textAreaSetup, textAreaDraw].forEach(function(editor){
+            editor.setTheme("ace/theme/katzenmilch");
+            editor.getSession().setMode("ace/mode/javascript");
+            editor.renderer.setShowGutter(false);
+            editor.setFontSize("14px");
+        });
 	var setEditorContent = function(libsString, setupString, drawString, animationName){
             textAreaLibs.value = libsString;
             textAreaSetup.setValue(setupString);
