@@ -93,11 +93,11 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
         displayAssemblageName(assController.getAssemblageName());
 
 
-        textAreaSetup.setTheme("ace/theme/KatzenMilch");
+        textAreaSetup.setTheme("ace/theme/katzenmilch");
         textAreaSetup.getSession().setMode("ace/mode/javascript");
         textAreaSetup.renderer.setShowGutter(false);
         textAreaSetup.setFontSize("14px");
-        textAreaDraw.setTheme("ace/theme/KatzenMilch");
+        textAreaDraw.setTheme("ace/theme/katzenmilch");
         textAreaDraw.getSession().setMode("ace/mode/javascript");
         textAreaDraw.renderer.setShowGutter(false); 
         textAreaDraw.setFontSize("14px");
