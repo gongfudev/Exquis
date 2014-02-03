@@ -36,8 +36,27 @@
       height: 300px;
   }
     </style>
-    <script data-main="/main.js" src="/lib/require.js"></script>
+    <!--
+        <script data-main="/main.js" src="/lib/require.js"></script>
     <script src="/lib/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+-->
+    <script>
+      function loadScript(attributes){
+          var ind = document.URL.indexOf("index.html"),
+              prefix = ind ? document.URL.substr(0,ind) : "",
+              someScript = document.createElement('script');
+          for(var name in attributes){
+             var value = attributes[name];
+             if(value.charAt(0) == "/"){
+                 value = prefix + value;
+             }
+             someScript.setAttribute(name, value);
+          }
+          document.head.appendChild(someScript);
+      }
+      loadScript({'data-main': '/main.js', 'src': '/lib/require.js'});
+      loadScript({'src': '/lib/ace/ace.js', 'type':'text/javascript', 'charset': 'utf-8'});
+    </script>
 </head>
 <body>
 

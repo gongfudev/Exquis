@@ -105,8 +105,8 @@ define(["iter2d"], function(iter2d){
 	return "/animations/"+animationName+".json";
     };
 
-    var loadAssemblage = function(assName, handleJsonAnimations){
-	var assemblagePath = "/assemblages/";
+    var loadAssemblage = function(assName, pathPrefix, handleJsonAnimations){
+	var assemblagePath = pathPrefix + "/assemblages/";
 	
         if(!assName){
             assName =  "assemblageAvecSinus",
@@ -127,8 +127,11 @@ define(["iter2d"], function(iter2d){
 
 
     var loadAnimations = function(handleJsonAnimations){
-	var name = window.location.pathname.substr("/assemblage/".length);
-	loadAssemblage(name, handleJsonAnimations);
+	var pathname = window.location.pathname,
+            ind = document.URL.indexOf("index.html"),
+            pathPrefix = ind ? document.URL.substr(0,ind) : "",
+            name = ind ? 0 : pathname.substr("/assemblage/".length);
+	loadAssemblage(name, pathPrefix, handleJsonAnimations);
     };
 
     return {saveAnimation: saveAnimation,
