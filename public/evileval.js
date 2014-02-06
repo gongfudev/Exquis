@@ -17,7 +17,7 @@ define([], function(){
 	    }
 	    // all libraries are reloaded, leave the old ones to the garbage collector
 	    canvasAnim.animation.lib = {};
-            require(addresses, function(lib){
+            require(addresses, function(){
 		for(var i=0; i<addresses.length; i++){
 		    canvasAnim.animation.lib[aliases[i]] = arguments[i];
 		}
@@ -27,7 +27,12 @@ define([], function(){
 		}
 	    });
         },
-    
+
+        addAnimationStringToCanvasAnim = function(canvasAnim, animationString){
+            eval("canvasAnim.animation = "+animationString);
+            canvasAnim.animationString = animationString;
+        },
+            
         addSetupToCanvasAnim = function(canvasAnim, setupString){
 	    eval("canvasAnim.animation.setup = function(context) {" + setupString + "\n};");
 	    canvasAnim.animation.setupString = setupString;
@@ -54,7 +59,8 @@ define([], function(){
 	
     return {
         addLibsToCanvasAnim: addLibsToCanvasAnim, 
-	addAnimationToCanvasAnim: addAnimationToCanvasAnim,
+	addAnimationStringToCanvasAnim: addAnimationStringToCanvasAnim,
+        addAnimationToCanvasAnim: addAnimationToCanvasAnim,
 	addDrawToCanvasAnim: addDrawToCanvasAnim,
 	addSetupToCanvasAnim: addSetupToCanvasAnim
     };

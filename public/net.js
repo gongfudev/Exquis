@@ -6,6 +6,7 @@ define(["iter2d"], function(iter2d){
 
         var results = {};
         var counter = 0;
+        // TODO handle js and json
         var handleJson = function(result, path){
             var name =  /animations\/(\w+)\.json/.exec(path)[1];
             results[name] = result;
