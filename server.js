@@ -63,7 +63,7 @@ var startServer = function (allowTests){
     if (allowTests){
         console.log("server started in testing mode");
     }
-
+    var port = Number(process.env.PORT || 8000);
     http.createServer(function(request, response) {
 
         var pathname = require('url').parse(request.url).pathname;
@@ -102,9 +102,9 @@ var startServer = function (allowTests){
 	
         }
     
-    }).listen(8000);
+    }).listen(port);
 
-    console.log("server on port 8000");
+    console.log("server on port "+port);
 };
 
 var allowTests = process.argv.indexOf("test") > 0;
