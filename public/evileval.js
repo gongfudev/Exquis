@@ -16,10 +16,10 @@ define([], function(){
 		}
 	    }
 	    // all libraries are reloaded, leave the old ones to the garbage collector
-	    canvasAnim.animation.lib = {};
+	    canvasAnim.lib = {};
             require(addresses, function(){
 		for(var i=0; i<addresses.length; i++){
-		    canvasAnim.animation.lib[aliases[i]] = arguments[i];
+		    canvasAnim.lib[aliases[i]] = arguments[i];
 		}
 		canvasAnim.animation.libsString = libsString;
 		if(typeof callback != "undefined"){
@@ -28,18 +28,22 @@ define([], function(){
 	    });
         },
 
+        animate = function (obj){
+            return obj;
+        },
+    
         addAnimationStringToCanvasAnim = function(canvasAnim, animationString){
-            eval("canvasAnim.animation = "+animationString);
+            canvasAnim.animation = eval(animationString);
             canvasAnim.animationString = animationString;
         },
             
         addSetupToCanvasAnim = function(canvasAnim, setupString){
-	    eval("canvasAnim.animation.setup = function(context) {" + setupString + "\n};");
+	    eval("canvasAnim.animation.setup = function(context, lib) {" + setupString + "\n};");
 	    canvasAnim.animation.setupString = setupString;
 	},
 
 	addDrawToCanvasAnim = function(canvasAnim, drawString){
-	    eval("canvasAnim.animation.draw = function(context, borders) {" + drawString + "\n};");
+	    eval("canvasAnim.animation.draw = function(context, borders, lib) {" + drawString + "\n};");
 	    canvasAnim.animation.drawString = drawString;
 	},
 

@@ -34,13 +34,20 @@ avoir des animations par defaut dans des fichiers javascripts chargés par index
 * new syntax format
 ** evalEvil prend une animation sous la forme suivante (string)
 
-"function(){
+"animate(function(){
    var i = 0;
    return {
+      libs:{"http:/burp", "burp"},
       setup: function(ctx, borders, libs){...},
       draw: function(ctx, borders, libs){...}
    };
-}"
+});"
+
+"animate({
+      libs:{"http:/burp", "burp"},
+      setup: function(ctx, borders, libs){...},
+      draw: function(ctx, borders, libs){...}
+   });"
 
 donc il va falloir passer les librairies en argument
 au lieu de les coller à this.
