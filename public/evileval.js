@@ -28,9 +28,9 @@ define([], function(){
 	    });
         },
 
-        animate = function (obj){
+        x = {animate: function (obj){
             return obj;
-        },
+        }},
     
         addAnimationStringToCanvasAnim = function(canvasAnim, animationString){
             canvasAnim.animation = eval(animationString);

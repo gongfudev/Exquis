@@ -1,4 +1,4 @@
-animate({
+x.animate({
     name: "carreQuiTourne",
     libs:{},
     setup: function(context, borders){

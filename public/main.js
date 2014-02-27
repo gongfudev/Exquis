@@ -1,7 +1,8 @@
 
-var main = function(net, exquis){
+var main = function(net, init){
+    window.x = {};
     window.load = function(){
-        net.loadAnimations(exquis);
+        net.loadAnimations(window.x, init);
     };
     window.test = function(){
         require(["tests/clientTest"],

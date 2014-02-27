@@ -33,8 +33,8 @@ avoir des animations par defaut dans des fichiers javascripts chargés par index
 ** bug: class invalid sur le textArea des libs restent rouge même quand on sélectionne une autre animation (valide)
 * new syntax format
 ** evalEvil prend une animation sous la forme suivante (string)
-
-"animate(function(){
+http://stackoverflow.com/questions/20838067/catch-js-errors-when-adding-a-script-dynamically
+"x.animate(function(){
    var i = 0;
    return {
       libs:{"http:/burp", "burp"},

@@ -45,8 +45,12 @@ define(["net",
                 this.animation.setup(context, this.lib);
             }
         };
-
-        evileval.addAnimationToCanvasAnim(jsonAnimation.animation, canvasAnim);
+        
+	try{
+            evileval.addAnimationToCanvasAnim(jsonAnimation.animation, canvasAnim);
+	}catch(e){
+            console.error(e);
+        }
 
         return canvasAnim;
 
@@ -103,9 +107,7 @@ define(["net",
     };
 
 
-    var exquis = {};
-            
-    var init = function (assName, jsonAnimations) {
+    var init = function (exquis, assName, jsonAnimations) {
 
         var container = document.getElementById("container");
 

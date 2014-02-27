@@ -106,7 +106,7 @@ define(["iter2d"], function(iter2d){
 	return "/animations/"+animationName+".json";
     };
 
-    var loadAssemblage = function(assName, handleJsonAnimations){
+    var loadAssemblage = function(exquis, assName, handleJsonAnimations){
 	var assemblagePath = "/assemblages/";
 	
         if(!assName){
@@ -120,16 +120,16 @@ define(["iter2d"], function(iter2d){
             var animationNames = iter2d.map2dArray(assemblage, makeJsonName);
 
             loadJsons2d(animationNames, function(jsonAnimations){
-                handleJsonAnimations(assName, jsonAnimations);
+                handleJsonAnimations(exquis, assName, jsonAnimations);
             });
             
         });
     };
 
 
-    var loadAnimations = function(handleJsonAnimations){
+    var loadAnimations = function(exquis, handleJsonAnimations){
 	var name = window.location.pathname.substr("/assemblage/".length);
-	loadAssemblage(name, handleJsonAnimations);
+	loadAssemblage(exquis, name, handleJsonAnimations);
     };
 
     return {saveAnimation: saveAnimation,
