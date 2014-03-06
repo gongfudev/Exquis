@@ -1,0 +1,3 @@
+[["copieBordSudEst", "copieBordSud", "copieBordOuest"],
+["copieBordSudEst", "carreQuiTourne.js", "copieBordOuest"],
+["carreQuiTourne.js", "copieBordNordOuest", "copieBordNord"]]

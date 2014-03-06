@@ -32,7 +32,7 @@ define(["iter2d"], function(iter2d){
         var loadedFileCount = 0;
 
         var handleJson = function(result, path, position){
-                var name =  /animations\/(\w+)\.json/.exec(path)[1];
+                var name =  /animations\/(\w+)\.js(on)?/.exec(path)[1];
                 
                 if(results[position.row] === undefined){
                   results[position.row] = [];
@@ -59,7 +59,14 @@ define(["iter2d"], function(iter2d){
 
     //TODO add an error handler callback
     var loadJson = function(path, callback, callbackRestArgs){
-
+        console.log(path);
+        if(path.match(/.js$/)){
+            //TODO this line appears 3 times in this file goddammit
+            var name =  /animations\/(\w+)\.js(on)?/.exec(path)[1];
+            callback(name, path, callbackRestArgs);
+            return;
+        }
+        
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function(){
             if (xmlhttp.readyState==4 && xmlhttp.status==200){
@@ -102,8 +109,9 @@ define(["iter2d"], function(iter2d){
     };
 
     
-    var makeJsonName = function(animationName){
-	return "/animations/"+animationName+".json";
+    var makeAnimationFileName = function(animationName){
+        var name = "/animations/"+animationName;
+	return name.match(/.js$/) ? name : name + ".json";
     };
 
     var loadAssemblage = function(exquis, assName, handleJsonAnimations){
@@ -117,7 +125,7 @@ define(["iter2d"], function(iter2d){
 
         loadJson(assemblagePath, function(assemblage){
             
-            var animationNames = iter2d.map2dArray(assemblage, makeJsonName);
+            var animationNames = iter2d.map2dArray(assemblage, makeAnimationFileName);
 
             loadJsons2d(animationNames, function(jsonAnimations){
                 handleJsonAnimations(exquis, assName, jsonAnimations);
@@ -135,7 +143,7 @@ define(["iter2d"], function(iter2d){
     return {saveAnimation: saveAnimation,
 	    loadAnimations: loadAnimations,
 	    loadJson: loadJson,
-	    makeJsonName: makeJsonName,
+	    makeJsonName: makeAnimationFileName,
             saveAssemblage: saveAssemblage};
     
 });

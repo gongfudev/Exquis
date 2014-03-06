@@ -4,8 +4,9 @@ define([], function(){
 	    if(typeof libsString == "undefined"){
 		return;
 	    }
-						 
-	    var libs = JSON.parse(libsString),
+
+            //TODO rename libsString to something more reasonable
+	    var libs = typeof libsString == "string" ? JSON.parse(libsString): libsString,
 		addresses = [],
 		aliases = [];
 	    
@@ -28,10 +29,17 @@ define([], function(){
 	    });
         },
 
-        x = {animate: function (obj){
-            return obj;
-        }},
-    
+        loadJsAnimOnCanvasAnim = function(exquis, jsAnimPath, canvasAnim){
+            exquis.loadingCanvasAnim = canvasAnim;
+            
+            var script = document.createElement('script');
+            script.src = jsAnimPath;
+            script.async = false;
+            // TODO: add onload property to remove script tag when no longer needed
+
+            document.head.appendChild(script);
+        },
+        
         addAnimationStringToCanvasAnim = function(canvasAnim, animationString){
             canvasAnim.animation = eval(animationString);
             canvasAnim.animationString = animationString;
@@ -59,7 +67,17 @@ define([], function(){
 	        addDrawToCanvasAnim.call(that, canvasAnim, animation.draw);
 		canvasAnim.setup();
 	    });
-	};
+	},
+
+        evalWithScriptTag = function(document, animationString, canvasAnim){
+            var element = document.createElement("script");
+            element.language = "javascript";
+            element.type = "text/javascript";       
+            // element.defer = true;
+            element.text = animationString;
+            var head = document.getElementsByTagName('head')[0];
+            head.appendChild(element);
+        };
 	
     return {
         addLibsToCanvasAnim: addLibsToCanvasAnim, 

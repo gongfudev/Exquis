@@ -8,21 +8,24 @@ define(["net",
         "evileval"], function(net, iter2d, editorView, editorController, csshelper, evileval){
             
 
-    var makeCell = function(row, col, height, width, jsonAnim){
+    var makeCell = function(row, col, height, width, jsonAnim, exquis){
         var canvas = makeCanvas(row, col, height, width), 
-            context = canvas.getContext("2d"); 
-        return {
-            canvasAnim: makeCanvasAnimation(context, jsonAnim),
-            hint: makeHint(row, col, height, width)
-        };
+            context = canvas.getContext("2d"), 
+            cell = {};
+
+        cell.canvasAnim = makeCanvasAnimation(context, jsonAnim, exquis);
+        cell.hint = makeHint(row, col, height, width);
+
+        return cell;
     };
 
-    var makeCanvasAnimation = function(context, jsonAnimation){
+    var makeCanvasAnimation = function(context, jsonAnimation, exquis){
 
+        var isJsAnim = typeof jsonAnimation == "string"; 
 
         var canvasAnim = {
             animation : {},
-            animationName: jsonAnimation.name,
+            animationName: isJsAnim ? jsonAnimation : jsonAnimation.name,
 
             borders : function(){
                return {
@@ -36,7 +39,9 @@ define(["net",
             draw : function(borders){
                 // force reset matrix
                 context.setTransform(1, 0, 0, 1, 0, 0);
-                this.animation.draw(context, borders, this.lib);
+                if(this.animation.draw){
+                    this.animation.draw(context, borders, this.lib);
+                }
             },
 
             setup : function(){
@@ -45,11 +50,15 @@ define(["net",
                 this.animation.setup(context, this.lib);
             }
         };
-        
-	try{
-            evileval.addAnimationToCanvasAnim(jsonAnimation.animation, canvasAnim);
-	}catch(e){
-            console.error(e);
+
+        if (isJsAnim){
+            evileval.loadJsAnimOnCanvasAnim(exquis, jsonAnimation, canvasAnim);
+        }else{
+	    try{
+                evileval.addAnimationToCanvasAnim(jsonAnimation.animation, canvasAnim);
+	    }catch(e){
+                console.error(e);
+            }
         }
 
         return canvasAnim;
@@ -118,7 +127,7 @@ define(["net",
         exquis.cells = iter2d.map2dArray(jsonAnimations,function(jsonAnim,row,col){
             var height = 150,
                 width = 150,
-                cell = makeCell(row, col, height, width, jsonAnim),
+                cell = makeCell(row, col, height, width, jsonAnim, exquis),
                 edit = function(){ 
                     if (exquis.targetCell) { csshelper.removeClass(exquis.targetCell.hint, "visible-cell"); }
                     exquis.targetCell = cell;
@@ -133,6 +142,13 @@ define(["net",
             return  cell;
         });
 
+        exquis.animate = function(animation){
+            exquis.loadingCanvasAnim.animation = animation;
+	    evileval.addLibsToCanvasAnim(exquis.loadingCanvasAnim, animation.libs, function(){
+		exquis.loadingCanvasAnim.setup();
+	    });
+        };
+        
         addHintListeners(exquis.cells);
         
         exquis.assemblage = function(){

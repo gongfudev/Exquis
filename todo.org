@@ -43,7 +43,7 @@ http://stackoverflow.com/questions/20838067/catch-js-errors-when-adding-a-script
    };
 });"
 
-"animate({
+"x.animate({
       libs:{"http:/burp", "burp"},
       setup: function(ctx, borders, libs){...},
       draw: function(ctx, borders, libs){...}
