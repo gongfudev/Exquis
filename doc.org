@@ -1,6 +1,18 @@
-
 * bootstrap mechanism
-main.js calls net.loadAnimations with exquis.init as argument
+
+** main.js calls net.loadAnimations with exquis.init as argument
+net.loadAnimations(x, init) 
+net.loadAssemblage(x, assName, init)
+*** gets assemblage json (2d array of names)
+*** net.loadJsons2d(animNames : creates jsonAnimations
+**** returns 2d array of Animation.json where {animation: { setup: string, draw:string}, name: string} 
+*** init(x, assName, jsonAnimations: 2dArray of Animation.json)
+  
+** init creates attributes of the global exquis (x) object
+*** cells
+*** animate
+
+
 exquis.init is called with all the loaded animations as argument
 exquis.init creates an exquis object and calls makeEditor(exquis)b
 

@@ -117,7 +117,7 @@ define(["net",
 
 
     var init = function (exquis, assName, jsonAnimations) {
-
+        console.log(jsonAnimations);
         var container = document.getElementById("container");
 
         exquis.assName = assName;

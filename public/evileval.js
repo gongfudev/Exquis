@@ -29,12 +29,13 @@ define([], function(){
 	    });
         },
 
-        loadJsAnimOnCanvasAnim = function(exquis, jsAnimPath, canvasAnim){
+        loadJsAnimOnCanvasAnim = function(exquis, jsAnimPath, canvasAnim, onLoadCallback){
             exquis.loadingCanvasAnim = canvasAnim;
             
             var script = document.createElement('script');
             script.src = jsAnimPath;
             script.async = false;
+            script.addEventListener('load', onLoadCallback);
             // TODO: add onload property to remove script tag when no longer needed
 
             document.head.appendChild(script);
@@ -84,7 +85,9 @@ define([], function(){
 	addAnimationStringToCanvasAnim: addAnimationStringToCanvasAnim,
         addAnimationToCanvasAnim: addAnimationToCanvasAnim,
 	addDrawToCanvasAnim: addDrawToCanvasAnim,
-	addSetupToCanvasAnim: addSetupToCanvasAnim
+	addSetupToCanvasAnim: addSetupToCanvasAnim,
+        loadJsAnimOnCanvasAnim: loadJsAnimOnCanvasAnim,
+        functionBodyAsString: functionBodyAsString  
     };
 
 });

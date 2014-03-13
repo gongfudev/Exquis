@@ -1,6 +1,6 @@
 "use strict";
 
-define(["iter2d"], function(iter2d){
+define(["iter2d", "evileval"], function(iter2d, evileval){
     
     var loadJsons = function(jsons, callback ){
 
@@ -43,6 +43,7 @@ define(["iter2d"], function(iter2d){
                 loadedFileCount++;
 
                 if (loadedFileCount === totalFileCount){
+                    console.log(results);
                     callback(results);
                 }
         };
@@ -63,7 +64,13 @@ define(["iter2d"], function(iter2d){
         if(path.match(/.js$/)){
             //TODO this line appears 3 times in this file goddammit
             var name =  /animations\/(\w+)\.js(on)?/.exec(path)[1];
-            callback(name, path, callbackRestArgs);
+            evileval.loadJsAnimOnCanvasAnim(x, path, {}, function(){
+                var animation = { setup : evileval.functionBodyAsString(x.loadingCanvasAnim.animation.setup),
+                                  draw:  evileval.functionBodyAsString(x.loadingCanvasAnim.animation.draw),
+                                  libs:"{}"};
+                callback(animation, path, callbackRestArgs);
+            });
+           
             return;
         }
         

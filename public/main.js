@@ -1,6 +1,15 @@
 
-var main = function(net, init){
-    window.x = {};
+var main = function(net, init, evileval){
+    window.x = {
+        animate : function(animation){
+            var that = this;
+            that.loadingCanvasAnim.animation = animation;
+	    evileval.addLibsToCanvasAnim(that.loadingCanvasAnim, animation.libs, function(){
+	        if(that.loadingCanvasAnim.hasOwnProperty("setup")){
+                    that.loadingCanvasAnim.setup();
+                }
+	    });
+    }};
     window.load = function(){
         net.loadAnimations(window.x, init);
     };
@@ -21,4 +30,4 @@ var main = function(net, init){
     window.load();
 };
 
-require(["net", "exquis", "lib/domReady!"], main);
+require(["net", "exquis", "evileval", "lib/domReady!"], main);
