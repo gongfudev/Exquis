@@ -21,11 +21,10 @@ define(["net",
 
     var makeCanvasAnimation = function(context, jsonAnimation, exquis){
 
-        var isJsAnim = typeof jsonAnimation == "string"; 
-
+        var isJsAnim = true; 
         var canvasAnim = {
-            animation : {},
-            animationName: isJsAnim ? jsonAnimation : jsonAnimation.name,
+            animation : jsonAnimation.animation.js,// {},
+            animationName: jsonAnimation.name,
 
             borders : function(){
                return {
@@ -46,13 +45,14 @@ define(["net",
 
             setup : function(){
                 // force reset matrix
+                console.log(this.animation);
                 context.setTransform(1, 0, 0, 1, 0, 0);
                 this.animation.setup(context, this.lib);
             }
         };
-
+/*
         if (isJsAnim){
-            evileval.loadJsAnimOnCanvasAnim(exquis, jsonAnimation, canvasAnim);
+           //canvasAnim.animation = jsonAnimation.js;
         }else{
 	    try{
                 evileval.addAnimationToCanvasAnim(jsonAnimation.animation, canvasAnim);
@@ -60,7 +60,8 @@ define(["net",
                 console.error(e);
             }
         }
-
+*/
+        canvasAnim.setup();
         return canvasAnim;
 
     };

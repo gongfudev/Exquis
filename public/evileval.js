@@ -60,13 +60,16 @@ define([], function(){
 	    return func.toString().replace(/function\s*\([\w\s,]*\)\s*{\n?(\s*[\s\S]*)}/g,"$1");
 	    //.replace(/\n/g,"\\n");
 	},
-	addAnimationToCanvasAnim = function(animation, canvasAnim){
+	addAnimationToCanvasAnim = function(animation, canvasAnim, onDone){
             var that = this;
-	    
 	    addLibsToCanvasAnim(canvasAnim, animation.libs, function(){
+
 	        addSetupToCanvasAnim.call(that, canvasAnim, animation.setup);
 	        addDrawToCanvasAnim.call(that, canvasAnim, animation.draw);
-		canvasAnim.setup();
+	        if(canvasAnim.hasOwnProperty("setup")){
+		    canvasAnim.setup();
+                }
+                onDone();
 	    });
 	},
 
