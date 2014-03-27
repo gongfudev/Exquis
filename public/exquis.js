@@ -45,7 +45,6 @@ define(["net",
 
             setup : function(){
                 // force reset matrix
-                console.log(this.animation);
                 context.setTransform(1, 0, 0, 1, 0, 0);
                 this.animation.setup(context, this.lib);
             }
@@ -118,7 +117,6 @@ define(["net",
 
 
     var init = function (exquis, assName, jsonAnimations) {
-        console.log(jsonAnimations);
         var container = document.getElementById("container");
 
         exquis.assName = assName;

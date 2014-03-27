@@ -29,16 +29,29 @@ define([], function(){
 	    });
         },
 
+        createScriptTag = function(onLoadCallback){
+            var script = document.createElement('script');
+            script.language = "javascript";
+            script.type = "text/javascript";
+            script.async = false;
+            script.addEventListener('load', function(){
+                onLoadCallback();
+                document.head.removeChild(script);
+            });
+            document.head.appendChild(script);
+            return script;
+        },
+
+        evalInScript = function(codeString, onLoadCallback){
+            var script = createScriptTag(onLoadCallback);
+            script.text = codeString;
+        },
+
         loadJsAnimOnCanvasAnim = function(exquis, jsAnimPath, canvasAnim, onLoadCallback){
             exquis.loadingCanvasAnim = canvasAnim;
-            
-            var script = document.createElement('script');
+            var script = createScriptTag(onLoadCallback);
             script.src = jsAnimPath;
-            script.async = false;
-            script.addEventListener('load', onLoadCallback);
-            // TODO: add onload property to remove script tag when no longer needed
 
-            document.head.appendChild(script);
         },
         
         addAnimationStringToCanvasAnim = function(canvasAnim, animationString){
@@ -71,17 +84,8 @@ define([], function(){
                 }
                 onDone();
 	    });
-	},
+	};
 
-        evalWithScriptTag = function(document, animationString, canvasAnim){
-            var element = document.createElement("script");
-            element.language = "javascript";
-            element.type = "text/javascript";       
-            // element.defer = true;
-            element.text = animationString;
-            var head = document.getElementsByTagName('head')[0];
-            head.appendChild(element);
-        };
 	
     return {
         addLibsToCanvasAnim: addLibsToCanvasAnim, 
