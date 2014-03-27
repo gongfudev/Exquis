@@ -42,7 +42,8 @@ define([], function(){
             return script;
         },
 
-        evalInScript = function(codeString, onLoadCallback){
+        evalInScript = function(exquis, codeString, canvasAnim, onLoadCallback){
+            exquis.loadingCanvasAnim = canvasAnim;
             var script = createScriptTag(onLoadCallback);
             script.text = codeString;
         },
@@ -82,7 +83,9 @@ define([], function(){
 	        if(canvasAnim.hasOwnProperty("setup")){
 		    canvasAnim.setup();
                 }
-                onDone();
+                if(typeof onDone != "undefined"){
+                    onDone();
+                }
 	    });
 	};
 
@@ -94,7 +97,8 @@ define([], function(){
 	addDrawToCanvasAnim: addDrawToCanvasAnim,
 	addSetupToCanvasAnim: addSetupToCanvasAnim,
         loadJsAnimOnCanvasAnim: loadJsAnimOnCanvasAnim,
-        functionBodyAsString: functionBodyAsString  
+        functionBodyAsString: functionBodyAsString,
+        evalInScript: evalInScript
     };
 
 });

@@ -84,6 +84,17 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
 		    displayLibsValidity(false);
 		}
 	    },
+            assembleCode : function(name, libsString, setupString, drawString){
+                var result = "x.animate({name: '"+ name +"', libs:"+ libsString;
+                result += ",setup: function(context, borders){"+ setupString +"}";
+                result += ",draw: function(context, borders, libs){"+ drawString +"}});";
+                return result;   
+            },
+            onCodeChange: function(libsString, setupString, drawString, displayValidity){
+                var name = exquis.targetCell.canvasAnim.animationName,
+                    codeString = this.assembleCode( name, libsString, setupString, drawString);
+                evileval.evalInScript(exquis, codeString, exquis.targetCell.canvasAnim);
+            },
             onEditorSetupChange: function(setupString, displaySetupValidity){
 		var targetCell = exquis.targetCell;
 		targetCell.canvasAnim.updateSetup = function(){

@@ -13,6 +13,9 @@ var main = function(net, init, evileval){
     window.load = function(){
         net.loadAnimations(window.x, init);
     };
+    window.onerror = function(message, url, lineNumber){
+        console.log(message +" "+ url +" "+ lineNumber);
+    };
     window.test = function(){
         require(["tests/clientTest"],
                 function(clientTest){

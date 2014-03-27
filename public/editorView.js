@@ -56,7 +56,10 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
         var addLibsListener = function(textAreaLibs, displayLibsValidity){
             displayLibsValidity(true);
             textAreaLibs.onkeyup = function(){
-                textAreaController.onEditorLibsChange(textAreaLibs.value, displayLibsValidity);
+                textAreaController.onCodeChange(textAreaLibs.value,
+                                                textAreaSetup.getValue(),
+                                                textAreaDraw.getValue(),
+                                                displaySetupValidity);
 	    };
         };
       
@@ -64,15 +67,22 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
             displaySetupValidity(true);
         
             textAreaSetup.getSession().on('change', function(e) {
-                textAreaController.onEditorSetupChange(textAreaSetup.getValue(), displaySetupValidity);
+                textAreaController.onCodeChange(textAreaLibs.value,
+                                                textAreaSetup.getValue(),
+                                                textAreaDraw.getValue(),
+                                                displaySetupValidity);
             });
         };
+
         
         var addDrawListener = function(textAreaDraw, displayDrawValidity){
             displayDrawValidity(true);
  
             textAreaDraw.getSession().on('change', function(e) {
-                textAreaController.onEditorDrawChange(textAreaDraw.getValue(), displayDrawValidity);
+                textAreaController.onCodeChange(textAreaLibs.value,
+                                                textAreaSetup.getValue(),
+                                                textAreaDraw.getValue(),
+                                                displaySetupValidity);
             });
         };
         
@@ -100,18 +110,18 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
             editor.setFontSize("14px");
         });
 	var setEditorContent = function(libsString, setupString, drawString, animationName){
-        textAreaLibs.value = libsString;
+            textAreaLibs.value = libsString;
 
-        textAreaSetup.setValue(setupString);
-        textAreaSetup.getSession().selection.clearSelection();
-        
-        textAreaDraw.setValue(drawString);
-        textAreaDraw.getSession().selection.clearSelection();
-        
-        displayAnimationName(animationName);
-        displaySetupValidity(true);
-        displayDrawValidity(true);
-        displayLibsValidity(true);
+            textAreaSetup.setValue(setupString);
+            textAreaSetup.getSession().selection.clearSelection();
+            
+            textAreaDraw.setValue(drawString);
+            textAreaDraw.getSession().selection.clearSelection();
+            
+            displayAnimationName(animationName);
+            displaySetupValidity(true);
+            displayDrawValidity(true);
+            displayLibsValidity(true);
     };
 	
 	return {
