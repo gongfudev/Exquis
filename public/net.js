@@ -50,13 +50,24 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
         for(var i=0; i<jsons.length; i++){
           var lastrow = i == (jsons.length - 1);
           for(var j=0; j<jsons[i].length; j++){
-             var position = {row: i, col: j};
-             loadJsonAnimation(jsons[i][j], handleJson, position);
+             var position = {row: i, col: j},
+                 animationName = jsons[i][j];
+             if(isExternalJs(animationName)){
+                 //TODO this does not work
+                animationName = /http:.*\/(\w+\.js)/.exec(animationName)[1];
+             }
+             console.log(animationName); 
+             
+             loadJsonAnimation(animationName, handleJson, position);
           }
         }
 
     };
 
+    var isExternalJs = function(url){
+        return url.match(/http:\/\//);
+    };
+    
     //TODO add an error handler callback
     var loadJsonAnimation = function(path, callback, callbackRestArgs){
         if(path.match(/.js$/)){
