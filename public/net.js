@@ -16,7 +16,7 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
             }
         };
         for(var i=0; i<jsons.length; i++){
-           loadJson(jsons[i], handleJson);
+           loadJsonAnimation(jsons[i], handleJson);
         }
 
     };
@@ -51,14 +51,14 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
           var lastrow = i == (jsons.length - 1);
           for(var j=0; j<jsons[i].length; j++){
              var position = {row: i, col: j};
-             loadJson(jsons[i][j], handleJson, position);
+             loadJsonAnimation(jsons[i][j], handleJson, position);
           }
         }
 
     };
 
     //TODO add an error handler callback
-    var loadJson = function(path, callback, callbackRestArgs){
+    var loadJsonAnimation = function(path, callback, callbackRestArgs){
         if(path.match(/.js$/)){
             //TODO this line appears 3 times in this file goddammit
             var name =  /animations\/(\w+)\.js(on)?/.exec(path)[1];
@@ -72,7 +72,7 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
            
             return;
         }else if(path.match(/animations.*.json$/)){
-            var onSimpleJsonLoad = function(result, path, callbackRestArgsWAWA){
+            var onJsonLoad = function(result, path, callbackRestArgsWAWA){
                 var fakeCanvasAnim = {animation:{}},
                     onEvilDone = function(){
                         result.js = fakeCanvasAnim.animation;
@@ -84,15 +84,15 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
                     console.error(e);
                 }
             };
-            simpleLoadJson(path, onSimpleJsonLoad);
+            loadJson(path, onJsonLoad);
             
         }else{
-            simpleLoadJson(path, callback, callbackRestArgs);
+            loadJson(path, callback, callbackRestArgs);
         }
         
     };
     
-    var simpleLoadJson = function(path, callback, callbackRestArgs){
+    var loadJson = function(path, callback, callbackRestArgs){
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function(){
             if (xmlhttp.readyState==4 && xmlhttp.status==200){
@@ -168,6 +168,7 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
 
     return {saveAnimation: saveAnimation,
 	    loadAnimations: loadAnimations,
+	    loadJsonAnimation: loadJsonAnimation,
 	    loadJson: loadJson,
 	    makeJsonName: makeAnimationFileName,
             saveAssemblage: saveAssemblage};

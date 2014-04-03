@@ -39,7 +39,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
             load: function(){
                 var pickAnimation = function(e){
 		    var chosenAnimation = e.target.textContent;
-		    net.loadJson(net.makeJsonName(chosenAnimation), function(animation){
+		    net.loadJsonAnimation(net.makeJsonName(chosenAnimation), function(animation){
 		        var canvasAnim = exquis.targetCell.canvasAnim;
 		        evileval.addAnimationToCanvasAnim(animation, canvasAnim);
 		        canvasAnim.animationName = chosenAnimation;
@@ -48,7 +48,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
                         ui.showDialog(false);
 		    });
                 };
-		net.loadJson("/animations/", function(files){
+		net.loadJsonAnimation("/animations/", function(files){
                     ui.showDialog(true);
 		    ui.populateFilePicker(files, pickAnimation);
 		});
