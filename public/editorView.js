@@ -53,75 +53,41 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
             };
         };
 
-        var addLibsListener = function(textAreaLibs, displayLibsValidity){
-            displayLibsValidity(true);
-            textAreaLibs.onkeyup = function(){
-                textAreaController.onCodeChange(textAreaLibs.value,
-                                                textAreaSetup.getValue(),
-                                                textAreaDraw.getValue(),
-                                                displaySetupValidity);
-	    };
-        };
-      
         var addSetupListener = function(textAreaSetup, displaySetupValidity){
             displaySetupValidity(true);
         
             textAreaSetup.getSession().on('change', function(e) {
-                textAreaController.onCodeChange(textAreaLibs.value,
-                                                textAreaSetup.getValue(),
-                                                textAreaDraw.getValue(),
+                textAreaController.onCodeChange(textAreaSetup.getValue(),
                                                 displaySetupValidity);
             });
         };
 
         
-        var addDrawListener = function(textAreaDraw, displayDrawValidity){
-            displayDrawValidity(true);
- 
-            textAreaDraw.getSession().on('change', function(e) {
-                textAreaController.onCodeChange(textAreaLibs.value,
-                                                textAreaSetup.getValue(),
-                                                textAreaDraw.getValue(),
-                                                displaySetupValidity);
-            });
-        };
         
 	var editor = document.getElementById("editor"),
             displayAssemblageName = makeTextContentSetter(document.getElementById("assemblage_name")),
             displayAnimationName = makeTextContentSetter(document.getElementById("filename_display")),
             textAreaSetup = ace.edit("text_area_setup"),
-	    textAreaDraw =  ace.edit("text_area_draw"),
-	    textAreaLibs = document.getElementById("text_area_libs"),
-            displayLibsValidity = makeDisplayCodeValidity(textAreaLibs), 
-            displaySetupValidity = makeDisplayCodeValidityForAce(textAreaSetup), 
-            displayDrawValidity = makeDisplayCodeValidityForAce(textAreaDraw);
-        addLibsListener(textAreaLibs, displayLibsValidity);
+            displaySetupValidity = makeDisplayCodeValidityForAce(textAreaSetup); 
         addSetupListener(textAreaSetup, displaySetupValidity);
-        addDrawListener(textAreaDraw, displayDrawValidity);
         makeAnimationButtons(displayAnimationName);
         makeAssemblageButtons(displayAssemblageName);
         displayAssemblageName(assController.getAssemblageName());
 
 
-        [textAreaSetup, textAreaDraw].forEach(function(editor){
-            editor.setTheme("ace/theme/katzenmilch");
-            editor.getSession().setMode("ace/mode/javascript");
-            editor.renderer.setShowGutter(false);
-            editor.setFontSize("14px");
-        });
+        textAreaSetup.setTheme("ace/theme/katzenmilch");
+        textAreaSetup.getSession().setMode("ace/mode/javascript");
+        textAreaSetup.renderer.setShowGutter(false);
+        textAreaSetup.setFontSize("14px");
+
 	var setEditorContent = function(libsString, setupString, drawString, animationName, animation){
-            textAreaLibs.value = libsString;
 
             textAreaSetup.setValue(evileval.stringify(animation));
             textAreaSetup.getSession().selection.clearSelection();
             
-            textAreaDraw.setValue(drawString);
-            textAreaDraw.getSession().selection.clearSelection();
             
             displayAnimationName(animationName);
             displaySetupValidity(true);
-            displayDrawValidity(true);
-            displayLibsValidity(true);
     };
 	
 	return {

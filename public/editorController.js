@@ -90,22 +90,16 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
                 result += ",draw: function(context, borders, libs){"+ drawString +"}});";
                 return result;   
             },
-            onCodeChange: function(libsString, setupString, drawString, displayValidity){
+            onCodeChange: function(codeString, displayValidity){
 		var targetCell = exquis.targetCell;
-                        console.log("updateSetup");
+                // TODO: call displayValidity
 		targetCell.canvasAnim.updateSetup = function(){
 		    var canvasAnim = targetCell.canvasAnim;
 
-                    evileval.evalInScript(exquis, setupString, targetCell.canvasAnim, function(){
-                        console.log("script loaded");
+                    evileval.evalInScript(exquis, codeString, targetCell.canvasAnim, function(){
                         console.log(arguments);
                     });
 		};
-                /*
-                 var name = exquis.targetCell.canvasAnim.animationName,
-                    codeString = this.assembleCode( name, libsString, setupString, drawString);
-                evileval.evalInScript(exquis, codeString, exquis.targetCell.canvasAnim);
-                 */
             },
             onEditorSetupChange: function(setupString, displaySetupValidity){
 		var targetCell = exquis.targetCell;
