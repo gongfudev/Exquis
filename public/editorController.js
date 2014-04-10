@@ -91,21 +91,40 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
                 return result;   
             },
             onCodeChange: function(libsString, setupString, drawString, displayValidity){
-                var name = exquis.targetCell.canvasAnim.animationName,
+		var targetCell = exquis.targetCell;
+                        console.log("updateSetup");
+		targetCell.canvasAnim.updateSetup = function(){
+		    var canvasAnim = targetCell.canvasAnim;
+
+                    evileval.evalInScript(exquis, setupString, targetCell.canvasAnim, function(){
+                        console.log("script loaded");
+                        console.log(arguments);
+                    });
+		};
+                /*
+                 var name = exquis.targetCell.canvasAnim.animationName,
                     codeString = this.assembleCode( name, libsString, setupString, drawString);
                 evileval.evalInScript(exquis, codeString, exquis.targetCell.canvasAnim);
+                 */
             },
             onEditorSetupChange: function(setupString, displaySetupValidity){
 		var targetCell = exquis.targetCell;
+                        console.log("updateSetup");
 		targetCell.canvasAnim.updateSetup = function(){
 		    var canvasAnim = targetCell.canvasAnim;
+
+                    evileval.evalInScript(exquis, setupString, targetCell.canvasAnim, function(){
+                        console.log("script loaded");
+                        console.log(arguments);
+                    });
+                    /*
 		    try{
 			evileval.addSetupToCanvasAnim(canvasAnim, setupString);
 			canvasAnim.setup();
 			displaySetupValidity(true);
 		    }catch(e){
 			displaySetupValidity(false);
-		    }
+		    }*/
 		};
             },
             onEditorDrawChange: function(drawString, displayDrawValidity){

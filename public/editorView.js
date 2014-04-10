@@ -109,10 +109,10 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
             editor.renderer.setShowGutter(false);
             editor.setFontSize("14px");
         });
-	var setEditorContent = function(libsString, setupString, drawString, animationName){
+	var setEditorContent = function(libsString, setupString, drawString, animationName, animation){
             textAreaLibs.value = libsString;
 
-            textAreaSetup.setValue(setupString);
+            textAreaSetup.setValue(evileval.stringify(animation));
             textAreaSetup.getSession().selection.clearSelection();
             
             textAreaDraw.setValue(drawString);

@@ -89,6 +89,21 @@ define([], function(){
 	    });
 	};
 
+    var stringify = function(animation){
+        var libs = animation.libs,
+            string = "x.animate({libs:{",
+            libsContent = [];
+        for(property in libs){
+            if(libs.hasOwnProperty(property)){
+                libsContent.push( "\"" + property + "\":\"" + libs[property] +"\"");
+            }
+        }
+        string += libsContent.join(", ") + "},\n";
+        string += "draw: " + animation.draw.toString() + ",\n";
+        string += "setup: " + animation.setup.toString() + "});";
+        return string;
+    };
+
 	
     return {
         addLibsToCanvasAnim: addLibsToCanvasAnim, 
@@ -98,7 +113,8 @@ define([], function(){
 	addSetupToCanvasAnim: addSetupToCanvasAnim,
         loadJsAnimOnCanvasAnim: loadJsAnimOnCanvasAnim,
         functionBodyAsString: functionBodyAsString,
-        evalInScript: evalInScript
+        evalInScript: evalInScript,
+        stringify: stringify  
     };
 
 });

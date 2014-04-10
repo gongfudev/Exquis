@@ -131,11 +131,13 @@ define(["net",
                     if (exquis.targetCell) { csshelper.removeClass(exquis.targetCell.hint, "visible-cell"); }
                     exquis.targetCell = cell;
                     csshelper.addClass(exquis.targetCell.hint, "visible-cell");
+                    //TODO: editCanvasAnim should be in editorController
                     exquis.editorView.editCanvasAnim(
 			cell.canvasAnim.animation.libsString,
 			cell.canvasAnim.animation.setupString,
 			cell.canvasAnim.animation.drawString,
-			cell.canvasAnim.animationName);
+			cell.canvasAnim.animationName,
+			cell.canvasAnim.animation);
                 };
             cell.hint.addEventListener('click', edit, false);
             return  cell;
