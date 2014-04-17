@@ -84,18 +84,24 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
             return;
         }else if(path.match(/animations.*.json$/)){
             var onJsonLoad = function(result, path, callbackRestArgsWAWA){
-                var fakeCanvasAnim = {animation:{}},
-                    onEvilDone = function(){
+                var fakeCanvasAnim = {animation:{}};
+                /*                var fakeCanvasAnim = {animation:{}},
+                 onEvilDone = function(){
                         result.js = fakeCanvasAnim.animation;
                         callback(result, path, callbackRestArgs);
                     };
-	        try{
+
+	    try{
                     evileval.addAnimationToCanvasAnim(result, fakeCanvasAnim,
                                                       {loadingCanvasAnim:fakeCanvasAnim},
                                                       onEvilDone);
 	        }catch(e){
                     console.error(e);
-                }
+                 }
+            */
+                evileval.evalInScript(x, evileval.stringifyJSON(result), fakeCanvasAnim);  
+                result.js = fakeCanvasAnim.animation;
+                callback(result, path, callbackRestArgs);
             };
             loadJson(path, onJsonLoad);
             
@@ -122,7 +128,7 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
 					  setup: cell.animation.setupString,
                                           draw : cell.animation.drawString }),
             dirName = "animations",
-            name = (fileName || cell.animationName) + ".json";
+            name = (fileName || cell.animationName) + ".js";
 
         saveFile(dirName, name, JSONString, callback);
     };

@@ -106,6 +106,13 @@ define([], function(){
         return string;
     };
 
+    var stringifyJSON = function (jsonAnim){
+        var string = "x.animate({libs:" + jsonAnim.libs + ",\n";
+        string += "setup: function(context, lib){\n"+ jsonAnim.setup +"},\n";
+        string += "draw: function(context, borders, lib){\n"+ jsonAnim.draw +"}});";
+        return string; 
+    };
+
 	
     return {
         addLibsToCanvasAnim: addLibsToCanvasAnim, 
@@ -116,7 +123,8 @@ define([], function(){
         loadJsAnimOnCanvasAnim: loadJsAnimOnCanvasAnim,
         functionBodyAsString: functionBodyAsString,
         evalInScript: evalInScript,
-        stringify: stringify  
+        stringify: stringify,  
+        stringifyJSON: stringifyJSON  
     };
 
 });
