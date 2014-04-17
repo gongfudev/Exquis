@@ -74,8 +74,10 @@ define([], function(){
 	    return func.toString().replace(/function\s*\([\w\s,]*\)\s*{\n?(\s*[\s\S]*)}/g,"$1");
 	    //.replace(/\n/g,"\\n");
 	},
-	addAnimationToCanvasAnim = function(animation, canvasAnim, onDone){
+	addAnimationToCanvasAnim = function(animation, canvasAnim, exquis, onDone){
             var that = this;
+
+            exquis.loadingCanvasAnim = canvasAnim;
 	    addLibsToCanvasAnim(canvasAnim, animation.libs, function(){
 
 	        addSetupToCanvasAnim.call(that, canvasAnim, animation.setup);

@@ -41,10 +41,15 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
 		    var chosenAnimation = e.target.textContent;
 		    net.loadJsonAnimation(net.makeJsonName(chosenAnimation), function(animation){
 		        var canvasAnim = exquis.targetCell.canvasAnim;
-		        evileval.addAnimationToCanvasAnim(animation, canvasAnim);
+                        //exquis.loadingCanvasAnim = canvasAnim;
+		        evileval.addAnimationToCanvasAnim(animation, canvasAnim, exquis);
 		        canvasAnim.animationName = chosenAnimation;
 		        canvasAnim.setup();
-		        exquis.editorView.editCanvasAnim(animation.libs, animation.setup, animation.draw, chosenAnimation);
+		        exquis.editorView.editCanvasAnim(animation.libs,
+                                                         animation.setup,
+                                                         animation.draw,
+                                                         chosenAnimation,
+                                                         animation.js);
                         ui.showDialog(false);
 		    });
                 };

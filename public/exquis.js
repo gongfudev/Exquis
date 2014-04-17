@@ -49,17 +49,6 @@ define(["net",
                 this.animation.setup(context, this.lib);
             }
         };
-/*
-        if (isJsAnim){
-           //canvasAnim.animation = jsonAnimation.js;
-        }else{
-	    try{
-                evileval.addAnimationToCanvasAnim(jsonAnimation.animation, canvasAnim);
-	    }catch(e){
-                console.error(e);
-            }
-        }
-*/
         canvasAnim.setup();
         return canvasAnim;
 

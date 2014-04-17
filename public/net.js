@@ -90,7 +90,9 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
                         callback(result, path, callbackRestArgs);
                     };
 	        try{
-                    evileval.addAnimationToCanvasAnim(result, fakeCanvasAnim, onEvilDone);
+                    evileval.addAnimationToCanvasAnim(result, fakeCanvasAnim,
+                                                      {loadingCanvasAnim:fakeCanvasAnim},
+                                                      onEvilDone);
 	        }catch(e){
                     console.error(e);
                 }
