@@ -123,14 +123,12 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
         xmlhttp.send();
     };
     
-    var saveAnimation = function(cell, callback, fileName){
-        var JSONString = JSON.stringify({ libs: cell.animation.libsString,
-					  setup: cell.animation.setupString,
-                                          draw : cell.animation.drawString }),
+    var saveAnimation = function(canvasAnim, callback, fileName){
+        var JSString = evileval.stringify(canvasAnim.animation),
             dirName = "animations",
-            name = (fileName || cell.animationName) + ".js";
+            name = (fileName || canvasAnim.animationName) + ".js";
 
-        saveFile(dirName, name, JSONString, callback);
+        saveFile(dirName, name, JSString, callback);
     };
 
     var saveAssemblage = function(assName, assemblage, callback){
