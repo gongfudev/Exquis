@@ -2,63 +2,46 @@
 
 define(["iter2d", "evileval"], function(iter2d, evileval){
     
-    var loadJsons = function(jsons, callback ){
 
-        var results = {};
-        var counter = 0;
-        // TODO handle js and json
-        var handleJson = function(result, path){
-            var name =  /animations\/(\w+)\.json/.exec(path)[1];
-            results[name] = result;
-            counter ++;
-            if (counter == jsons.length ){
-                callback(results);
-            }
-        };
-        for(var i=0; i<jsons.length; i++){
-           loadJsonAnimation(jsons[i], handleJson);
-        }
-
-    };
-
-    var loadJsons2d = function(jsons, callback ){
+    var loadAnimations2d = function(animationNames, callback ){
 
         var results = [];
         var totalFileCount = 0;
-        for(var i=0; i<jsons.length; i++){
-          totalFileCount += jsons[i].length;
+        for(var i=0; i<animationNames.length; i++){
+          totalFileCount += animationNames[i].length;
         }
 
         var loadedFileCount = 0;
 
-        var handleJson = function(result, path, position){
-                var name =  /animations\/(\w+)\.js(on)?/.exec(path)[1];
-                
-                if(results[position.row] === undefined){
-                  results[position.row] = [];
-                }
+        // TODO: remove (obsolete: we are now loading everything synchronously)
+        var handleAnimation = function(result, path, position){
+            var name =  /animations\/(\w+)\.js/.exec(path)[1];
+            
+            if(results[position.row] === undefined){
+                results[position.row] = [];
+            }
 
-                results[position.row][position.col] = { animation: result,
-                                                        name: name };
-                loadedFileCount++;
+            results[position.row][position.col] = { animation: result,
+                                                    name: name };
+            loadedFileCount++;
 
-                if (loadedFileCount === totalFileCount){
-                    callback(results);
-                }
+            if (loadedFileCount === totalFileCount){
+                callback(results);
+            }
         };
 
-        for(var i=0; i<jsons.length; i++){
-          var lastrow = i == (jsons.length - 1);
-          for(var j=0; j<jsons[i].length; j++){
+        for(var i=0; i<animationNames.length; i++){
+          var lastrow = i == (animationNames.length - 1);
+          for(var j=0; j<animationNames[i].length; j++){
              var position = {row: i, col: j},
-                 animationName = jsons[i][j];
+                 animationName = animationNames[i][j];
              if(isExternalJs(animationName)){
                  //TODO this does not work
                 animationName = /http:.*\/(\w+\.js)/.exec(animationName)[1];
              }
              console.log(animationName); 
              
-             loadJsonAnimation(animationName, handleJson, position);
+             loadJsonAnimation(animationName, handleAnimation, position);
           }
         }
 
@@ -170,7 +153,7 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
             
             var animationNames = iter2d.map2dArray(assemblage, makeAnimationFileName);
 
-            loadJsons2d(animationNames, function(jsonAnimations){
+            loadAnimations2d(animationNames, function(jsonAnimations){
                 handleJsonAnimations(exquis, assName, jsonAnimations);
             });
             
