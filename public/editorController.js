@@ -8,8 +8,13 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
                 };
             
 	        net.loadJson("/assemblages/", function(files){
+                    files = files.filter(function(f){
+                        return f.match(/\.json$/);
+                    }).map(function(f){
+                        return f.replace(/\.json$/, "");
+                    });
                     ui.showDialog(true);
-                    ui.populateFilePicker(files, pickAssemblage);		
+                    ui.populateNamePicker(files, pickAssemblage);		
 	        });
             },
             save: function(){
@@ -39,7 +44,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
             load: function(){
                 var pickAnimation = function(e){
 		    var chosenAnimation = e.target.textContent;
-		    net.loadJsonAnimation(net.makeJsonName(chosenAnimation), function(animation){
+		    net.loadAnimation(net.makeAnimationFileName(chosenAnimation), function(animation){
 		        var canvasAnim = exquis.targetCell.canvasAnim;
 		        evileval.addAnimationToCanvasAnim(animation, canvasAnim, exquis);
 		        canvasAnim.animationName = chosenAnimation;
@@ -52,9 +57,14 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
                         ui.showDialog(false);
 		    });
                 };
-		net.loadJsonAnimation("/animations/", function(files){
+		net.loadJson("/animations/", function(files){
+                    files = files.filter(function(f){
+                        return f.match(/\.js$/);
+                    }).map(function(f){
+                        return f.replace(/\.js$/, "");
+                    });
                     ui.showDialog(true);
-		    ui.populateFilePicker(files, pickAnimation);
+		    ui.populateNamePicker(files, pickAnimation);
 		});
             },
 

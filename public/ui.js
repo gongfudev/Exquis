@@ -37,14 +37,13 @@ define(["csshelper"], function( csshelper){
         textArea.focus();
     };
    
-    var populateFilePicker = function(files, clickHandler){
+    var populateNamePicker = function(names, clickHandler){
 	dialog.innerHTML = '';
 	
-	for(var i = 0; i < files.length; ++i){
-	    var paragraph = document.createElement("p"),
-		animationName = files[i].replace(/\.json$/, "");
-	    paragraph.textContent = animationName;
-            paragraph.id = animationName;
+	for(var i = 0; i < names.length; ++i){
+	    var paragraph = document.createElement("p");
+	    paragraph.textContent = names[i];
+            paragraph.id = names[i];
 
 	    paragraph.addEventListener('click', clickHandler);
 	    
@@ -65,7 +64,7 @@ define(["csshelper"], function( csshelper){
 
     return {
         buildPrompt: buildPrompt,
-        populateFilePicker: populateFilePicker,
+        populateNamePicker: populateNamePicker,
         showDialog: showDialog
     };
 });

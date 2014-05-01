@@ -41,7 +41,7 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
              }
              console.log(animationName); 
              
-             loadJsonAnimation(animationName, handleAnimation, position);
+             loadAnimation(animationName, handleAnimation, position);
           }
         }
 
@@ -52,7 +52,7 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
     };
     
     //TODO add an error handler callback
-    var loadJsonAnimation = function(path, callback, callbackRestArgs){
+    var loadAnimation = function(path, callback, callbackRestArgs){
         if(path.match(/.js$/)){
             //TODO this line appears 3 times in this file goddammit
             var name =  /animations\/(\w+)\.js(on)?/.exec(path)[1];
@@ -63,35 +63,9 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
                                   js: x.loadingCanvasAnim.animation};
                 callback(animation, path, callbackRestArgs);
             });
-           
-            return;
-        }else if(path.match(/animations.*.json$/)){
-            var onJsonLoad = function(result, path, callbackRestArgsWAWA){
-                var fakeCanvasAnim = {animation:{}};
-                /*                var fakeCanvasAnim = {animation:{}},
-                 onEvilDone = function(){
-                        result.js = fakeCanvasAnim.animation;
-                        callback(result, path, callbackRestArgs);
-                    };
-
-	    try{
-                    evileval.addAnimationToCanvasAnim(result, fakeCanvasAnim,
-                                                      {loadingCanvasAnim:fakeCanvasAnim},
-                                                      onEvilDone);
-	        }catch(e){
-                    console.error(e);
-                 }
-            */
-                evileval.evalInScript(x, evileval.stringifyJSON(result), fakeCanvasAnim);  
-                result.js = fakeCanvasAnim.animation;
-                callback(result, path, callbackRestArgs);
-            };
-            loadJson(path, onJsonLoad);
-            
         }else{
             loadJson(path, callback, callbackRestArgs);
         }
-        
     };
     
     var loadJson = function(path, callback, callbackRestArgs){
@@ -136,8 +110,7 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
 
     
     var makeAnimationFileName = function(animationName){
-        var name = "/animations/"+animationName;
-	return name.match(/.js$/) ? name : name + ".json";
+        return "/animations/"+animationName + ".js";
     };
 
     var loadAssemblage = function(exquis, assName, handleJsonAnimations){
@@ -168,9 +141,9 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
 
     return {saveAnimation: saveAnimation,
 	    loadAnimations: loadAnimations,
-	    loadJsonAnimation: loadJsonAnimation,
+	    loadAnimation: loadAnimation,
 	    loadJson: loadJson,
-	    makeJsonName: makeAnimationFileName,
+	    makeAnimationFileName: makeAnimationFileName,
             saveAssemblage: saveAssemblage};
     
 });

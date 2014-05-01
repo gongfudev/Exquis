@@ -1,1 +1,1 @@
-[["copieBordSudEst.js","copieBordSud.js","copieBordOuest.js"],["copieBordSudEst.js","carreVoisin.js","carreSinus.js"],["carreSinus.js","copieBordNordOuest.js","copieBordOuest.js"]]
+[["copieBordSudEst","copieBordSud","copieBordOuest"],["copieBordSudEst","carreVoisin","carreSinus"],["carreSinus","copieBordNordOuest","copieBordOuest"]]
