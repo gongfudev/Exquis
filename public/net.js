@@ -4,6 +4,7 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
     
 
     var loadAnimations2d = function(animationNames, callback ){
+        
 
         var results = [];
         var totalFileCount = 0;
@@ -39,8 +40,6 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
                  //TODO this does not work
                 animationName = /http:.*\/(\w+\.js)/.exec(animationName)[1];
              }
-             console.log(animationName); 
-             
              loadAnimation(animationName, handleAnimation, position);
           }
         }
@@ -52,20 +51,11 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
     };
     
     //TODO add an error handler callback
-    var loadAnimation = function(path, callback, callbackRestArgs){
-        if(path.match(/.js$/)){
-            //TODO this line appears 3 times in this file goddammit
-            var name =  /animations\/(\w+)\.js(on)?/.exec(path)[1];
-            evileval.loadJsAnimOnCanvasAnim(x, path, {}, function(){
-                var animation = { setup : evileval.functionBodyAsString(x.loadingCanvasAnim.animation.setup),
-                                  draw:  evileval.functionBodyAsString(x.loadingCanvasAnim.animation.draw),
-                                  libs:"{}",
-                                  js: x.loadingCanvasAnim.animation};
-                callback(animation, path, callbackRestArgs);
-            });
-        }else{
-            loadJson(path, callback, callbackRestArgs);
-        }
+    var loadAnimation = function(path, handleAnimation, handleAnimationRestArgs){
+        evileval.loadJsAnimOnCanvasAnim(x, path, {}, function(){
+            var animation = { js: x.loadingCanvasAnim.animation};
+            handleAnimation(animation, path, handleAnimationRestArgs);
+        });
     };
     
     var loadJson = function(path, callback, callbackRestArgs){
