@@ -1,5 +1,5 @@
 
-var main = function(net, init, evileval){
+var main = function(net, exquisInit, evileval){
     window.x = {
         animate : function(animation){
             var that = this;
@@ -11,7 +11,7 @@ var main = function(net, init, evileval){
 	    });
     }};
     window.load = function(){
-        net.loadAnimations(window.x, init);
+        net.loadAnimations(window.x, exquisInit);
     };
     window.onerror = function(message, url, lineNumber){
         console.log(message +" "+ url +" "+ lineNumber);

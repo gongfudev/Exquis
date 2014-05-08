@@ -36,7 +36,6 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
              loadAnimation(animationName, handleAnimation, position);
           }
         }
-
     };
 
     var isExternalJs = function(url){
@@ -46,7 +45,7 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
     //TODO add an error handler callback
     var loadAnimation = function(path, handleAnimation, handleAnimationRestArgs){
         evileval.loadJsAnimOnCanvasAnim(x, path, {}, function(){
-            var animation = { js: x.loadingCanvasAnim.animation};
+            var animation =  x.loadingCanvasAnim.animation;
             handleAnimation(animation, path, handleAnimationRestArgs);
         });
     };

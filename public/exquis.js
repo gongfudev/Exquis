@@ -23,7 +23,7 @@ define(["net",
 
         var isJsAnim = true; 
         var canvasAnim = {
-            animation : jsonAnimation.animation.js,// {},
+            animation : jsonAnimation.animation,
             animationName: jsonAnimation.name,
 
             borders : function(){
@@ -122,9 +122,6 @@ define(["net",
                     csshelper.addClass(exquis.targetCell.hint, "visible-cell");
                     //TODO: editCanvasAnim should be in editorController
                     exquis.editorView.editCanvasAnim(
-			cell.canvasAnim.animation.libsString,
-			cell.canvasAnim.animation.setupString,
-			cell.canvasAnim.animation.drawString,
 			cell.canvasAnim.animationName,
 			cell.canvasAnim.animation);
                 };

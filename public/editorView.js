@@ -80,7 +80,7 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
         textAreaSetup.renderer.setShowGutter(false);
         textAreaSetup.setFontSize("14px");
 
-	var setEditorContent = function(libsString, setupString, drawString, animationName, animation){
+	var setEditorContent = function(animationName, animation){
 
             textAreaSetup.setValue(evileval.stringify(animation));
             textAreaSetup.getSession().selection.clearSelection();
