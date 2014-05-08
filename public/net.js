@@ -7,15 +7,7 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
         
 
         var results = [];
-        var totalFileCount = 0;
-        for(var i=0; i<animationNames.length; i++){
-          totalFileCount += animationNames[i].length;
-        }
-
-        var loadedFileCount = 0;
-
-        // TODO: remove (obsolete: we are now loading everything synchronously)
-        var handleAnimation = function(result, path, position){
+        var addToResults = function(result, path, position){
             var name =  /animations\/(\w+)\.js/.exec(path)[1];
             
             if(results[position.row] === undefined){
@@ -24,18 +16,19 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
 
             results[position.row][position.col] = { animation: result,
                                                     name: name };
-            loadedFileCount++;
-
-            if (loadedFileCount === totalFileCount){
-                callback(results);
-            }
+        };
+        var addToResultsAndCallback =  function(result, path, position){
+            addToResults(result, path, position);
+            callback(results);
         };
 
         for(var i=0; i<animationNames.length; i++){
           var lastrow = i == (animationNames.length - 1);
           for(var j=0; j<animationNames[i].length; j++){
              var position = {row: i, col: j},
-                 animationName = animationNames[i][j];
+                 animationName = animationNames[i][j],
+                 lastcol = j == (animationNames[i].length - 1),
+                 handleAnimation = lastcol && lastrow ? addToResultsAndCallback : addToResults;
              if(isExternalJs(animationName)){
                  //TODO this does not work
                 animationName = /http:.*\/(\w+\.js)/.exec(animationName)[1];
