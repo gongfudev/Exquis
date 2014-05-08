@@ -40,9 +40,9 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
 	    animSaveAsButton.addEventListener('click', animSaveAs, true);
 	};
 
-        var makeDisplayCodeValidity = function(textArea){
+        var makeDisplayCodeValidity = function(element){
             return function(valid){
-                textArea.className = valid ? "code_valid" : "code_invalid";
+                element.className = valid ? "code_valid" : "code_invalid";
             };
         };
 
@@ -53,42 +53,39 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
             };
         };
 
-        var addSetupListener = function(textAreaSetup, displaySetupValidity){
-            displaySetupValidity(true);
+        var addAceListener = function(aceEditor, displayCodeValidity){
+            displayCodeValidity(true);
         
-            textAreaSetup.getSession().on('change', function(e) {
-                textAreaController.onCodeChange(textAreaSetup.getValue(),
-                                                displaySetupValidity);
+            aceEditor.getSession().on('change', function(e) {
+                textAreaController.onCodeChange(aceEditor.getValue(),
+                                                displayCodeValidity);
             });
         };
 
         
-        
 	var editor = document.getElementById("editor"),
             displayAssemblageName = makeTextContentSetter(document.getElementById("assemblage_name")),
             displayAnimationName = makeTextContentSetter(document.getElementById("filename_display")),
-            textAreaSetup = ace.edit("text_area_setup"),
-            displaySetupValidity = makeDisplayCodeValidityForAce(textAreaSetup); 
-        addSetupListener(textAreaSetup, displaySetupValidity);
+            aceEditor = ace.edit("ace"),
+            displayCodeValidity = makeDisplayCodeValidityForAce(aceEditor); 
+        addAceListener(aceEditor, displayCodeValidity);
         makeAnimationButtons(displayAnimationName);
         makeAssemblageButtons(displayAssemblageName);
         displayAssemblageName(assController.getAssemblageName());
 
 
-        textAreaSetup.setTheme("ace/theme/katzenmilch");
-        textAreaSetup.getSession().setMode("ace/mode/javascript");
-        textAreaSetup.renderer.setShowGutter(false);
-        textAreaSetup.setFontSize("14px");
+        aceEditor.setTheme("ace/theme/katzenmilch");
+        aceEditor.getSession().setMode("ace/mode/javascript");
+        aceEditor.renderer.setShowGutter(false);
+        aceEditor.setFontSize("14px");
 
 	var setEditorContent = function(animationName, animation){
-
-            textAreaSetup.setValue(evileval.stringify(animation));
-            textAreaSetup.getSession().selection.clearSelection();
-            
+            aceEditor.setValue(evileval.stringify(animation));
+            aceEditor.getSession().selection.clearSelection();
             
             displayAnimationName(animationName);
-            displaySetupValidity(true);
-    };
+            displayCodeValidity(true);
+        };
 	
 	return {
 	    editCanvasAnim: setEditorContent,
@@ -99,7 +96,6 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
 		// unselect edition
 		editor.className = "invisible";
 	    }};
-
     };
 
     return makeEditor;
