@@ -60,28 +60,16 @@ define([], function(){
             canvasAnim.animationString = animationString;
         },
             
-        addSetupToCanvasAnim = function(canvasAnim, setupString){
-	    eval("canvasAnim.animation.setup = function(context, lib) {" + setupString + "\n};");
-	    canvasAnim.animation.setupString = setupString;
-	},
-
-	addDrawToCanvasAnim = function(canvasAnim, drawString){
-	    eval("canvasAnim.animation.draw = function(context, borders, lib) {" + drawString + "\n};");
-	    canvasAnim.animation.drawString = drawString;
-	},
-
 	functionBodyAsString = function(func){
 	    return func.toString().replace(/function\s*\([\w\s,]*\)\s*{\n?(\s*[\s\S]*)}/g,"$1");
 	    //.replace(/\n/g,"\\n");
 	},
+            
 	addAnimationToCanvasAnim = function(animation, canvasAnim, exquis, onDone){
-            var that = this;
 
             exquis.loadingCanvasAnim = canvasAnim;
 	    addLibsToCanvasAnim(canvasAnim, animation.libs, function(){
 
-	        addSetupToCanvasAnim.call(that, canvasAnim, animation.setup);
-	        addDrawToCanvasAnim.call(that, canvasAnim, animation.draw);
 	        if(canvasAnim.hasOwnProperty("setup")){
 		    canvasAnim.setup();
                 }
@@ -105,7 +93,7 @@ define([], function(){
         string += "setup: " + animation.setup.toString() + "});";
         return string;
     };
-
+    // this is only used by the json2js script for converting legacy animations
     var stringifyJSON = function (jsonAnim){
         var string = "x.animate({libs:" + jsonAnim.libs + ",\n";
         string += "setup: function(context, lib){\n"+ jsonAnim.setup +"},\n";
@@ -118,8 +106,6 @@ define([], function(){
         addLibsToCanvasAnim: addLibsToCanvasAnim, 
 	addAnimationStringToCanvasAnim: addAnimationStringToCanvasAnim,
         addAnimationToCanvasAnim: addAnimationToCanvasAnim,
-	addDrawToCanvasAnim: addDrawToCanvasAnim,
-	addSetupToCanvasAnim: addSetupToCanvasAnim,
         loadJsAnimOnCanvasAnim: loadJsAnimOnCanvasAnim,
         functionBodyAsString: functionBodyAsString,
         evalInScript: evalInScript,

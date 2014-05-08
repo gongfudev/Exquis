@@ -8,23 +8,23 @@ define(["net",
         "evileval"], function(net, iter2d, editorView, editorController, csshelper, evileval){
             
 
-    var makeCell = function(row, col, height, width, jsonAnim, exquis){
+    var makeCell = function(row, col, height, width, animationCode, exquis){
         var canvas = makeCanvas(row, col, height, width), 
             context = canvas.getContext("2d"), 
             cell = {};
 
-        cell.canvasAnim = makeCanvasAnimation(context, jsonAnim, exquis);
+        cell.canvasAnim = makeCanvasAnimation(context, animationCode, exquis);
         cell.hint = makeHint(row, col, height, width);
 
         return cell;
     };
 
-    var makeCanvasAnimation = function(context, jsonAnimation, exquis){
+    var makeCanvasAnimation = function(context, animationCode, exquis){
 
         var isJsAnim = true; 
         var canvasAnim = {
-            animation : jsonAnimation.animation,
-            animationName: jsonAnimation.name,
+            animation : animationCode.animation,
+            animationName: animationCode.name,
 
             borders : function(){
                return {
@@ -105,17 +105,17 @@ define(["net",
     };
 
 
-    var init = function (exquis, assName, jsonAnimations) {
+    var init = function (exquis, assName, animCodes) {
         var container = document.getElementById("container");
 
         exquis.assName = assName;
         
         exquis.editorView = editorView(editorController(exquis));
 
-        exquis.cells = iter2d.map2dArray(jsonAnimations,function(jsonAnim,row,col){
+        exquis.cells = iter2d.map2dArray(animCodes,function(animCode,row,col){
             var height = 150,
                 width = 150,
-                cell = makeCell(row, col, height, width, jsonAnim, exquis),
+                cell = makeCell(row, col, height, width, animCode, exquis),
                 edit = function(){ 
                     if (exquis.targetCell) { csshelper.removeClass(exquis.targetCell.hint, "visible-cell"); }
                     exquis.targetCell = cell;
@@ -176,9 +176,9 @@ define(["net",
                     
                 });
 
-                if(canvasAnim.updateSetup){
-		    canvasAnim.updateSetup();
-		    delete(canvasAnim.updateSetup);
+                if(canvasAnim.evaluateCode){
+		    canvasAnim.evaluateCode();
+		    delete(canvasAnim.evaluateCode);
                 }
                 
                 if(canvasAnim.updateDraw){

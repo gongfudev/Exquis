@@ -85,8 +85,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
         var controller = {
             onEditorLibsChange: function(libsString, displayLibsValidity){
 		var targetCell = exquis.targetCell,
-		    canvasAnim = targetCell.canvasAnim,
-		    setupString = canvasAnim.animation.setupString;
+		    canvasAnim = targetCell.canvasAnim;
 		try{
 		    evileval.addLibsToCanvasAnim(canvasAnim,libsString);
 		    displayLibsValidity(true);
@@ -94,58 +93,15 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
 		    displayLibsValidity(false);
 		}
 	    },
-            assembleCode : function(name, libsString, setupString, drawString){
-                var result = "x.animate({name: '"+ name +"', libs:"+ libsString;
-                result += ",setup: function(context, borders){"+ setupString +"}";
-                result += ",draw: function(context, borders, libs){"+ drawString +"}});";
-                return result;   
-            },
             onCodeChange: function(codeString, displayValidity){
 		var targetCell = exquis.targetCell;
                 // TODO: call displayValidity
-		targetCell.canvasAnim.updateSetup = function(){
+		targetCell.canvasAnim.evaluateCode = function(){
 		    var canvasAnim = targetCell.canvasAnim;
 
                     evileval.evalInScript(exquis, codeString, targetCell.canvasAnim, function(){
                         console.log(arguments);
                     });
-		};
-            },
-            onEditorSetupChange: function(setupString, displaySetupValidity){
-		var targetCell = exquis.targetCell;
-                        console.log("updateSetup");
-		targetCell.canvasAnim.updateSetup = function(){
-		    var canvasAnim = targetCell.canvasAnim;
-
-                    evileval.evalInScript(exquis, setupString, targetCell.canvasAnim, function(){
-                        console.log("script loaded");
-                        console.log(arguments);
-                    });
-                    /*
-		    try{
-			evileval.addSetupToCanvasAnim(canvasAnim, setupString);
-			canvasAnim.setup();
-			displaySetupValidity(true);
-		    }catch(e){
-			displaySetupValidity(false);
-		    }*/
-		};
-            },
-            onEditorDrawChange: function(drawString, displayDrawValidity){
-		var targetCell = exquis.targetCell;
-		targetCell.canvasAnim.updateDraw = function(neighbouringBorders){
-		    var canvasAnim = targetCell.canvasAnim,
-			drawBackup = canvasAnim.animation.draw;
-		    try{
-			evileval.addDrawToCanvasAnim(canvasAnim, drawString);
-			canvasAnim.draw(neighbouringBorders);
-			displayDrawValidity(true);
-		    }catch(e){
-			console.error(e);
-			canvasAnim.animation.draw = drawBackup;
-			canvasAnim.draw(neighbouringBorders);
-			displayDrawValidity(false);
-		    }
 		};
             }
         };
