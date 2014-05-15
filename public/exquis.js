@@ -23,15 +23,10 @@ define(["net",
 
         var isJsAnim = true; 
         var canvasAnim = {
-            animation : animationCode.animation,
+            animationToSetup : animationCode.animation,
             animationName: animationCode.name,
-            setupCalled: false,
+            currentAnimation:null,
 
-            updateAnimation: function(animation){
-                this.setupCalled = false;
-                this.animation = animation;
-            },
-            
             borders : function(){
                return {
                     north: context.getImageData(0, 0, context.canvas.width, 1),
@@ -42,22 +37,22 @@ define(["net",
             },
 
             draw : function(borders){
-                if(!this.setupCalled){
+                if(!this.currentAnimation){
                     return;
                 }
 
                 // force reset matrix
                 context.setTransform(1, 0, 0, 1, 0, 0);
-                if(this.animation.draw){
-                    this.animation.draw(context, borders, this.lib);
+                if(this.currentAnimation.draw){
+                    this.currentAnimation.draw(context, borders, this.lib);
                 }
             },
 
             setup : function(){
                 // force reset matrix
                 context.setTransform(1, 0, 0, 1, 0, 0);
-                this.animation.setup(context, this.lib);
-                this.setupCalled = true;
+                this.animationToSetup.setup(context, this.lib);
+                this.currentAnimation = this.animationToSetup;
             }
         };
         canvasAnim.setup();
@@ -134,7 +129,7 @@ define(["net",
                     //TODO: editCanvasAnim should be in editorController
                     exquis.editorView.editCanvasAnim(
 			cell.canvasAnim.animationName,
-			cell.canvasAnim.animation);
+			cell.canvasAnim.currentAnimation);
                 };
             cell.hint.addEventListener('click', edit, false);
             return  cell;

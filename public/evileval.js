@@ -22,7 +22,7 @@ define([], function(){
 	    for(var i=0; i<addresses.length; i++){
 		canvasAnim.lib[aliases[i]] = arguments[i];
 	    }
-	    canvasAnim.animation.libsString = libsString;
+	    canvasAnim.animationToSetup.libsString = libsString;
 	    if(typeof callback != "undefined"){
 		callback();
 	    }
@@ -54,7 +54,7 @@ define([], function(){
     },
         
     addAnimationStringToCanvasAnim = function(canvasAnim, animationString){
-        canvasAnim.animation = eval(animationString);
+        canvasAnim.animationToSetup = eval(animationString);
         canvasAnim.animationString = animationString;
     },
         
