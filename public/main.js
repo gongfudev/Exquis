@@ -3,7 +3,11 @@ var main = function(net, exquisInit, evileval){
     window.x = {
         animate : function(animation){
             var that = this;
-            that.loadingCanvasAnim.animation = animation;
+	    if(that.loadingCanvasAnim.hasOwnProperty("updateAnimation")){
+                that.loadingCanvasAnim.updateAnimation(animation);
+            }else{
+                that.loadingCanvasAnim.animation = animation;
+            }
 	    evileval.addLibsToCanvasAnim(that.loadingCanvasAnim, animation.libs, function(){
 	        if(that.loadingCanvasAnim.hasOwnProperty("setup")){
                     that.loadingCanvasAnim.setup();

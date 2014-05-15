@@ -25,7 +25,13 @@ define(["net",
         var canvasAnim = {
             animation : animationCode.animation,
             animationName: animationCode.name,
+            setupCalled: false,
 
+            updateAnimation: function(animation){
+                this.setupCalled = false;
+                this.animation = animation;
+            },
+            
             borders : function(){
                return {
                     north: context.getImageData(0, 0, context.canvas.width, 1),
@@ -36,6 +42,10 @@ define(["net",
             },
 
             draw : function(borders){
+                if(!this.setupCalled){
+                    return;
+                }
+
                 // force reset matrix
                 context.setTransform(1, 0, 0, 1, 0, 0);
                 if(this.animation.draw){
@@ -47,6 +57,7 @@ define(["net",
                 // force reset matrix
                 context.setTransform(1, 0, 0, 1, 0, 0);
                 this.animation.setup(context, this.lib);
+                this.setupCalled = true;
             }
         };
         canvasAnim.setup();
@@ -128,13 +139,6 @@ define(["net",
             cell.hint.addEventListener('click', edit, false);
             return  cell;
         });
-
-        exquis.animate = function(animation){
-            exquis.loadingCanvasAnim.animation = animation;
-	    evileval.addLibsToCanvasAnim(exquis.loadingCanvasAnim, animation.libs, function(){
-		exquis.loadingCanvasAnim.setup();
-	    });
-        };
         
         addHintListeners(exquis.cells);
         
