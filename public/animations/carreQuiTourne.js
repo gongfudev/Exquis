@@ -1,6 +1,6 @@
 define({libs:{},
 draw: function (context, borders, lib){
-context.fillStyle = "rgb(0,0,0)";
+context.fillStyle = "rgb(100,250,0)";
 context.fillRect(0, 0, context.canvas.width, context.canvas.height);
 
 context.save();
