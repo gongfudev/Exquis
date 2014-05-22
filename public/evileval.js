@@ -41,16 +41,21 @@ define([], function(){
         return script;
     },
 
-    evalInScript = function(exquis, codeString, canvasAnim, onLoadCallback){
-        exquis.loadingCanvasAnim = canvasAnim;
-        var script = createScriptTag(onLoadCallback);
-        script.text = codeString;
+    evalAnimation = function(exquis, codeString, canvasAnim, onLoadCallback){
+        var define = function(animation){
+            exquis.loadingCanvasAnim = canvasAnim;
+            exquis.animate(animation);
+            onLoadCallback();
+        };
+        eval(codeString);
     },
         
     loadJsAnimOnCanvasAnim = function(exquis, jsAnimPath, canvasAnim, onLoadCallback){
-        exquis.loadingCanvasAnim = canvasAnim;
-        var script = createScriptTag(onLoadCallback);
-        script.src = jsAnimPath;
+        require([jsAnimPath], function(animation){
+            exquis.loadingCanvasAnim = canvasAnim;
+            exquis.animate(Object.create(animation));
+            onLoadCallback();
+        });
     },
         
     addAnimationStringToCanvasAnim = function(canvasAnim, animationString){
@@ -78,7 +83,7 @@ define([], function(){
 
     stringify = function(animation){
         var libs = animation.libs,
-            string = "x.animate({libs:{",
+            string = "define({libs:{",
             libsContent = [];
         for(property in libs){
             if(libs.hasOwnProperty(property)){
@@ -92,7 +97,7 @@ define([], function(){
     },
     // this is only used by the json2js script for converting legacy animations
     stringifyJSON = function (jsonAnim){
-        var string = "x.animate({libs:" + jsonAnim.libs + ",\n";
+        var string = "define({libs:" + jsonAnim.libs + ",\n";
         string += "setup: function(context, lib){\n"+ jsonAnim.setup +"},\n";
         string += "draw: function(context, borders, lib){\n"+ jsonAnim.draw +"}});";
         return string; 
@@ -104,7 +109,7 @@ define([], function(){
         addAnimationToCanvasAnim: addAnimationToCanvasAnim,
         loadJsAnimOnCanvasAnim: loadJsAnimOnCanvasAnim,
         functionBodyAsString: functionBodyAsString,
-        evalInScript: evalInScript,
+        evalAnimation: evalAnimation,
         stringify: stringify,  
         stringifyJSON: stringifyJSON  
     };

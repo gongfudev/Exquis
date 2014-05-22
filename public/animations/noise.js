@@ -1,4 +1,4 @@
-x.animate({libs:{"bibs/noise":"noise"},
+define({libs:{"bibs/noise":"noise"},
 draw: function (context, borders, lib){
 // paste current image one pixel down
 context.clearRect(0, 0, 150, 150);

@@ -1,4 +1,4 @@
-x.animate({libs:{},
+define({libs:{},
 draw: function (context, borders, lib){
   // paste current image one pixel down
   var currentImage = context.getImageData(0, 0, context.canvas.width, context.canvas.height);

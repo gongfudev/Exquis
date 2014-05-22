@@ -1,4 +1,4 @@
-x.animate({libs:{},
+define({libs:{},
 draw: function (context, borders, lib){
 context.fillStyle = "rgb(0,0,0)";
 context.fillRect(0, 0, context.canvas.width, context.canvas.height);

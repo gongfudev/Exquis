@@ -1,4 +1,4 @@
-x.animate({libs:{},
+define({libs:{},
 setup: function(context, lib){
 var applyVendorPrefix = function(){
 	navigator.getUserMedia = navigator.getUserMedia ||

@@ -1,4 +1,4 @@
-x.animate({libs:{"bibs/noise":"noise"},
+define({libs:{"bibs/noise":"noise"},
 draw: function (context, borders, lib){
 this.frameCount += 1;
 if( this.frameCount % 2 == 0) {

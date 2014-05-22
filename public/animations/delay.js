@@ -1,4 +1,4 @@
-x.animate({libs:{},
+define({libs:{},
 setup: function(context, lib){
 this.start = new Date();
 this.frameCount = 0;},

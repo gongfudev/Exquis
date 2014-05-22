@@ -1,4 +1,4 @@
-x.animate({libs:{"bibs/gameOfLife":"gameLife"} ,
+define({libs:{"bibs/gameOfLife":"gameLife"} ,
 setup: function(context, lib){
 
 var width = 75;

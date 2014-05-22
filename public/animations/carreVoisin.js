@@ -1,4 +1,4 @@
-x.animate({libs:{},
+define({libs:{},
 setup: function(context, lib){
 this.toRadians = function(degrees){
     return  degrees * Math.PI / 180; 

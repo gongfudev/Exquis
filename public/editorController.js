@@ -99,7 +99,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
 		targetCell.canvasAnim.evaluateCode = function(){
 		    var canvasAnim = targetCell.canvasAnim;
 
-                    evileval.evalInScript(exquis, codeString, targetCell.canvasAnim, function(){
+                    evileval.evalAnimation(exquis, codeString, targetCell.canvasAnim, function(){
                         console.log(arguments);
                     });
 		};
