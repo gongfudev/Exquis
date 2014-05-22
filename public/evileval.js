@@ -45,16 +45,18 @@ define([], function(){
         var define = function(animation){
             exquis.loadingCanvasAnim = canvasAnim;
             exquis.animate(animation);
-            onLoadCallback();
+            onLoadCallback(animation);
         };
         eval(codeString);
     },
         
     loadJsAnimOnCanvasAnim = function(exquis, jsAnimPath, canvasAnim, onLoadCallback){
         require([jsAnimPath], function(animation){
+            var animationClone = Object.create(animation);
             exquis.loadingCanvasAnim = canvasAnim;
-            exquis.animate(Object.create(animation));
-            onLoadCallback();
+            exquis.animate(animationClone);
+            onLoadCallback(animationClone);
+            //setTimeout(onLoadCallback, 1000);
         });
     },
         
