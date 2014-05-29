@@ -42,17 +42,14 @@ define([], function(){
     },
 
     evalAnimation = function(exquis, codeString, canvasAnim, onLoadCallback){
-        var define = function(animation){
-            exquis.loadingCanvasAnim = canvasAnim;
-            exquis.animate(animation);
-            onLoadCallback(animation);
-        };
-        eval(codeString);
+        var jsAnimPath = toDataUri(codeString);
+        loadJsAnimOnCanvasAnim(exquis, jsAnimPath, canvasAnim, onLoadCallback);
     },
         
     loadJsAnimOnCanvasAnim = function(exquis, jsAnimPath, canvasAnim, onLoadCallback){
         require([jsAnimPath], function(animation){
             var animationClone = Object.create(animation);
+            canvasAnim.uri = jsAnimPath; 
             exquis.loadingCanvasAnim = canvasAnim;
             exquis.animate(animationClone);
             onLoadCallback(animationClone);
@@ -60,9 +57,8 @@ define([], function(){
         });
     },
         
-    addAnimationStringToCanvasAnim = function(canvasAnim, animationString){
-        canvasAnim.animationToSetup = eval(animationString);
-        canvasAnim.animationString = animationString;
+    toDataUri = function(jsCode){
+        return "data:text/javascript;base64," + btoa(jsCode);
     },
         
     functionBodyAsString = function(func){
@@ -107,7 +103,6 @@ define([], function(){
 	
     return {
         addLibsToCanvasAnim: addLibsToCanvasAnim, 
-	addAnimationStringToCanvasAnim: addAnimationStringToCanvasAnim,
         addAnimationToCanvasAnim: addAnimationToCanvasAnim,
         loadJsAnimOnCanvasAnim: loadJsAnimOnCanvasAnim,
         functionBodyAsString: functionBodyAsString,

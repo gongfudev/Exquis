@@ -1,6 +1,5 @@
 define({libs:{"bibs/gameOfLife":"gameLife"} ,
 setup: function(context, lib){
-
 var width = 75;
 var height = 75;
 var gameLife = lib.gameLife;
@@ -23,7 +22,7 @@ this.cells = this.evolve();
 
 context.fillStyle = "rgb(0, 0, 0)";
 
-var scale = 6
+var scale = 6;
 this.cells.forEach(function(cell){
    context.fillRect(cell.x *scale, cell.y *scale, scale, scale);
 

@@ -44,8 +44,8 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
     
     //TODO add an error handler callback
     var loadAnimation = function(path, handleAnimation, handleAnimationRestArgs){
-        evileval.loadJsAnimOnCanvasAnim(x, path, {}, function(){
-            var animation =  x.loadingCanvasAnim.animationToSetup;
+        evileval.loadJsAnimOnCanvasAnim(x, path, {}, function(animation){
+            //var animation =  x.loadingCanvasAnim.animationToSetup;
             handleAnimation(animation, path, handleAnimationRestArgs);
         });
     };
@@ -63,6 +63,9 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
     };
     
     var saveAnimation = function(canvasAnim, callback, fileName){
+        if (!canvasAnim.uri.match(/^data:/)){
+            return;
+        }
         var JSString = evileval.stringify(canvasAnim.currentAnimation),
             dirName = "animations",
             name = (fileName || canvasAnim.animationName) + ".js";
