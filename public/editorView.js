@@ -88,7 +88,7 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
         };
 	
 	return {
-	    editCanvasAnim: setEditorContent,
+	    setEditorContent: setEditorContent,
 	    show: function(){
 		editor.className = "";
 	    },

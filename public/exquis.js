@@ -25,7 +25,7 @@ define(["net",
         var canvasAnim = {
             animationToSetup : animationCode.animation,
             animationName: animationCode.name,
-            currentAnimation:null,
+            currentAnimation: null,
 
             borders : function(){
                return {
@@ -126,8 +126,8 @@ define(["net",
                     if (exquis.targetCell) { csshelper.removeClass(exquis.targetCell.hint, "visible-cell"); }
                     exquis.targetCell = cell;
                     csshelper.addClass(exquis.targetCell.hint, "visible-cell");
-                    //TODO: editCanvasAnim should be in editorController
-                    exquis.editorView.editCanvasAnim(
+                    //TODO: setEditorContent should be in editorController
+                    exquis.editorView.setEditorContent(
 			cell.canvasAnim.animationName,
 			cell.canvasAnim.currentAnimation);
                 };
