@@ -5,7 +5,7 @@ define(["net",
         "editorView",
         "editorController",
         "csshelper",
-        "evileval"], function(net, iter2d, editorView, editorController, csshelper, evileval){
+        "evileval"], function(net, iter2d, editorView, makeEditorController, csshelper, evileval){
             
 
     var makeCell = function(row, col, height, width, animationCode, exquis){
@@ -112,11 +112,12 @@ define(["net",
 
 
     var init = function (exquis, assName, animCodes) {
-        var container = document.getElementById("container");
+        var container = document.getElementById("container"),
+            editorController = makeEditorController(exquis);
 
         exquis.assName = assName;
-        
-        exquis.editorView = editorView(editorController(exquis));
+
+        exquis.editorView = editorView(editorController);
 
         exquis.cells = iter2d.map2dArray(animCodes,function(animCode,row,col){
             var height = 150,
@@ -126,10 +127,7 @@ define(["net",
                     if (exquis.targetCell) { csshelper.removeClass(exquis.targetCell.hint, "visible-cell"); }
                     exquis.targetCell = cell;
                     csshelper.addClass(exquis.targetCell.hint, "visible-cell");
-                    //TODO: setEditorContent should be in editorController
-                    exquis.editorView.setEditorContent(
-			cell.canvasAnim.animationName,
-			cell.canvasAnim.currentAnimation);
+                    editorController.updateWithCanvasAnim(cell.canvasAnim);
                 };
             cell.hint.addEventListener('click', edit, false);
             return  cell;

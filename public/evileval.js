@@ -49,16 +49,21 @@ define([], function(){
     loadJsAnimOnCanvasAnim = function(exquis, jsAnimPath, canvasAnim, onLoadCallback){
         require([jsAnimPath], function(animation){
             var animationClone = Object.create(animation);
-            canvasAnim.uri = jsAnimPath; 
+            canvasAnim.uri = jsAnimPath;
+            canvasAnim.animation = animationClone;
             exquis.loadingCanvasAnim = canvasAnim;
             exquis.animate(animationClone);
-            onLoadCallback(animationClone);
+            onLoadCallback(canvasAnim);
             //setTimeout(onLoadCallback, 1000);
         });
     },
         
     toDataUri = function(jsCode){
         return "data:text/javascript;base64," + btoa(jsCode);
+    },
+
+    dataUri2text = function(uri){
+        return atob(uri.substr(28));
     },
         
     functionBodyAsString = function(func){

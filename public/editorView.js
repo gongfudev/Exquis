@@ -3,6 +3,7 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
         var assController = controller.assController,
             animController = controller.animController,
             textAreaController = controller.textAreaController;
+
         
         var makeTextContentSetter = function(domElement){
             return function(name){
@@ -79,15 +80,15 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
         aceEditor.renderer.setShowGutter(false);
         aceEditor.setFontSize("14px");
 
-	var setEditorContent = function(animationName, animation){
-            aceEditor.setValue(evileval.stringify(animation));
+	var setEditorContent = function(animationName, animCode){
+            aceEditor.setValue(animCode);
             aceEditor.getSession().selection.clearSelection();
             
             displayAnimationName(animationName);
             displayCodeValidity(true);
         };
 	
-	return {
+	var theView = {
 	    setEditorContent: setEditorContent,
 	    show: function(){
 		editor.className = "";
@@ -95,7 +96,10 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
 	    hide: function(){
 		// unselect edition
 		editor.className = "invisible";
-	    }};
+	    }
+        };
+        controller.setView(theView);
+        return theView;
     };
 
     return makeEditor;

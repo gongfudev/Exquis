@@ -1,4 +1,5 @@
 define(['ui', 'net', 'evileval'], function(ui, net, evileval){
+    var view;
     var makeAssemblageController = function(exquis){
         var controller = {
             load: function(pickAssemblageCallback){
@@ -43,13 +44,15 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
         var controller = {
             load: function(){
                 var pickAnimation = function(e){
-		    var chosenAnimation = e.target.textContent;
-		    net.loadAnimation(net.makeAnimationFileName(chosenAnimation), function(animation){
+		    var chosenAnimationName = e.target.textContent;
+		    net.loadAnimation(net.makeAnimationFileName(chosenAnimationName), function(animation){
 		        var canvasAnim = exquis.targetCell.canvasAnim;
 		        evileval.addAnimationToCanvasAnim(animation, canvasAnim, exquis);
-		        canvasAnim.animationName = chosenAnimation;
+		        canvasAnim.animationName = chosenAnimationName;
 		        canvasAnim.setup();
-		        exquis.editorView.setEditorContent(chosenAnimation, animation);
+                        updateWithCanvasAnim(canvasAnim);
+		        // view.setEditorContent(chosenAnimationName, canvasAnim);
+                        
                         ui.showDialog(false);
 		    });
                 };
@@ -100,7 +103,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
 		    var canvasAnim = targetCell.canvasAnim;
 
                     evileval.evalAnimation(exquis, codeString, targetCell.canvasAnim, function(){
-                        console.log(arguments);
+                        // console.log(arguments);
                     });
 		};
             }
@@ -108,11 +111,26 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
         return controller;
     };
 
-    return function(exquis){
+    var updateWithCanvasAnim = function(canvasAnim){
+        if (canvasAnim.uri.match(/^data:/)){
+            var animCode = dataUri2text(canvasAnim.uri);
+            view.setEditorContent(canvasAnim.animationName, animCode); 
+        }else{
+            net.loadText(function(animCode, path){
+                var uri = evileval.toDataUri(animCode);
+                canvasAnim.uri = uri; 
+                view.setEditorContent(canvasAnim.animationName, animCode); 
+            });
+        }
+    };
+    
+    return function(exquis, editorView){
         return {
+            setView: function(aView) {view = aView;},
             assController: makeAssemblageController(exquis),
             animController: makeAnimationController(exquis),
-            textAreaController: makeTextAreaController(exquis)
+            textAreaController: makeTextAreaController(exquis),
+            updateWithCanvasAnim: updateWithCanvasAnim
         };
     };
 

@@ -13,9 +13,8 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
             if(results[position.row] === undefined){
                 results[position.row] = [];
             }
-
-            results[position.row][position.col] = { animation: result,
-                                                    name: name };
+            result.name = name;
+            results[position.row][position.col] = result;
         };
         var addToResultsAndCallback =  function(result, path, position){
             addToResults(result, path, position);
@@ -44,22 +43,29 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
     
     //TODO add an error handler callback
     var loadAnimation = function(path, handleAnimation, handleAnimationRestArgs){
-        evileval.loadJsAnimOnCanvasAnim(x, path, {}, function(animation){
+        evileval.loadJsAnimOnCanvasAnim(x, path, {}, function(canvasAnim){
             //var animation =  x.loadingCanvasAnim.animationToSetup;
-            handleAnimation(animation, path, handleAnimationRestArgs);
+            handleAnimation(canvasAnim, path, handleAnimationRestArgs);
         });
     };
     
-    var loadJson = function(path, callback, callbackRestArgs){
+    var loadText = function(path, callback){
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function(){
             if (xmlhttp.readyState==4 && xmlhttp.status==200){
-                var result = JSON.parse(xmlhttp.responseText);
-                callback(result, path, callbackRestArgs);
+                var result = xmlhttp.responseText;
+                callback(result, path);
             }
         };
         xmlhttp.open("GET", path, true);
         xmlhttp.send();
+    };
+    
+    var loadJson = function(path, callback, callbackRestArgs){
+        loadText(path, function(text, path){
+            var result = JSON.parse(text);
+            callback(result, path, callbackRestArgs);
+        });
     };
     
     var saveAnimation = function(canvasAnim, callback, fileName){
