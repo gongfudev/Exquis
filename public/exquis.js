@@ -25,6 +25,7 @@ define(["net",
         var canvasAnim = {
             animationToSetup : animationCode.animation,
             animationName: animationCode.name,
+            uri: animationCode.uri,
             currentAnimation: null,
 
             borders : function(){

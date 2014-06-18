@@ -116,7 +116,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
             var animCode = dataUri2text(canvasAnim.uri);
             view.setEditorContent(canvasAnim.animationName, animCode); 
         }else{
-            net.loadText(function(animCode, path){
+            net.loadText(canvasAnim.uri, function(animCode, path){
                 var uri = evileval.toDataUri(animCode);
                 canvasAnim.uri = uri; 
                 view.setEditorContent(canvasAnim.animationName, animCode); 

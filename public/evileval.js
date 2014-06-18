@@ -112,6 +112,8 @@ define([], function(){
         loadJsAnimOnCanvasAnim: loadJsAnimOnCanvasAnim,
         functionBodyAsString: functionBodyAsString,
         evalAnimation: evalAnimation,
+        toDataUri: toDataUri,
+        dataUri2text: dataUri2text,
         stringify: stringify,  
         stringifyJSON: stringifyJSON  
     };

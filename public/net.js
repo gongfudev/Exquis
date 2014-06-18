@@ -133,6 +133,7 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
     return {saveAnimation: saveAnimation,
 	    loadAnimations: loadAnimations,
 	    loadAnimation: loadAnimation,
+	    loadText: loadText,
 	    loadJson: loadJson,
 	    makeAnimationFileName: makeAnimationFileName,
             saveAssemblage: saveAssemblage};
