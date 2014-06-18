@@ -113,7 +113,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
 
     var updateWithCanvasAnim = function(canvasAnim){
         if (canvasAnim.uri.match(/^data:/)){
-            var animCode = dataUri2text(canvasAnim.uri);
+            var animCode = evileval.dataUri2text(canvasAnim.uri);
             view.setEditorContent(canvasAnim.animationName, animCode); 
         }else{
             net.loadText(canvasAnim.uri, function(animCode, path){
