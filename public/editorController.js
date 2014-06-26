@@ -44,8 +44,13 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
         var controller = {
             load: function(){
                 var pickAnimation = function(e){
-		    var chosenAnimationName = e.target.textContent;
-		    net.loadAnimation(net.makeAnimationFileName(chosenAnimationName), function(animation){
+		    var chosenAnimationName = e.target.textContent,
+                        canvasAnim = exquis.targetCell.canvasAnim;
+                    canvasAnim.uri = net.makeAnimationFileUri(chosenAnimationName);
+                    updateWithCanvasAnim(canvasAnim);
+                    ui.showDialog(false);
+                    /*
+		    net.loadAnimation(jsAnimPath, function(animation){
 		        var canvasAnim = exquis.targetCell.canvasAnim;
 		        evileval.addAnimationToCanvasAnim(animation, canvasAnim, exquis);
 		        canvasAnim.animationName = chosenAnimationName;
@@ -55,6 +60,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
                         
                         ui.showDialog(false);
 		    });
+                     */
                 };
 		net.loadJson("/animations/", function(files){
                     files = files.filter(function(f){

@@ -104,6 +104,10 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
         return "/animations/"+animationName + ".js";
     };
 
+    var makeAnimationFileUri = function(animationName){
+        return "/animations/"+animationName + ".js";
+    };
+
     var loadAssemblage = function(exquis, assName, handleAnimCodes){
 	var assemblagePath = "/assemblages/";
 	
@@ -135,7 +139,7 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
 	    loadAnimation: loadAnimation,
 	    loadText: loadText,
 	    loadJson: loadJson,
-	    makeAnimationFileName: makeAnimationFileName,
+	    makeAnimationFileUri: makeAnimationFileUri,
             saveAssemblage: saveAssemblage};
     
 });
