@@ -46,13 +46,39 @@ define([], function(){
         loadJsAnimOnCanvasAnim(exquis, jsAnimPath, canvasAnim, onLoadCallback);
     },
         
+    loadJsAnimOnCanvasAnimP = function(jsAnimPath, canvasAnim, position){
+        return new Promise(function(resolve, reject){
+            require([jsAnimPath],
+                    function(animation){
+                        console.log(animation);
+                        var animationClone = Object.create(animation);
+                        canvasAnim.uri = jsAnimPath;
+                        canvasAnim.animation = animationClone;
+	                if(canvasAnim.hasOwnProperty("setup")){
+                            canvasAnim.setup();
+                        }
+                        resolve({canvasAnim:canvasAnim,
+                                 position: position,
+                                 path: jsAnimPath});
+                        //onLoadCallback(canvasAnim);
+                    },
+                   function(err){
+                       reject(err);
+                   });
+        });
+    },
+        
     loadJsAnimOnCanvasAnim = function(exquis, jsAnimPath, canvasAnim, onLoadCallback){
         require([jsAnimPath], function(animation){
+            console.log(animation);
             var animationClone = Object.create(animation);
             canvasAnim.uri = jsAnimPath;
             canvasAnim.animation = animationClone;
-            exquis.loadingCanvasAnim = canvasAnim;
-            exquis.animate(animationClone);
+	    if(canvasAnim.hasOwnProperty("setup")){
+                canvasAnim.setup();
+            }
+            // exquis.loadingCanvasAnim = canvasAnim;
+            // exquis.animate(animationClone);
             onLoadCallback(canvasAnim);
             //setTimeout(onLoadCallback, 1000);
         });
@@ -110,6 +136,7 @@ define([], function(){
         addLibsToCanvasAnim: addLibsToCanvasAnim, 
         addAnimationToCanvasAnim: addAnimationToCanvasAnim,
         loadJsAnimOnCanvasAnim: loadJsAnimOnCanvasAnim,
+        loadJsAnimOnCanvasAnimP:loadJsAnimOnCanvasAnimP,
         functionBodyAsString: functionBodyAsString,
         evalAnimation: evalAnimation,
         toDataUri: toDataUri,

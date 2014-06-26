@@ -21,20 +21,36 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
             callback(results);
         };
 
+        var initialPromise = null;
         for(var i=0; i<animationNames.length; i++){
           var lastrow = i == (animationNames.length - 1);
           for(var j=0; j<animationNames[i].length; j++){
-             var position = {row: i, col: j},
-                 animationName = animationNames[i][j],
-                 lastcol = j == (animationNames[i].length - 1),
-                 handleAnimation = lastcol && lastrow ? addToResultsAndCallback : addToResults;
-             if(isExternalJs(animationName)){
-                 //TODO this does not work
-                animationName = /http:.*\/(\w+\.js)/.exec(animationName)[1];
-             }
-             loadAnimation(animationName, handleAnimation, position);
+              var position = {row: i, col: j},
+                  animationName = animationNames[i][j],
+                  lastcol = j == (animationNames[i].length - 1),
+                  handleAnimation = lastcol && lastrow ? addToResultsAndCallback : addToResults;
+              if(isExternalJs(animationName)){
+                  //TODO this does not work
+                  animationName = /http:.*\/(\w+\.js)/.exec(animationName)[1];
+              }
+              //loadAnimation(animationName, handleAnimation, position);
+
+              if(initialPromise === null){
+                  initialPromise = evileval.loadJsAnimOnCanvasAnimP(animationName, {});
+              }else{
+                  initialPromise = initialPromise.then(function(anPaPo){
+                      addToResults(anPaPo.canvasAnim, anPaPo.path, anPaPo.position); 
+                      console.log(results);
+                      return evileval.loadJsAnimOnCanvasAnimP(animationName, {});
+                  });
+              }
           }
         }
+        initialPromise.then(function(anPaPo){
+            addToResults(anPaPo.canvasAnim, anPaPo.path, anPaPo.position);
+            callback(results);
+        });
+        
     };
 
     var isExternalJs = function(url){

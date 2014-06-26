@@ -49,19 +49,9 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
                     canvasAnim.uri = net.makeAnimationFileUri(chosenAnimationName);
                     updateWithCanvasAnim(canvasAnim);
                     ui.showDialog(false);
-                    /*
-		    net.loadAnimation(jsAnimPath, function(animation){
-		        var canvasAnim = exquis.targetCell.canvasAnim;
-		        evileval.addAnimationToCanvasAnim(animation, canvasAnim, exquis);
-		        canvasAnim.animationName = chosenAnimationName;
-		        canvasAnim.setup();
-                        updateWithCanvasAnim(canvasAnim);
-		        // view.setEditorContent(chosenAnimationName, canvasAnim);
-                        
-                        ui.showDialog(false);
-		    });
-                     */
                 };
+                
+                // load the list of animation files available on the server
 		net.loadJson("/animations/", function(files){
                     files = files.filter(function(f){
                         return f.match(/\.js$/);
