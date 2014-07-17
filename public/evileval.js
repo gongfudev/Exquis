@@ -50,17 +50,13 @@ define([], function(){
         return new Promise(function(resolve, reject){
             require([jsAnimPath],
                     function(animation){
-                        console.log(animation);
                         var animationClone = Object.create(animation);
                         canvasAnim.uri = jsAnimPath;
                         canvasAnim.animation = animationClone;
 	                if(canvasAnim.hasOwnProperty("setup")){
                             canvasAnim.setup();
                         }
-                        resolve({canvasAnim:canvasAnim,
-                                 position: position,
-                                 path: jsAnimPath});
-                        //onLoadCallback(canvasAnim);
+                        resolve(canvasAnim);
                     },
                    function(err){
                        reject(err);
@@ -70,7 +66,6 @@ define([], function(){
         
     loadJsAnimOnCanvasAnim = function(exquis, jsAnimPath, canvasAnim, onLoadCallback){
         require([jsAnimPath], function(animation){
-            console.log(animation);
             var animationClone = Object.create(animation);
             canvasAnim.uri = jsAnimPath;
             canvasAnim.animation = animationClone;

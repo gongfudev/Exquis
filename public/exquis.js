@@ -27,7 +27,6 @@ define(["net",
             animationName: animationCode.name,
             uri: animationCode.uri,
             currentAnimation: null,
-
             borders : function(){
                return {
                     north: context.getImageData(0, 0, context.canvas.width, 1),
@@ -115,7 +114,6 @@ define(["net",
     var init = function (exquis, assName, animCodes) {
         var container = document.getElementById("container"),
             editorController = makeEditorController(exquis);
-
         exquis.assName = assName;
 
         exquis.editorView = editorView(editorController);

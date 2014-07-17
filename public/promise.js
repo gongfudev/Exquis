@@ -1,4 +1,4 @@
-function get(url) {
+function HTTPget(url) {
   // Return a new promise.
   return new Promise(function(resolve, reject) {
     // Do the usual XHR stuff
@@ -29,20 +29,20 @@ function get(url) {
   });
 }
 
-function getJSON(url) {
-  return get(url).then(JSON.parse);
+function HTTPgetJSON(url) {
+  return HTTPget(url).then(JSON.parse);
 }
 
 function propro(){
 
     
-  getJSON("/assemblages/assemblageAvecSinus.json")
+  HTTPgetJSON("/assemblages/assemblageAvecSinus.json")
   .then(function(animationNames){
       var animNamesList = animationNames.reduce(function(a, b) {
               return a.concat(b);
           }),
           animPromises =  animNamesList.map(function(animName){
-              return get("/animations/" + animName + ".js") ;
+              return HTTPget("/animations/" + animName + ".js") ;
           });
       return Promise.all(animPromises);
    }).then(function(animNames){

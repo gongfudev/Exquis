@@ -1,57 +1,6 @@
 "use strict";
 
 define(["iter2d", "evileval"], function(iter2d, evileval){
-    
-
-    var loadAnimations2d = function(animationNames, callback ){
-        
-
-        var results = [];
-        var addToResults = function(result, path, position){
-            var name =  /animations\/(\w+)\.js/.exec(path)[1];
-            
-            if(results[position.row] === undefined){
-                results[position.row] = [];
-            }
-            result.name = name;
-            results[position.row][position.col] = result;
-        };
-        var addToResultsAndCallback =  function(result, path, position){
-            addToResults(result, path, position);
-            callback(results);
-        };
-
-        var initialPromise = null;
-        for(var i=0; i<animationNames.length; i++){
-          var lastrow = i == (animationNames.length - 1);
-          for(var j=0; j<animationNames[i].length; j++){
-              var position = {row: i, col: j},
-                  animationName = animationNames[i][j],
-                  lastcol = j == (animationNames[i].length - 1),
-                  handleAnimation = lastcol && lastrow ? addToResultsAndCallback : addToResults;
-              if(isExternalJs(animationName)){
-                  //TODO this does not work
-                  animationName = /http:.*\/(\w+\.js)/.exec(animationName)[1];
-              }
-              //loadAnimation(animationName, handleAnimation, position);
-
-              if(initialPromise === null){
-                  initialPromise = evileval.loadJsAnimOnCanvasAnimP(animationName, {});
-              }else{
-                  initialPromise = initialPromise.then(function(anPaPo){
-                      addToResults(anPaPo.canvasAnim, anPaPo.path, anPaPo.position); 
-                      console.log(results);
-                      return evileval.loadJsAnimOnCanvasAnimP(animationName, {});
-                  });
-              }
-          }
-        }
-        initialPromise.then(function(anPaPo){
-            addToResults(anPaPo.canvasAnim, anPaPo.path, anPaPo.position);
-            callback(results);
-        });
-        
-    };
 
     var isExternalJs = function(url){
         return url.match(/http:\/\//);
@@ -112,9 +61,7 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
         ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");
         ajax.onreadystatechange = callback;
         ajax.send(params);
-        
     };
-
     
     var makeAnimationFileName = function(animationName){
         return "/animations/"+animationName + ".js";
@@ -132,22 +79,68 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
             history.pushState({},"...", "/assemblage/" + assName);
         }
 	assemblagePath += assName + ".json";
-
-        loadJson(assemblagePath, function(assemblage){
-            
-            var animationNames = iter2d.map2dArray(assemblage, makeAnimationFileName);
-
-            loadAnimations2d(animationNames, function(animCodes){
-                handleAnimCodes(exquis, assName, animCodes);
+        HTTPgetJSON(assemblagePath)
+            .then(function(animationNames){
+                var animNamesList = animationNames.reduce(function(a, b) {
+                    return a.concat(b);
+                }),
+                    animPromises =  animNamesList.map(function(animName){
+                        var animPath = "/animations/" + animName + ".js";
+                        return evileval.loadJsAnimOnCanvasAnimP(animPath, {});
+                    });
+                return Promise.all(animPromises);
+            }).then(function(animCodes){
+                var animCodes2d = splitarray(animCodes, 3);
+                handleAnimCodes(exquis, assName, animCodes2d);
             });
-            
-        });
     };
-
+    
+    var splitarray = function(input, spacing){
+        var output = [];
+        for (var i = 0; i < input.length; i += spacing){
+            output[output.length] = input.slice(i, i + spacing);
+        }
+        return output;
+    };
 
     var loadAnimations = function(exquis, handleJsonAnimations){
 	var name = window.location.pathname.substr("/assemblage/".length);
 	loadAssemblage(exquis, name, handleJsonAnimations);
+    };
+    
+    var HTTPget = function(url) {
+        // Return a new promise.
+        return new Promise(function(resolve, reject) {
+            // Do the usual XHR stuff
+            var req = new XMLHttpRequest();
+            req.open('GET', url);
+
+            req.onload = function() {
+                // This is called even on 404 etc
+                // so check the status
+                if (req.status == 200) {
+                    // Resolve the promise with the response text
+                    resolve(req.response);
+                }
+                else {
+                    // Otherwise reject with the status text
+                    // which will hopefully be a meaningful error
+                    reject(Error(req.statusText));
+                }
+            };
+
+            // Handle network errors
+            req.onerror = function() {
+                reject(Error("Network Error"));
+            };
+
+            // Make the request
+            req.send();
+        });
+    };
+
+    var HTTPgetJSON = function(url) {
+        return HTTPget(url).then(JSON.parse);
     };
 
     return {saveAnimation: saveAnimation,
@@ -156,6 +149,9 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
 	    loadText: loadText,
 	    loadJson: loadJson,
 	    makeAnimationFileUri: makeAnimationFileUri,
-            saveAssemblage: saveAssemblage};
+            saveAssemblage: saveAssemblage,
+            HTTPgetJSON: HTTPgetJSON,
+            HTTPget: HTTPget
+           };
     
 });
