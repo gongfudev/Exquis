@@ -86,7 +86,7 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
                 }),
                     animPromises =  animNamesList.map(function(animName){
                         var animPath = "/animations/" + animName + ".js";
-                        return evileval.loadJsAnimOnCanvasAnimP(animPath, {});
+                        return evileval.loadJsAnimOnCanvasAnimP(animPath, {name: animName});
                     });
                 return Promise.all(animPromises);
             }).then(function(animCodes){

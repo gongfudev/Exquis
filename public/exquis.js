@@ -20,7 +20,6 @@ define(["net",
     };
 
     var makeCanvasAnimation = function(context, animationCode, exquis){
-
         var isJsAnim = true; 
         var canvasAnim = {
             animationToSetup : animationCode.animation,
