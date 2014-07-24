@@ -47,7 +47,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
 		    var chosenAnimationName = e.target.textContent,
                         canvasAnim = exquis.targetCell.canvasAnim;
                     canvasAnim.uri = net.makeAnimationFileUri(chosenAnimationName);
-                    updateWithCanvasAnim(canvasAnim);
+                    updateWithCanvasAnim(canvasAnim, chosenAnimationName);
                     ui.showDialog(false);
                 };
                 
@@ -105,15 +105,16 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
         return controller;
     };
 
-    var updateWithCanvasAnim = function(canvasAnim){
+    var updateWithCanvasAnim = function(canvasAnim, newAnimationName){
+        var animationName = newAnimationName || canvasAnim.animationName;
         if (canvasAnim.uri.match(/^data:/)){
             var animCode = evileval.dataUri2text(canvasAnim.uri);
-            view.setEditorContent(canvasAnim.animationName, animCode); 
+            view.setEditorContent(animationName, animCode); 
         }else{
             net.loadText(canvasAnim.uri, function(animCode, path){
                 var uri = evileval.toDataUri(animCode);
                 canvasAnim.uri = uri; 
-                view.setEditorContent(canvasAnim.animationName, animCode); 
+                view.setEditorContent(animationName, animCode); 
             });
         }
     };

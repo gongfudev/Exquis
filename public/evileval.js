@@ -46,12 +46,13 @@ define([], function(){
         loadJsAnimOnCanvasAnimP(jsAnimPath, canvasAnim).then(onLoadCallback);
     },
         
-    loadJsAnimOnCanvasAnimP = function(jsAnimPath, canvasAnim, position){
+    loadJsAnimOnCanvasAnimP = function(jsAnimPath, canvasAnim, animationName){
         return new Promise(function(resolve, reject){
             require([jsAnimPath],
                     function(animation){
                         var animationClone = Object.create(animation);
                         canvasAnim.uri = jsAnimPath;
+                        canvasAnim.animationName = animationName;
                         canvasAnim.animationToSetup = animationClone;
 	                if(canvasAnim.hasOwnProperty("setup")){
                             canvasAnim.setup();
