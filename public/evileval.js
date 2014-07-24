@@ -43,7 +43,7 @@ define([], function(){
 
     evalAnimation = function(exquis, codeString, canvasAnim, onLoadCallback){
         var jsAnimPath = toDataUri(codeString);
-        loadJsAnimOnCanvasAnim(exquis, jsAnimPath, canvasAnim, onLoadCallback);
+        loadJsAnimOnCanvasAnimP(jsAnimPath, canvasAnim).then(onLoadCallback);
     },
         
     loadJsAnimOnCanvasAnimP = function(jsAnimPath, canvasAnim, position){
@@ -52,7 +52,7 @@ define([], function(){
                     function(animation){
                         var animationClone = Object.create(animation);
                         canvasAnim.uri = jsAnimPath;
-                        canvasAnim.animation = animationClone;
+                        canvasAnim.animationToSetup = animationClone;
 	                if(canvasAnim.hasOwnProperty("setup")){
                             canvasAnim.setup();
                         }

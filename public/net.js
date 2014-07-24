@@ -9,7 +9,7 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
     //TODO add an error handler callback
     var loadAnimation = function(path, handleAnimation, handleAnimationRestArgs){
         evileval.loadJsAnimOnCanvasAnim(x, path, {}, function(canvasAnim){
-            //var animation =  x.loadingCanvasAnim.animationToSetup;
+            //var animation = x.loadingCanvasAnim.animationToSetup;
             handleAnimation(canvasAnim, path, handleAnimationRestArgs);
         });
     };
@@ -86,7 +86,7 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
                 }),
                     animPromises =  animNamesList.map(function(animName){
                         var animPath = "/animations/" + animName + ".js";
-                        return evileval.loadJsAnimOnCanvasAnimP(animPath, {name: animName});
+                        return evileval.loadJsAnimOnCanvasAnimP(animPath, {animationName: animName});
                     });
                 return Promise.all(animPromises);
             }).then(function(animCodes){

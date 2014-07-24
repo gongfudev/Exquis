@@ -22,8 +22,8 @@ define(["net",
     var makeCanvasAnimation = function(context, animationCode, exquis){
         var isJsAnim = true; 
         var canvasAnim = {
-            animationToSetup : animationCode.animation,
-            animationName: animationCode.name,
+            animationToSetup : animationCode.animationToSetup,
+            animationName: animationCode.animationName,
             uri: animationCode.uri,
             currentAnimation: null,
             borders : function(){
