@@ -6,13 +6,6 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
         return url.match(/http:\/\//);
     };
     
-    //TODO add an error handler callback
-    var loadAnimation = function(path, handleAnimation, handleAnimationRestArgs){
-        evileval.loadJsAnimOnCanvasAnimP(path, {}).then(function(canvasAnim){
-            handleAnimation(canvasAnim, path, handleAnimationRestArgs);
-        });
-    };
-    
     var loadText = function(path, callback){
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function(){
@@ -144,7 +137,6 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
 
     return {saveAnimation: saveAnimation,
 	    loadAnimations: loadAnimations,
-	    loadAnimation: loadAnimation,
 	    loadText: loadText,
 	    loadJson: loadJson,
 	    makeAnimationFileUri: makeAnimationFileUri,

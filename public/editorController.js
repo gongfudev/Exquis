@@ -113,7 +113,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
         }else{
             net.loadText(canvasAnim.uri, function(animCode, path){
                 var uri = evileval.toDataUri(animCode);
-                canvasAnim.uri = uri; 
+                canvasAnim.uri = uri;
                 view.setEditorContent(animationName, animCode); 
             });
         }

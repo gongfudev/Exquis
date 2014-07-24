@@ -43,7 +43,7 @@ define([], function(){
 
     evalAnimation = function(exquis, codeString, canvasAnim, onLoadCallback){
         var jsAnimPath = toDataUri(codeString);
-        loadJsAnimOnCanvasAnimP(jsAnimPath, canvasAnim).then(onLoadCallback);
+        loadJsAnimOnCanvasAnimP(jsAnimPath, canvasAnim, canvasAnim.animationName).then(onLoadCallback);
     },
         
     loadJsAnimOnCanvasAnimP = function(jsAnimPath, canvasAnim, animationName){
