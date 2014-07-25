@@ -2,10 +2,6 @@
 
 define(["iter2d", "evileval"], function(iter2d, evileval){
 
-    var isExternalJs = function(url){
-        return url.match(/http:\/\//);
-    };
-    
     var saveAnimation = function(canvasAnim, callback, fileName){
         if (!canvasAnim.uri.match(/^data:/)){
             return;
@@ -44,7 +40,7 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
         return "/animations/"+animationName + ".js";
     };
 
-    var loadAssemblage = function(assName, handleAnimCodes){
+    var loadAssemblage = function(assName){
 	var assemblagePath = "/assemblages/";
 	
 	assemblagePath += assName + ".json";
