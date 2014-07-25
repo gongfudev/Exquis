@@ -6,25 +6,6 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
         return url.match(/http:\/\//);
     };
     
-    var loadText = function(path, callback){
-        var xmlhttp = new XMLHttpRequest();
-        xmlhttp.onreadystatechange = function(){
-            if (xmlhttp.readyState==4 && xmlhttp.status==200){
-                var result = xmlhttp.responseText;
-                callback(result, path);
-            }
-        };
-        xmlhttp.open("GET", path, true);
-        xmlhttp.send();
-    };
-    
-    var loadJson = function(path, callback, callbackRestArgs){
-        loadText(path, function(text, path){
-            var result = JSON.parse(text);
-            callback(result, path, callbackRestArgs);
-        });
-    };
-    
     var saveAnimation = function(canvasAnim, callback, fileName){
         if (!canvasAnim.uri.match(/^data:/)){
             return;
@@ -137,8 +118,6 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
 
     return {saveAnimation: saveAnimation,
 	    loadAnimations: loadAnimations,
-	    loadText: loadText,
-	    loadJson: loadJson,
 	    makeAnimationFileUri: makeAnimationFileUri,
             saveAssemblage: saveAssemblage,
             HTTPgetJSON: HTTPgetJSON,

@@ -8,7 +8,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
                     document.location = "/assemblage/" + chosenAssemblage;
                 };
             
-	        net.loadJson("/assemblages/", function(files){
+                net.HTTPgetJSON("/assemblages/").then(function(files){
                     files = files.filter(function(f){
                         return f.match(/\.json$/);
                     }).map(function(f){
@@ -52,7 +52,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
                 };
                 
                 // load the list of animation files available on the server
-		net.loadJson("/animations/", function(files){
+                net.HTTPgetJSON("/animations/").then(function(files){
                     files = files.filter(function(f){
                         return f.match(/\.js$/);
                     }).map(function(f){
@@ -111,7 +111,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
             var animCode = evileval.dataUri2text(canvasAnim.uri);
             view.setEditorContent(animationName, animCode); 
         }else{
-            net.loadText(canvasAnim.uri, function(animCode, path){
+            net.HTTPget(canvasAnim.uri).then(function(animCode){
                 var uri = evileval.toDataUri(animCode);
                 canvasAnim.uri = uri;
                 view.setEditorContent(animationName, animCode); 
