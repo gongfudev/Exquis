@@ -110,8 +110,9 @@ define(["net",
     };
 
 
-    var init = function (exquis, assName, animCodes) {
+    var init = function (assName, animCodes) {
         var container = document.getElementById("container"),
+            exquis = {},
             editorController = makeEditorController(exquis);
         exquis.assName = assName;
 
@@ -186,7 +187,7 @@ define(["net",
         };
 
         setInterval(draw, 50);
-
+        return exquis;
     };
 
 

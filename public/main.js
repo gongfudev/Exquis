@@ -1,17 +1,13 @@
 
 var main = function(net, exquisInit, evileval){
-    window.x = {
-        animate : function(animation){
-            var that = this;
-            that.loadingCanvasAnim.animationToSetup = animation;
-	    evileval.addLibsToCanvasAnim(that.loadingCanvasAnim, animation.libs, function(){
-	        if(that.loadingCanvasAnim.hasOwnProperty("setup")){
-                    that.loadingCanvasAnim.setup();
-                }
-	    });
-    }};
     window.load = function(){
-        net.loadAnimations(window.x, exquisInit);
+        net.loadAnimations(exquisInit)
+            .then(function(assemblage){
+                window.x = exquisInit(
+                           assemblage.name,
+                           assemblage.canvasAnims);
+                });
+
     };
     window.onerror = function(message, url, lineNumber){
         console.log(message +" "+ url +" "+ lineNumber);

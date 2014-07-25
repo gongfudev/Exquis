@@ -63,15 +63,11 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
         return "/animations/"+animationName + ".js";
     };
 
-    var loadAssemblage = function(exquis, assName, handleAnimCodes){
+    var loadAssemblage = function(assName, handleAnimCodes){
 	var assemblagePath = "/assemblages/";
 	
-        if(!assName){
-            assName =  "assemblageAvecSinus",
-            history.pushState({},"...", "/assemblage/" + assName);
-        }
 	assemblagePath += assName + ".json";
-        HTTPgetJSON(assemblagePath)
+        return HTTPgetJSON(assemblagePath)
             .then(function(animationNames){
                 var animNamesList = animationNames.reduce(function(a, b) {
                     return a.concat(b);
@@ -81,9 +77,9 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
                         return evileval.loadJsAnimOnCanvasAnimP(animPath, {}, animName);
                     });
                 return Promise.all(animPromises);
-            }).then(function(animCodes){
-                var animCodes2d = splitarray(animCodes, 3);
-                handleAnimCodes(exquis, assName, animCodes2d);
+            }).then(function(canvasAnims){
+                return { name: assName,
+                         canvasAnims: splitarray(canvasAnims, 3)};
             });
     };
     
@@ -95,9 +91,13 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
         return output;
     };
 
-    var loadAnimations = function(exquis, handleJsonAnimations){
+    var loadAnimations = function(handleAnimCodes){
 	var name = window.location.pathname.substr("/assemblage/".length);
-	loadAssemblage(exquis, name, handleJsonAnimations);
+        if(!name){
+            name =  "assemblageAvecSinus",
+            history.pushState({},"...", "/assemblage/" + name);
+        }
+	return loadAssemblage(name);
     };
     
     var HTTPget = function(url) {
