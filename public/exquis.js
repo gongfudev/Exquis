@@ -116,20 +116,21 @@ define(["net",
             editorController = makeEditorController(exquis);
         exquis.assName = assName;
 
-        exquis.editorView = editorView(editorController);
-
         exquis.cells = iter2d.map2dArray(animCodes,function(animCode,row,col){
             var height = 150,
-                width = 150,
-                cell = makeCell(row, col, height, width, animCode, exquis),
-                edit = function(){ 
+                width = 150;
+            return makeCell(row, col, height, width, animCode, exquis);
+        });
+        
+        exquis.editorView = editorView(editorController);
+        iter2d.forEach2dArray(exquis.cells, function(cell){
+             var edit = function(){ 
                     if (exquis.targetCell) { csshelper.removeClass(exquis.targetCell.hint, "visible-cell"); }
                     exquis.targetCell = cell;
                     csshelper.addClass(exquis.targetCell.hint, "visible-cell");
                     editorController.updateWithCanvasAnim(cell.canvasAnim);
                 };
             cell.hint.addEventListener('click', edit, false);
-            return  cell;
         });
         
         addHintListeners(exquis.cells);
