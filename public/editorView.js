@@ -1,4 +1,4 @@
-define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui, controller){
+define(["net", "evileval", "ui" ], function(net, evileval, ui){
     var makeEditor = function(controller){
         var assController = controller.assController,
             animController = controller.animController,
