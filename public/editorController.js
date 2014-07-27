@@ -82,16 +82,6 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
 
     var makeTextAreaController = function(exquis){
         var controller = {
-            onEditorLibsChange: function(libsString, displayLibsValidity){
-		var targetCell = exquis.targetCell,
-		    canvasAnim = targetCell.canvasAnim;
-		try{
-		    evileval.addLibsToCanvasAnim(canvasAnim,libsString);
-		    displayLibsValidity(true);
-		}catch(e){
-		    displayLibsValidity(false);
-		}
-	    },
             onCodeChange: function(codeString, displayValidity){
 		var targetCell = exquis.targetCell;
                 // TODO: call displayValidity
