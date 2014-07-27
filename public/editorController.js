@@ -86,9 +86,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
 		var targetCell = exquis.targetCell;
                 // TODO: call displayValidity
 		targetCell.canvasAnim.evaluateCode = function(){
-                    evileval.evalAnimation(exquis, codeString, targetCell.canvasAnim, function(){
-                        // console.log(arguments);
-                    });
+                    evileval.evalAnimation(exquis, codeString, targetCell.canvasAnim);
 		};
             }
         };

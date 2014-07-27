@@ -174,12 +174,7 @@ define(["iter2d", "csshelper"], function(iter2d, csshelper){
 		    delete(canvasAnim.evaluateCode);
                 }
                 
-                if(canvasAnim.updateDraw){
-		    canvasAnim.updateDraw(neighbouringBorders);
-		    delete(canvasAnim.updateDraw);
-                }else{
-		    canvasAnim.draw(neighbouringBorders);
-                }
+		canvasAnim.draw(neighbouringBorders);
             });
         };
 
