@@ -6,7 +6,7 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
         if (!canvasAnim.uri.match(/^data:/)){
             return;
         }
-        var JSString = evileval.stringify(canvasAnim.currentAnimation),
+        var JSString = evileval.dataUri2text(canvasAnim.uri),
             dirName = "animations",
             name = (fileName || canvasAnim.animationName) + ".js";
 
