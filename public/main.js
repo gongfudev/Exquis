@@ -1,5 +1,5 @@
 
-var main = function(net, exquisInit, evileval, makeEditorView, makeEditorController){
+var main = function(net, exquisInit, makeEditorView, makeEditorController){
     window.load = function(){
         net.loadAnimations(exquisInit)
             .then(function(assemblage){
@@ -30,4 +30,4 @@ var main = function(net, exquisInit, evileval, makeEditorView, makeEditorControl
     window.load();
 };
 
-require(["net", "exquis", "evileval", "editorView", "editorController", "lib/domReady!"], main);
+require(["net", "exquis", "editorView", "editorController", "lib/domReady!"], main);

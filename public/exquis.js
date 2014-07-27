@@ -1,9 +1,6 @@
 "use strict";
 
-define(["net",
-        "iter2d",
-        "csshelper",
-        "evileval"], function(net, iter2d, csshelper, evileval){
+define(["iter2d", "csshelper"], function(iter2d, csshelper){
             
 
     var makeCell = function(row, col, height, width, animationCode, exquis){
