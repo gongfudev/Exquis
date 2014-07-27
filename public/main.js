@@ -1,13 +1,13 @@
 
-var main = function(net, exquisInit, evileval, makeEditorView){
+var main = function(net, exquisInit, evileval, makeEditorView, makeEditorController){
     window.load = function(){
         net.loadAnimations(exquisInit)
             .then(function(assemblage){
-                window.x = exquisInit(
-                           assemblage.name,
-                           assemblage.canvasAnims);
-                window.x.addEditorView(makeEditorView);
-                });
+                var exquis =  exquisInit(assemblage.name, assemblage.canvasAnims);
+                exquis.addEditor(makeEditorView, makeEditorController);
+                // this is only for debugging in the console
+                window.x = exquis;
+            });
 
     };
     window.onerror = function(message, url, lineNumber){
@@ -30,4 +30,4 @@ var main = function(net, exquisInit, evileval, makeEditorView){
     window.load();
 };
 
-require(["net", "exquis", "evileval", "editorView", "lib/domReady!"], main);
+require(["net", "exquis", "evileval", "editorView", "editorController", "lib/domReady!"], main);

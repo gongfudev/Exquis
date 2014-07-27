@@ -2,9 +2,8 @@
 
 define(["net",
         "iter2d",
-        "editorController",
         "csshelper",
-        "evileval"], function(net, iter2d, makeEditorController, csshelper, evileval){
+        "evileval"], function(net, iter2d, csshelper, evileval){
             
 
     var makeCell = function(row, col, height, width, animationCode, exquis){
@@ -120,16 +119,16 @@ define(["net",
             return makeCell(row, col, height, width, animCode, exquis);
         });
         
-        exquis.editorController = makeEditorController(exquis);
-        exquis.addEditorView = function(makeEditorView){
-            var that = this;
-            that.editorView = makeEditorView(that.editorController);
+        exquis.addEditor = function(makeEditorView, makeEditorController){
+            var that = this,
+                editorController = makeEditorController(that);
+            that.editorView = makeEditorView(editorController);
             iter2d.forEach2dArray(that.cells, function(cell){
                 var edit = function(){ 
                     if (that.targetCell) { csshelper.removeClass(that.targetCell.hint, "visible-cell"); }
                     that.targetCell = cell;
                     csshelper.addClass(that.targetCell.hint, "visible-cell");
-                    that.editorController.updateWithCanvasAnim(cell.canvasAnim);
+                    editorController.updateWithCanvasAnim(cell.canvasAnim);
                 };
                 cell.hint.addEventListener('click', edit, false);
             });
