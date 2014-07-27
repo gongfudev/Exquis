@@ -1,11 +1,12 @@
 
-var main = function(net, exquisInit, evileval){
+var main = function(net, exquisInit, evileval, makeEditorView){
     window.load = function(){
         net.loadAnimations(exquisInit)
             .then(function(assemblage){
                 window.x = exquisInit(
                            assemblage.name,
                            assemblage.canvasAnims);
+                window.x.addEditorView(makeEditorView);
                 });
 
     };
@@ -29,4 +30,4 @@ var main = function(net, exquisInit, evileval){
     window.load();
 };
 
-require(["net", "exquis", "evileval", "lib/domReady!"], main);
+require(["net", "exquis", "evileval", "editorView", "lib/domReady!"], main);

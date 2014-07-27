@@ -2,10 +2,9 @@
 
 define(["net",
         "iter2d",
-        "editorView",
         "editorController",
         "csshelper",
-        "evileval"], function(net, iter2d, editorView, makeEditorController, csshelper, evileval){
+        "evileval"], function(net, iter2d, makeEditorController, csshelper, evileval){
             
 
     var makeCell = function(row, col, height, width, animationCode, exquis){
@@ -112,8 +111,7 @@ define(["net",
 
     var init = function (assName, animCodes) {
         var container = document.getElementById("container"),
-            exquis = {},
-            editorController = makeEditorController(exquis);
+            exquis = {};
         exquis.assName = assName;
 
         exquis.cells = iter2d.map2dArray(animCodes,function(animCode,row,col){
@@ -122,16 +120,31 @@ define(["net",
             return makeCell(row, col, height, width, animCode, exquis);
         });
         
-        exquis.editorView = editorView(editorController);
-        iter2d.forEach2dArray(exquis.cells, function(cell){
-             var edit = function(){ 
-                    if (exquis.targetCell) { csshelper.removeClass(exquis.targetCell.hint, "visible-cell"); }
-                    exquis.targetCell = cell;
-                    csshelper.addClass(exquis.targetCell.hint, "visible-cell");
-                    editorController.updateWithCanvasAnim(cell.canvasAnim);
+        exquis.editorController = makeEditorController(exquis);
+        exquis.addEditorView = function(makeEditorView){
+            var that = this;
+            that.editorView = makeEditorView(that.editorController);
+            iter2d.forEach2dArray(that.cells, function(cell){
+                var edit = function(){ 
+                    if (that.targetCell) { csshelper.removeClass(that.targetCell.hint, "visible-cell"); }
+                    that.targetCell = cell;
+                    csshelper.addClass(that.targetCell.hint, "visible-cell");
+                    that.editorController.updateWithCanvasAnim(cell.canvasAnim);
                 };
-            cell.hint.addEventListener('click', edit, false);
-        });
+                cell.hint.addEventListener('click', edit, false);
+            });
+            
+            var toggleEditorView = function(event){
+                if (event.target.tagName === "HTML"){
+                    // unselect edition
+                    that.editorView.hide();
+                    if (that.targetCell) { csshelper.removeClass(that.targetCell.hint, "visible-cell"); }
+                }else{
+                    that.editorView.show();
+                }
+            };
+            document.addEventListener('click', toggleEditorView, true);
+        };
         
         addHintListeners(exquis.cells);
         
@@ -142,19 +155,6 @@ define(["net",
 
             return animationNames;
         };
-
-        var toggleEditorView = function(event){
-            if (event.target.tagName === "HTML"){
-                // unselect edition
-                exquis.editorView.hide();
-                if (exquis.targetCell) { csshelper.removeClass(exquis.targetCell.hint, "visible-cell"); }
-            }else{
-                exquis.editorView.show();
-            }
-        };
-
-        
-        document.addEventListener('click', toggleEditorView, true);
 
         var draw = function(){
 
