@@ -1,5 +1,5 @@
-define({libs:{},
-setup: function(context, lib){
+define({
+setup: function(context){
 },
-draw: function(context, borders, lib){
+draw: function(context, borders){
 }});

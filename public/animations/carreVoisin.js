@@ -1,5 +1,5 @@
 define({libs:{},
-setup: function(context, lib){
+setup: function(context){
 this.toRadians = function(degrees){
     return  degrees * Math.PI / 180; 
 };
@@ -8,7 +8,7 @@ this.halfWidth = context.canvas.width / 2;
 this.halfHeight = context.canvas.height / 2;
 
 this.lines = [];},
-draw: function(context, borders, lib){
+draw: function(context, borders){
 
 
 // copy lines from borders.west

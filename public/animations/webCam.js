@@ -1,5 +1,5 @@
-define({libs:{},
-setup: function(context, lib){
+define({
+setup: function(context){
 var applyVendorPrefix = function(){
 	navigator.getUserMedia = navigator.getUserMedia ||
 	navigator.webkitGetUserMedia ||
@@ -45,5 +45,5 @@ var provideVideoContext = function(width, height){
 applyVendorPrefix();
 
 if (this.v == null) this.v = provideVideoContext(320, 240);},
-draw: function(context, borders, lib){
+draw: function(context, borders){
 context.drawImage(this.v, 0, 0, context.canvas.width, context.canvas.height);}});

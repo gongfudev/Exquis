@@ -1,5 +1,5 @@
 define({libs:{},
-draw: function (context, borders, lib){
+draw: function (context, borders){
 context.fillStyle = "rgb(100,250,0)";
 context.fillRect(0, 0, context.canvas.width, context.canvas.height);
 
@@ -14,7 +14,7 @@ context.fillStyle = "rgb(150,20,200)";
 context.fillRect(-25, -25, 50, 50);
 
 context.restore();},
-setup: function (context, lib){
+setup: function (context){
 this.toRadians =  Math.PI / 180; 
 
 this.rotation = 0;

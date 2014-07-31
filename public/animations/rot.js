@@ -1,5 +1,5 @@
-define({libs:{},
-setup: function(context, lib){
+define({
+setup: function(context){
 this.TO_RADIANS = Math.PI/180; 
  
 this.buffer = document.createElement('canvas');

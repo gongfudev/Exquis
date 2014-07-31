@@ -1,8 +1,8 @@
-define({libs:{},
-setup: function(context, lib){
+define({
+setup: function(context){
 this.start = new Date();
 this.frameCount = 0;},
-draw: function(context, borders, lib){
+draw: function(context, borders){
 this.frameCount++;
 var now = new Date();
 var elapsed = now - this.start;

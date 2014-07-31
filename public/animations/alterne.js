@@ -1,8 +1,8 @@
-define({libs:{},
-setup: function(context, lib){
+define({
+setup: function(context){
 this.start = new Date();
 this.frameCount = 0;},
-draw: function(context, borders, lib){
+draw: function(context, borders){
 this.frameCount++;
 var elapsed = new Date() - this.start;
 var motherPeriodCount = Math.floor((elapsed) / 1700);
