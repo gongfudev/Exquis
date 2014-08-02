@@ -50,7 +50,7 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
                     return a.concat(b);
                 }),
                     animPromises =  animNamesList.map(function(animName){
-                        var animPath = "/animations/" + animName + ".js";
+                        var animPath = makeAnimationPath(animName);
                         return evileval.loadJsAnimOnCanvasAnimP(animPath, {}, animName);
                     });
                 return Promise.all(animPromises);
@@ -58,6 +58,13 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
                 return { name: assName,
                          canvasAnims: splitarray(canvasAnims, 3)};
             });
+    };
+    
+    var makeAnimationPath = function (animName){
+        if(/^https?:\/\//.exec(animName)){
+            return animName;
+        }
+        return "/animations/" + animName + ".js";
     };
     
     var splitarray = function(input, spacing){
