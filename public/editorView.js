@@ -1,8 +1,9 @@
-define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui, controller){
+define([], function(){
     var makeEditor = function(controller){
         var assController = controller.assController,
             animController = controller.animController,
             textAreaController = controller.textAreaController;
+
         
         var makeTextContentSetter = function(domElement){
             return function(name){
@@ -40,9 +41,9 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
 	    animSaveAsButton.addEventListener('click', animSaveAs, true);
 	};
 
-        var makeDisplayCodeValidity = function(textArea){
+        var makeDisplayCodeValidity = function(element){
             return function(valid){
-                textArea.className = valid ? "code_valid" : "code_invalid";
+                element.className = valid ? "code_valid" : "code_invalid";
             };
         };
 
@@ -53,77 +54,52 @@ define(["net", "evileval", "ui", "editorController"], function(net, evileval, ui
             };
         };
 
-        var addLibsListener = function(textAreaLibs, displayLibsValidity){
-            displayLibsValidity(true);
-            textAreaLibs.onkeyup = function(){
-                textAreaController.onEditorLibsChange(textAreaLibs.value, displayLibsValidity);
-	    };
-        };
-      
-        var addSetupListener = function(textAreaSetup, displaySetupValidity){
-            displaySetupValidity(true);
+        var addAceListener = function(aceEditor, displayCodeValidity){
+            displayCodeValidity(true);
         
-            textAreaSetup.getSession().on('change', function(e) {
-                textAreaController.onEditorSetupChange(textAreaSetup.getValue(), displaySetupValidity);
+            aceEditor.getSession().on('change', function(e) {
+                textAreaController.onCodeChange(aceEditor.getValue(),
+                                                displayCodeValidity);
             });
         };
-        
-        var addDrawListener = function(textAreaDraw, displayDrawValidity){
-            displayDrawValidity(true);
- 
-            textAreaDraw.getSession().on('change', function(e) {
-                textAreaController.onEditorDrawChange(textAreaDraw.getValue(), displayDrawValidity);
-            });
-        };
+
         
 	var editor = document.getElementById("editor"),
             displayAssemblageName = makeTextContentSetter(document.getElementById("assemblage_name")),
             displayAnimationName = makeTextContentSetter(document.getElementById("filename_display")),
-            textAreaSetup = ace.edit("text_area_setup"),
-	    textAreaDraw =  ace.edit("text_area_draw"),
-	    textAreaLibs = document.getElementById("text_area_libs"),
-            displayLibsValidity = makeDisplayCodeValidity(textAreaLibs), 
-            displaySetupValidity = makeDisplayCodeValidityForAce(textAreaSetup), 
-            displayDrawValidity = makeDisplayCodeValidityForAce(textAreaDraw);
-        addLibsListener(textAreaLibs, displayLibsValidity);
-        addSetupListener(textAreaSetup, displaySetupValidity);
-        addDrawListener(textAreaDraw, displayDrawValidity);
+            aceEditor = ace.edit("ace"),
+            displayCodeValidity = makeDisplayCodeValidityForAce(aceEditor); 
+        addAceListener(aceEditor, displayCodeValidity);
         makeAnimationButtons(displayAnimationName);
         makeAssemblageButtons(displayAssemblageName);
         displayAssemblageName(assController.getAssemblageName());
 
 
-        [textAreaSetup, textAreaDraw].forEach(function(editor){
-            editor.setTheme("ace/theme/katzenmilch");
-            editor.getSession().setMode("ace/mode/javascript");
-            editor.renderer.setShowGutter(false);
-            editor.setFontSize("14px");
-        });
-	var setEditorContent = function(libsString, setupString, drawString, animationName){
-        textAreaLibs.value = libsString;
+        aceEditor.setTheme("ace/theme/katzenmilch");
+        aceEditor.getSession().setMode("ace/mode/javascript");
+        aceEditor.renderer.setShowGutter(false);
+        aceEditor.setFontSize("14px");
 
-        textAreaSetup.setValue(setupString);
-        textAreaSetup.getSession().selection.clearSelection();
-        
-        textAreaDraw.setValue(drawString);
-        textAreaDraw.getSession().selection.clearSelection();
-        
-        displayAnimationName(animationName);
-        displaySetupValidity(true);
-        displayDrawValidity(true);
-        displayLibsValidity(true);
-    };
+	var setEditorContent = function(animationName, animCode){
+            aceEditor.setValue(animCode);
+            aceEditor.getSession().selection.clearSelection();
+            
+            displayAnimationName(animationName);
+            displayCodeValidity(true);
+        };
 	
-	return {
-	    editCanvasAnim: setEditorContent,
+	var theView = {
+	    setEditorContent: setEditorContent,
 	    show: function(){
 		editor.className = "";
 	    },
 	    hide: function(){
 		// unselect edition
 		editor.className = "invisible";
-	    }};
-
+	    }
+        };
+        controller.setView(theView);
+        return theView;
     };
 
     return makeEditor;

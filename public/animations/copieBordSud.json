@@ -1,1 +1,0 @@
-{"libs":"{}","setup":"this.nbPixels = 1;","draw":"// paste current image one pixel down\nvar currentImage = context.getImageData(0, 0, context.canvas.width, context.canvas.height);\ncontext.putImageData(currentImage, 0, -this.nbPixels);\n// add new line\nfor(var i=0; i<this.nbPixels+1; i++){\ncontext.putImageData(borders.south, 0, context.canvas.height - i);    \n}\n"}

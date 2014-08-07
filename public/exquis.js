@@ -1,29 +1,26 @@
 "use strict";
 
-define(["net",
-        "iter2d",
-        "editorView",
-        "editorController",
-        "csshelper",
-        "evileval"], function(net, iter2d, editorView, editorController, csshelper, evileval){
+define(["iter2d", "csshelper"], function(iter2d, csshelper){
             
 
-    var makeCell = function(row, col, height, width, jsonAnim){
+    var makeCell = function(row, col, height, width, animationCode, exquis){
         var canvas = makeCanvas(row, col, height, width), 
-            context = canvas.getContext("2d"); 
-        return {
-            canvasAnim: makeCanvasAnimation(context, jsonAnim),
-            hint: makeHint(row, col, height, width)
-        };
+            context = canvas.getContext("2d"), 
+            cell = {};
+
+        cell.canvasAnim = makeCanvasAnimation(context, animationCode, exquis);
+        cell.hint = makeHint(row, col, height, width);
+
+        return cell;
     };
 
-    var makeCanvasAnimation = function(context, jsonAnimation){
-
-
+    var makeCanvasAnimation = function(context, animationCode, exquis){
+        var isJsAnim = true; 
         var canvasAnim = {
-            animation : {},
-            animationName: jsonAnimation.name,
-
+            animationToSetup : animationCode.animationToSetup,
+            animationName: animationCode.animationName,
+            uri: animationCode.uri,
+            currentAnimation: null,
             borders : function(){
                return {
                     north: context.getImageData(0, 0, context.canvas.width, 1),
@@ -34,20 +31,25 @@ define(["net",
             },
 
             draw : function(borders){
+                if(!this.currentAnimation){
+                    return;
+                }
+
                 // force reset matrix
                 context.setTransform(1, 0, 0, 1, 0, 0);
-                this.animation.draw(context, borders);
+                if(this.currentAnimation.draw){
+                    this.currentAnimation.draw(context, borders, this.lib);
+                }
             },
 
             setup : function(){
                 // force reset matrix
                 context.setTransform(1, 0, 0, 1, 0, 0);
-                this.animation.setup(context);
+                this.animationToSetup.setup(context, this.lib);
+                this.currentAnimation = this.animationToSetup;
             }
         };
-
-        evileval.addAnimationToCanvasAnim(jsonAnimation.animation, canvasAnim);
-
+        canvasAnim.setup();
         return canvasAnim;
 
     };
@@ -103,34 +105,43 @@ define(["net",
     };
 
 
-    var exquis = {};
-            
-    var init = function (assName, jsonAnimations) {
-
-        var container = document.getElementById("container");
-
+    var init = function (assName, animCodes) {
+        var container = document.getElementById("container"),
+            exquis = {};
         exquis.assName = assName;
-        
-        exquis.editorView = editorView(editorController(exquis));
 
-        exquis.cells = iter2d.map2dArray(jsonAnimations,function(jsonAnim,row,col){
+        exquis.cells = iter2d.map2dArray(animCodes,function(animCode,row,col){
             var height = 150,
-                width = 150,
-                cell = makeCell(row, col, height, width, jsonAnim),
-                edit = function(){ 
-                    if (exquis.targetCell) { csshelper.removeClass(exquis.targetCell.hint, "visible-cell"); }
-                    exquis.targetCell = cell;
-                    csshelper.addClass(exquis.targetCell.hint, "visible-cell");
-                    exquis.editorView.editCanvasAnim(
-			cell.canvasAnim.animation.libsString,
-			cell.canvasAnim.animation.setupString,
-			cell.canvasAnim.animation.drawString,
-			cell.canvasAnim.animationName);
-                };
-            cell.hint.addEventListener('click', edit, false);
-            return  cell;
+                width = 150;
+            return makeCell(row, col, height, width, animCode, exquis);
         });
-
+        
+        exquis.addEditor = function(makeEditorView, makeEditorController){
+            var that = this,
+                editorController = makeEditorController(that);
+            that.editorView = makeEditorView(editorController);
+            iter2d.forEach2dArray(that.cells, function(cell){
+                var edit = function(){ 
+                    if (that.targetCell) { csshelper.removeClass(that.targetCell.hint, "visible-cell"); }
+                    that.targetCell = cell;
+                    csshelper.addClass(that.targetCell.hint, "visible-cell");
+                    editorController.updateWithCanvasAnim(cell.canvasAnim);
+                };
+                cell.hint.addEventListener('click', edit, false);
+            });
+            
+            var toggleEditorView = function(event){
+                if (event.target.tagName === "HTML"){
+                    // unselect edition
+                    that.editorView.hide();
+                    if (that.targetCell) { csshelper.removeClass(that.targetCell.hint, "visible-cell"); }
+                }else{
+                    that.editorView.show();
+                }
+            };
+            document.addEventListener('click', toggleEditorView, true);
+        };
+        
         addHintListeners(exquis.cells);
         
         exquis.assemblage = function(){
@@ -140,19 +151,6 @@ define(["net",
 
             return animationNames;
         };
-
-        var toggleEditorView = function(event){
-            if (event.target.tagName === "HTML"){
-                // unselect edition
-                exquis.editorView.hide();
-                if (exquis.targetCell) { csshelper.removeClass(exquis.targetCell.hint, "visible-cell"); }
-            }else{
-                exquis.editorView.show();
-            }
-        };
-
-        
-        document.addEventListener('click', toggleEditorView, true);
 
         var draw = function(){
 
@@ -171,22 +169,17 @@ define(["net",
                     
                 });
 
-                if(canvasAnim.updateSetup){
-		    canvasAnim.updateSetup();
-		    delete(canvasAnim.updateSetup);
+                if(canvasAnim.evaluateCode){
+		    canvasAnim.evaluateCode();
+		    delete(canvasAnim.evaluateCode);
                 }
                 
-                if(canvasAnim.updateDraw){
-		    canvasAnim.updateDraw(neighbouringBorders);
-		    delete(canvasAnim.updateDraw);
-                }else{
-		    canvasAnim.draw(neighbouringBorders);
-                }
+		canvasAnim.draw(neighbouringBorders);
             });
         };
 
         setInterval(draw, 50);
-
+        return exquis;
     };
 
 

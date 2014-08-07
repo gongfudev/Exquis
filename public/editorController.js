@@ -1,4 +1,5 @@
 define(['ui', 'net', 'evileval'], function(ui, net, evileval){
+    var view;
     var makeAssemblageController = function(exquis){
         var controller = {
             load: function(pickAssemblageCallback){
@@ -7,9 +8,14 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
                     document.location = "/assemblage/" + chosenAssemblage;
                 };
             
-	        net.loadJson("/assemblages/", function(files){
+                net.HTTPgetJSON("/assemblages/").then(function(files){
+                    files = files.filter(function(f){
+                        return f.match(/\.json$/);
+                    }).map(function(f){
+                        return f.replace(/\.json$/, "");
+                    });
                     ui.showDialog(true);
-                    ui.populateFilePicker(files, pickAssemblage);		
+                    ui.populateNamePicker(files, pickAssemblage);		
 	        });
             },
             save: function(){
@@ -38,19 +44,22 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
         var controller = {
             load: function(){
                 var pickAnimation = function(e){
-		    var chosenAnimation = e.target.textContent;
-		    net.loadJson(net.makeJsonName(chosenAnimation), function(animation){
-		        var canvasAnim = exquis.targetCell.canvasAnim;
-		        evileval.addAnimationToCanvasAnim(animation, canvasAnim);
-		        canvasAnim.animationName = chosenAnimation;
-		        canvasAnim.setup();
-		        exquis.editorView.editCanvasAnim(animation.libs, animation.setup, animation.draw, chosenAnimation);
-                        ui.showDialog(false);
-		    });
+		    var chosenAnimationName = e.target.textContent,
+                        canvasAnim = exquis.targetCell.canvasAnim;
+                    canvasAnim.uri = net.makeAnimationFileUri(chosenAnimationName);
+                    updateWithCanvasAnim(canvasAnim, chosenAnimationName);
+                    ui.showDialog(false);
                 };
-		net.loadJson("/animations/", function(files){
+                
+                // load the list of animation files available on the server
+                net.HTTPgetJSON("/animations/").then(function(files){
+                    files = files.filter(function(f){
+                        return f.match(/\.js$/);
+                    }).map(function(f){
+                        return f.replace(/\.js$/, "");
+                    });
                     ui.showDialog(true);
-		    ui.populateFilePicker(files, pickAnimation);
+		    ui.populateNamePicker(files, pickAnimation);
 		});
             },
 
@@ -73,56 +82,38 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
 
     var makeTextAreaController = function(exquis){
         var controller = {
-            onEditorLibsChange: function(libsString, displayLibsValidity){
-		var targetCell = exquis.targetCell,
-		    canvasAnim = targetCell.canvasAnim,
-		    setupString = canvasAnim.animation.setupString;
-		try{
-		    evileval.addLibsToCanvasAnim(canvasAnim,libsString);
-		    displayLibsValidity(true);
-		}catch(e){
-		    displayLibsValidity(false);
-		}
-	    },
-            onEditorSetupChange: function(setupString, displaySetupValidity){
+            onCodeChange: function(codeString, displayValidity){
 		var targetCell = exquis.targetCell;
-		targetCell.canvasAnim.updateSetup = function(){
-		    var canvasAnim = targetCell.canvasAnim;
-		    try{
-			evileval.addSetupToCanvasAnim(canvasAnim, setupString);
-			canvasAnim.setup();
-			displaySetupValidity(true);
-		    }catch(e){
-			displaySetupValidity(false);
-		    }
-		};
-            },
-            onEditorDrawChange: function(drawString, displayDrawValidity){
-		var targetCell = exquis.targetCell;
-		targetCell.canvasAnim.updateDraw = function(neighbouringBorders){
-		    var canvasAnim = targetCell.canvasAnim,
-			drawBackup = canvasAnim.animation.draw;
-		    try{
-			evileval.addDrawToCanvasAnim(canvasAnim, drawString);
-			canvasAnim.draw(neighbouringBorders);
-			displayDrawValidity(true);
-		    }catch(e){
-			console.error(e);
-			canvasAnim.animation.draw = drawBackup;
-			canvasAnim.draw(neighbouringBorders);
-			displayDrawValidity(false);
-		    }
+                // TODO: call displayValidity
+		targetCell.canvasAnim.evaluateCode = function(){
+                    evileval.evalAnimation(exquis, codeString, targetCell.canvasAnim);
 		};
             }
         };
         return controller;
     };
 
-    return function(exquis){
+    var updateWithCanvasAnim = function(canvasAnim, newAnimationName){
+        var animationName = newAnimationName || canvasAnim.animationName;
+        if (canvasAnim.uri.match(/^data:/)){
+            var animCode = evileval.dataUri2text(canvasAnim.uri);
+            view.setEditorContent(animationName, animCode); 
+        }else{
+            net.HTTPget(canvasAnim.uri).then(function(animCode){
+                var uri = evileval.toDataUri(animCode);
+                canvasAnim.uri = uri;
+                view.setEditorContent(animationName, animCode); 
+            });
+        }
+    };
+    
+    return function(exquis, editorView){
         return {
+            setView: function(aView) {view = aView;},
             assController: makeAssemblageController(exquis),
             animController: makeAnimationController(exquis),
-            textAreaController: makeTextAreaController(exquis)
+            textAreaController: makeTextAreaController(exquis),
+            updateWithCanvasAnim: updateWithCanvasAnim
         };
     };
 

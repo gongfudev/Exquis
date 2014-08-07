@@ -67,7 +67,7 @@ var startServer = function (allowTests){
     http.createServer(function(request, response) {
 
         var pathname = require('url').parse(request.url).pathname;
-
+console.log("get me "+pathname);
         if( !allowTests && pathname.substr(0,7) === "/tests/"){
             response.writeHeader(403);
 	    response.end();

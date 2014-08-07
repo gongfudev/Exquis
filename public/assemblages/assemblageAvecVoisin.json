@@ -1,1 +1,3 @@
-[["copieBordSudEst","copieBordSud","copieBordOuest"],["copieBordSudEst","carreVoisin","carreSinus"],["carreSinus","copieBordNordOuest","copieBordOuest"]]
+[["copieBordSudEst","copieBordSud","carreSinus"],
+ ["copieBordSudEst","carreVoisin","carreSinus"],
+ ["carreSinus","copieBordNordOuest","carreSinus"]]
