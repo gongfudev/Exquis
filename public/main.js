@@ -1,7 +1,7 @@
 
 var main = function(net, exquisInit, makeEditorView, makeEditorController){
     window.load = function(){
-        net.loadAnimations(exquisInit)
+        net.loadAnimations()
             .then(function(assemblage){
                 var exquis =  exquisInit(assemblage.name, assemblage.canvasAnims);
                 exquis.addEditor(makeEditorView, makeEditorController);

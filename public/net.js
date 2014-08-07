@@ -75,7 +75,7 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
         return output;
     };
 
-    var loadAnimations = function(handleAnimCodes){
+    var loadAnimations = function(){
 	var name = window.location.pathname.substr("/assemblage/".length);
         if(!name){
             name =  "assemblageAvecSinus",
