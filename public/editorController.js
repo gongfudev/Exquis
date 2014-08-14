@@ -4,20 +4,20 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
         var controller = {
             load: function(){
                 var pickAssemblage = function(e){
-		    var chosenAssemblage = e.target.textContent;
-                    document.location = "/assemblage/" + chosenAssemblage;
-                };
-            
-                net.HTTPgetJSON("/assemblages/").then(function(files){
-                    files = files.filter(function(f){
-                        return f.match(/\.json$/);
-                    }).map(function(f){
-                        return f.replace(/\.json$/, "");
-                    });
-                    ui.showDialog(true);
-                    ui.populateNamePicker(files, pickAssemblage);		
-	        });
-            },
+                  var chosenAssemblage = e.target.textContent;
+                  document.location = "/assemblage/" + chosenAssemblage;
+              };
+
+              net.HTTPgetJSON("/assemblages/").then(function(files){
+                files = files.filter(function(f){
+                    return f.match(/\.json$/);
+                }).map(function(f){
+                    return f.replace(/\.json$/, "");
+                });
+                ui.showDialog(true);
+                ui.populateNamePicker(files, pickAssemblage);		
+            });
+          },
             save: function(){
                 net.saveAssemblage(exquis.assName, exquis.assemblage());
             },
@@ -97,13 +97,16 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
 
     var updateWithCanvasAnim = function(canvasAnim, newAnimationName){
         var animationName = newAnimationName || canvasAnim.animationName;
+        
         if (canvasAnim.uri.match(/^data:/)){
             var animCode = evileval.dataUri2text(canvasAnim.uri);
             view.setEditorContent(animationName, animCode); 
+            canvasAnim.animationName = animationName;
         }else{
             net.HTTPget(canvasAnim.uri).then(function(animCode){
                 var uri = evileval.toDataUri(animCode);
                 canvasAnim.uri = uri;
+                canvasAnim.animationName = animationName;
                 view.setEditorContent(animationName, animCode); 
             });
         }

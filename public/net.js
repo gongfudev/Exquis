@@ -13,22 +13,21 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
         saveFile(dirName, name, JSString, callback);
     };
 
-    var saveAssemblage = function(assName, assemblage, callback){
+    var saveAssemblage = function(assName, assemblage){
         var JSONString = JSON.stringify(assemblage),
             dirName = "assemblages",
             name = assName + ".json";
             
-        saveFile(dirName, name, JSONString, callback);
+        saveFile(dirName, name, JSONString);
     };
     
-    var saveFile = function(dirName, fileName, content, callback){
+    var saveFile = function(dirName, fileName, content){
         var path = "/" + dirName + "/" + fileName,
             params = encodeURIComponent(content), 
             ajax = new XMLHttpRequest();
 
         ajax.open("POST", path, true);
         ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-        ajax.onreadystatechange = callback;
         ajax.send(params);
     };
     
