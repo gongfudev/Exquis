@@ -51,7 +51,7 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
                 }),
                     animPromises =  animNamesList.map(function(animName){
                         var animPath = makeAnimationPath(animName);
-                        return evileval.loadJsAnimOnCanvasAnimP(animPath, {}, animName);
+                        return evileval.loadJsAnimOnCanvasAnim(animPath, {}, animName);
                     });
                 return Promise.all(animPromises);
             }).then(function(canvasAnims){

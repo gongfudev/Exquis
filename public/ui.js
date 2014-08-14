@@ -11,32 +11,35 @@ define(["csshelper"], function( csshelper){
         return cancelButton;
     };
 
-    var buildPrompt = function(promptText, onAccept){
-        var textArea = document.createElement("textarea"),
+    var buildPrompt = function(promptText){
+        return new Promise(function(resolve, reject){
+            var textArea = document.createElement("textarea"),
             promptParagraph = document.createElement("p"),
             buttonRow = document.createElement("div");
-        
-        promptParagraph.textContent = promptText;
-        dialog.innerHTML = "";
-        dialog.appendChild(promptParagraph);
-        dialog.appendChild(textArea);
-        dialog.appendChild(buttonRow);
 
-        textArea.setAttribute("id", "prompt_text_area");
-        
-        var okButton = document.createElement("button");
-	okButton.textContent = "ok";
-        okButton.id = "ok_button";
-	okButton.addEventListener('click', function(){
-            onAccept(textArea.value);
-	    csshelper.addClass(modalScreen, "invisible");
+            promptParagraph.textContent = promptText;
+            dialog.innerHTML = "";
+            dialog.appendChild(promptParagraph);
+            dialog.appendChild(textArea);
+            dialog.appendChild(buttonRow);
+
+            textArea.setAttribute("id", "prompt_text_area");
+
+            var okButton = document.createElement("button");
+            okButton.textContent = "ok";
+            okButton.id = "ok_button";
+            okButton.addEventListener('click', function(){
+                resolve(textArea.value);
+                csshelper.addClass(modalScreen, "invisible");
+            });
+            buttonRow.appendChild(okButton);
+            buttonRow.appendChild(makeCancelButton(modalScreen));
+            csshelper.removeClass(modalScreen, "invisible");
+            textArea.focus();
+
         });
-        buttonRow.appendChild(okButton);
-        buttonRow.appendChild(makeCancelButton(modalScreen));
-	csshelper.removeClass(modalScreen, "invisible");
-        textArea.focus();
     };
-   
+
     var populateNamePicker = function(names, clickHandler){
 	dialog.innerHTML = '';
 	

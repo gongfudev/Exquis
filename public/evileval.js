@@ -2,10 +2,10 @@ define([], function(){
 
     var evalAnimation = function(exquis, codeString, canvasAnim){
         var jsAnimPath = toDataUri(codeString);
-        return loadJsAnimOnCanvasAnimP(jsAnimPath, canvasAnim, canvasAnim.animationName);
+        return loadJsAnimOnCanvasAnim(jsAnimPath, canvasAnim, canvasAnim.animationName);
     },
         
-    loadJsAnimOnCanvasAnimP = function(jsAnimPath, canvasAnim, animationName){
+    loadJsAnimOnCanvasAnim = function(jsAnimPath, canvasAnim, animationName){
         return new Promise(function(resolve, reject){
             require([jsAnimPath],
                     function(animation){
@@ -41,7 +41,7 @@ define([], function(){
     };
 	
     return {
-        loadJsAnimOnCanvasAnimP:loadJsAnimOnCanvasAnimP,
+        loadJsAnimOnCanvasAnim:loadJsAnimOnCanvasAnim,
         evalAnimation: evalAnimation,
         toDataUri: toDataUri,
         dataUri2text: dataUri2text,

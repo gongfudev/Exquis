@@ -2,7 +2,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
     var view;
     var makeAssemblageController = function(exquis){
         var controller = {
-            load: function(pickAssemblageCallback){
+            load: function(){
                 var pickAssemblage = function(e){
 		    var chosenAssemblage = e.target.textContent;
                     document.location = "/assemblage/" + chosenAssemblage;
@@ -23,14 +23,15 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
             },
             saveAs: function(displayAssemblageNameCallback){
                 
-                ui.buildPrompt("enter file name",function(fileName){
-		    if (fileName){
-		        net.saveAssemblage(fileName, exquis.assemblage());
-                        exquis.assName = fileName;
-                        displayAssemblageNameCallback(exquis.assName);
-                        history.pushState({},"...", fileName);
-		    }
-                });
+                ui.buildPrompt("enter file name")
+                .then(function(fileName){
+                  if (fileName){
+                      net.saveAssemblage(fileName, exquis.assemblage());
+                      exquis.assName = fileName;
+                      displayAssemblageNameCallback(exquis.assName);
+                      history.pushState({},"...", fileName);
+                  }
+              });
             },
             getAssemblageName: function(){
                 return exquis.assName;
@@ -67,14 +68,15 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
 		net.saveAnimation(exquis.targetCell.canvasAnim);
             },
 	    saveAs: function(displayAnimationNameCallback){
-                ui.buildPrompt("enter file name",function(fileName){
-		    if (fileName){
-		        net.saveAnimation(exquis.targetCell.canvasAnim, null, fileName);
+                ui.buildPrompt("enter file name")
+                .then(function(fileName){
+                    if (fileName){
+                        net.saveAnimation(exquis.targetCell.canvasAnim, null, fileName);
                         displayAnimationNameCallback(fileName);
                         exquis.targetCell.canvasAnim.animationName = fileName;
-		    }
+                    } 
                 });
-	    }
+            }
         };
 
         return controller;
@@ -83,11 +85,11 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
     var makeTextAreaController = function(exquis){
         var controller = {
             onCodeChange: function(codeString, displayValidity){
-		var targetCell = exquis.targetCell;
+                var targetCell = exquis.targetCell;
                 // TODO: call displayValidity
-		targetCell.canvasAnim.evaluateCode = function(){
+                targetCell.canvasAnim.evaluateCode = function(){
                     evileval.evalAnimation(exquis, codeString, targetCell.canvasAnim);
-		};
+                };
             }
         };
         return controller;
