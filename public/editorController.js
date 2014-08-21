@@ -64,14 +64,12 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
             save: function(){
 		net.saveAnimation(exquis.targetCell.canvasAnim);
             },
-	    saveAs: function(displayAnimationNameCallback){
-                ui.buildPrompt("enter file name")
+	    saveAs: function(){
+                return ui.buildPrompt("enter file name")
                 .then(function(fileName){
-                    if (fileName){
-                        net.saveAnimation(exquis.targetCell.canvasAnim, null, fileName);
-                        displayAnimationNameCallback(fileName);
-                        exquis.targetCell.canvasAnim.animationName = fileName;
-                    } 
+                    net.saveAnimation(exquis.targetCell.canvasAnim, null, fileName);
+                    exquis.targetCell.canvasAnim.animationName = fileName;
+                    return fileName;
                 });
             }
         };

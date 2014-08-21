@@ -17,9 +17,7 @@ define([], function(){
 	        assemblageSaveAsButton = document.getElementById("assemblage_save_as_button");
 
             var assemblageSaveAs = function(){
-                assController.saveAs().then(function(assName){
-                    displayAssemblageName(assName);
-                });
+                assController.saveAs().then(displayAssemblageName);
             };
 
             assemblageLoadButton.addEventListener('click', assController.load, true);
@@ -38,7 +36,7 @@ define([], function(){
 	    animSaveButton.addEventListener('click', animController.save, true);
 
 	    var animSaveAs = function(){
-                animController.saveAs(displayAnimationName);
+                animController.saveAs().then(displayAnimationName);
 	    };
 	    animSaveAsButton.addEventListener('click', animSaveAs, true);
 	};
