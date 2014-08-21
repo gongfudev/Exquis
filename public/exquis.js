@@ -126,7 +126,6 @@ define(["iter2d", "csshelper"], function(iter2d, csshelper){
                     editorController.updateWithCanvasAnim(cell.canvasAnim);
                 };
                 cell.hint.addEventListener('click', edit, false);
-                cell.canvasAnim.displayInvalidity = that.editorView.displayInvalidity;
             });
             
             var toggleEditorView = function(event){
@@ -176,8 +175,8 @@ define(["iter2d", "csshelper"], function(iter2d, csshelper){
                 try{
                     canvasAnim.draw(neighbouringBorders);
                 }catch(e){
-                    if(exquis.targetCell === cell && canvasAnim.displayInvalidity){
-                        canvasAnim.displayInvalidity(e);
+                    if(exquis.targetCell === cell && exquis.editorView){
+                        exquis.editorView.displayInvalidity(e);
                     }
                 }
             });
