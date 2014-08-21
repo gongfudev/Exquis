@@ -29,7 +29,12 @@ define(["csshelper"], function( csshelper){
             okButton.textContent = "ok";
             okButton.id = "ok_button";
             okButton.addEventListener('click', function(){
-                resolve(textArea.value);
+                var maybeFilename = textArea.value;
+                if(maybeFilename){
+                    resolve(maybeFilename);
+                }else{
+                    reject();
+                }
                 csshelper.addClass(modalScreen, "invisible");
             });
             buttonRow.appendChild(okButton);

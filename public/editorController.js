@@ -21,17 +21,14 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
             save: function(){
                 net.saveAssemblage(exquis.assName, exquis.assemblage());
             },
-            saveAs: function(displayAssemblageNameCallback){
-                
-                ui.buildPrompt("enter file name")
+            saveAs: function(){
+                return ui.buildPrompt("enter file name")
                 .then(function(fileName){
-                  if (fileName){
-                      net.saveAssemblage(fileName, exquis.assemblage());
-                      exquis.assName = fileName;
-                      displayAssemblageNameCallback(exquis.assName);
-                      history.pushState({},"...", fileName);
-                  }
-              });
+                    net.saveAssemblage(fileName, exquis.assemblage());
+                    exquis.assName = fileName;
+                    history.pushState({},"...", fileName);
+                    return exquis.assName;
+                });
             },
             getAssemblageName: function(){
                 return exquis.assName;

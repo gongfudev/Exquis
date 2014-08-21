@@ -17,7 +17,9 @@ define([], function(){
 	        assemblageSaveAsButton = document.getElementById("assemblage_save_as_button");
 
             var assemblageSaveAs = function(){
-                assController.saveAs(displayAssemblageName);
+                assController.saveAs().then(function(assName){
+                    displayAssemblageName(assName);
+                });
             };
 
             assemblageLoadButton.addEventListener('click', assController.load, true);
