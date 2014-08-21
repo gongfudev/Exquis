@@ -3,18 +3,18 @@
 define(["iter2d", "csshelper"], function(iter2d, csshelper){
             
 
-    var makeCell = function(row, col, height, width, animationCode, exquis){
+    var makeCell = function(row, col, height, width, animationCode){
         var canvas = makeCanvas(row, col, height, width), 
             context = canvas.getContext("2d"), 
             cell = {};
 
-        cell.canvasAnim = makeCanvasAnimation(context, animationCode, exquis);
+        cell.canvasAnim = makeCanvasAnimation(context, animationCode);
         cell.hint = makeHint(row, col, height, width);
 
         return cell;
     };
 
-    var makeCanvasAnimation = function(context, animationCode, exquis){
+    var makeCanvasAnimation = function(context, animationCode){
         var isJsAnim = true; 
         var canvasAnim = {
             animationToSetup : animationCode.animationToSetup,
@@ -31,15 +31,13 @@ define(["iter2d", "csshelper"], function(iter2d, csshelper){
             },
 
             draw : function(borders){
-                if(!this.currentAnimation){
+                if(!this.currentAnimation || !this.currentAnimation.draw){
                     return;
                 }
 
                 // force reset matrix
                 context.setTransform(1, 0, 0, 1, 0, 0);
-                if(this.currentAnimation.draw){
-                    this.currentAnimation.draw(context, borders, this.lib);
-                }
+                this.currentAnimation.draw(context, borders, this.lib);
             },
 
             setup : function(){
@@ -113,7 +111,7 @@ define(["iter2d", "csshelper"], function(iter2d, csshelper){
         exquis.cells = iter2d.map2dArray(animCodes,function(animCode,row,col){
             var height = 150,
                 width = 150;
-            return makeCell(row, col, height, width, animCode, exquis);
+            return makeCell(row, col, height, width, animCode);
         });
         
         exquis.addEditor = function(makeEditorView, makeEditorController){
@@ -128,6 +126,7 @@ define(["iter2d", "csshelper"], function(iter2d, csshelper){
                     editorController.updateWithCanvasAnim(cell.canvasAnim);
                 };
                 cell.hint.addEventListener('click', edit, false);
+                cell.canvasAnim.displayInvalidity = that.editorView.displayInvalidity;
             });
             
             var toggleEditorView = function(event){
@@ -170,11 +169,17 @@ define(["iter2d", "csshelper"], function(iter2d, csshelper){
                 });
 
                 if(canvasAnim.evaluateCode){
-		    canvasAnim.evaluateCode();
-		    delete(canvasAnim.evaluateCode);
+		           canvasAnim.evaluateCode();
+		           delete(canvasAnim.evaluateCode);
                 }
-                
-		canvasAnim.draw(neighbouringBorders);
+
+                try{
+                    canvasAnim.draw(neighbouringBorders);
+                }catch(e){
+                    if(exquis.targetCell === cell && canvasAnim.displayInvalidity){
+                        canvasAnim.displayInvalidity(e);
+                    }
+                }
             });
         };
 

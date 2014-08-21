@@ -11,7 +11,7 @@ var main = function(net, exquisInit, makeEditorView, makeEditorController){
 
     };
     window.onerror = function(message, url, lineNumber){
-        console.log(message +" "+ url +" "+ lineNumber);
+        //console.log(message +" "+ url +" "+ lineNumber);
     };
     window.test = function(){
         require(["tests/clientTest"],

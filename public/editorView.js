@@ -91,12 +91,16 @@ define([], function(){
 	var theView = {
 	    setEditorContent: setEditorContent,
 	    show: function(){
-		editor.className = "";
+		    editor.className = "";
 	    },
 	    hide: function(){
 		// unselect edition
-		editor.className = "invisible";
-	    }
+		    editor.className = "invisible";
+	    },
+        displayInvalidity : function(err){
+            console.log(err);
+            displayCodeValidity(false);
+        }
         };
         controller.setView(theView);
         return theView;
