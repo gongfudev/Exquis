@@ -79,18 +79,20 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
 
     var makeTextAreaController = function(exquis){
         var controller = {
-            onCodeChange: function(codeString, displayValidity){
-                var targetCell = exquis.targetCell;
-                // TODO: call displayValidity
-                targetCell.canvasAnim.evaluateCode = function(){
-                    evileval.evalAnimation(exquis, codeString, targetCell.canvasAnim)
-                    .then(function(){
-                        displayValidity(true);
-                    }, function(err){
-                        console.log(err);
-                        displayValidity(false);
+            onCodeChange: function(codeString){
+                var targetCell = exquis.targetCell,
+                    evaluatedPromise = new Promise(function(resolve, reject){
+                        targetCell.canvasAnim.evaluateCode = function(){
+                            evileval.evalAnimation(exquis, codeString, targetCell.canvasAnim)
+                            .then(function(){
+                                resolve();
+                            }, function(err){
+                                console.log(err);
+                                reject(err);
+                            });
+                        };
                     });
-                };
+                    return evaluatedPromise;
             }
         };
         return controller;

@@ -58,8 +58,13 @@ define([], function(){
             displayCodeValidity(true);
         
             aceEditor.getSession().on('change', function(e) {
-                textAreaController.onCodeChange(aceEditor.getValue(),
-                                                displayCodeValidity);
+                textAreaController.onCodeChange(aceEditor.getValue())
+                .then(function(){
+                    displayCodeValidity(true);  
+                }, function(err){
+                    console.log(err);
+                    displayCodeValidity(false);
+                });
             });
         };
 
