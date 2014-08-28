@@ -1,5 +1,5 @@
 define([], function(){
-    var makeEditor = function(controller){
+    var makeEditorView = function(controller){
         var assController = controller.assController,
             animController = controller.animController,
             textAreaController = controller.textAreaController;
@@ -107,9 +107,8 @@ define([], function(){
             displayCodeValidity(false);
         }
         };
-        controller.setView(theView);
         return theView;
     };
 
-    return makeEditor;
+    return makeEditorView;
 });

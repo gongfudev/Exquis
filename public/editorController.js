@@ -115,14 +115,18 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
         }
     };
     
-    return function(exquis, editorView){
-        return {
-            setView: function(aView) {view = aView;},
+    return function(exquis, makeEditorView){
+        var controller = {
             assController: makeAssemblageController(exquis),
             animController: makeAnimationController(exquis),
             textAreaController: makeTextAreaController(exquis),
             updateWithCanvasAnim: updateWithCanvasAnim
         };
+        view = makeEditorView(controller);
+        controller.hide = view.hide;
+        controller.show = view.show;
+        controller.displayInvalidity = view.displayInvalidity;
+        return controller;
     };
 
 });

@@ -115,15 +115,16 @@ define(["iter2d", "csshelper"], function(iter2d, csshelper){
         });
         
         exquis.addEditor = function(makeEditorView, makeEditorController){
-            var that = this,
-                editorController = makeEditorController(that);
-            that.editorView = makeEditorView(editorController);
+            var that = this;
+                
+            that.editorController = makeEditorController(that, makeEditorView);
+            
             iter2d.forEach2dArray(that.cells, function(cell){
                 var edit = function(){ 
                     if (that.targetCell) { csshelper.removeClass(that.targetCell.hint, "visible-cell"); }
                     that.targetCell = cell;
                     csshelper.addClass(that.targetCell.hint, "visible-cell");
-                    editorController.updateWithCanvasAnim(cell.canvasAnim);
+                    that.editorController.updateWithCanvasAnim(cell.canvasAnim);
                 };
                 cell.hint.addEventListener('click', edit, false);
             });
@@ -131,10 +132,10 @@ define(["iter2d", "csshelper"], function(iter2d, csshelper){
             var toggleEditorView = function(event){
                 if (event.target.tagName === "HTML"){
                     // unselect edition
-                    that.editorView.hide();
+                    that.editorController.hide();
                     if (that.targetCell) { csshelper.removeClass(that.targetCell.hint, "visible-cell"); }
                 }else{
-                    that.editorView.show();
+                    that.editorController.show();
                 }
             };
             document.addEventListener('click', toggleEditorView, true);
@@ -175,8 +176,8 @@ define(["iter2d", "csshelper"], function(iter2d, csshelper){
                 try{
                     canvasAnim.draw(neighbouringBorders);
                 }catch(e){
-                    if(exquis.targetCell === cell && exquis.editorView){
-                        exquis.editorView.displayInvalidity(e);
+                    if(exquis.targetCell === cell ){
+                        exquis.editorController.displayInvalidity(e);
                     }
                 }
             });
