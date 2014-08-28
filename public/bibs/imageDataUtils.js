@@ -16,17 +16,16 @@ define({
         return avgArray;
     },
 
-    // should return an imageData
-    // TODO: fix it (find how to slice an imageData.data array)
-    sliceImageData: function(context, imageData, startX, startY, width, height){
-        var startIndex = (startX + startY * imageData.width) * 4,
-            endX = startX + width,
-            endY = startY + height,
-            endIndex =  (endX + endY * imageData.width)  * 4,
-            result = context.createImageData(width, height);
-        result.data.set(imageData.data.buffer.slice(startIndex, endIndex));
+    // TODO: fix for vertical (by the way, why is borders.east.height==149?)
+    sliceImageData: function(context, imageData, start, length){
+        var horizontal = imageData.height == 1,
+            startIndex = start * 4,
+            endIndex = (start + length) * 4, 
+            result = horizontal ? context.createImageData(length, 1) : context.createImageData(1, length),
+            slicedData = imageData.data.subarray(startIndex, endIndex);
+        result.data.set(slicedData);
         return result;
-    },
+       },
 
     array2CSSColor: function(colorArray){
         var alpha = colorArray.length < 4 ? 1 : colorArray[3];

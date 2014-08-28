@@ -1,4 +1,4 @@
-define({libs:{},
+define({
 setup: function(context){
 this.toRadians = function(degrees){
     return  degrees * Math.PI / 180; 
