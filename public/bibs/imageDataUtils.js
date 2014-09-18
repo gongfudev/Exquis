@@ -16,7 +16,7 @@ define({
         return avgArray;
     },
 
-    // TODO: fix for vertical (by the way, why is borders.east.height==149?)
+    // TODO: fix for vertical 
     sliceImageData: function(context, imageData, start, length){
         var horizontal = imageData.height == 1,
             startIndex = start * 4,

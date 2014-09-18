@@ -26,7 +26,7 @@ define(["iter2d", "csshelper"], function(iter2d, csshelper){
                     north: context.getImageData(0, 0, context.canvas.width, 1),
                     south: context.getImageData(0, context.canvas.height - 1, context.canvas.width, 1),
                     east: context.getImageData(context.canvas.width - 1, 0, 1 , context.canvas.height),
-                    west: context.getImageData(0, 0, 1, context.canvas.height - 1)
+                    west: context.getImageData(0, 0, 1, context.canvas.height)
                 };
             },
 
