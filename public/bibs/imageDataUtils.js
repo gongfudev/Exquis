@@ -27,6 +27,15 @@ define({
         return result;
        },
 
+    copyContextPixels: function(context, fromRectangle, toPoint){
+          var currentImage = context.getImageData(fromRectangle.x, 
+                                                  fromRectangle.y, 
+                                                  fromRectangle.width, 
+                                                  fromRectangle.height);
+          context.putImageData(currentImage, toPoint.x, toPoint.y);
+    },
+
+
     array2CSSColor: function(colorArray){
         var alpha = colorArray.length < 4 ? 1 : colorArray[3];
         return "rgba(" + colorArray[0] + "," + colorArray[1] + "," + colorArray[2] + "," + alpha + ")";
