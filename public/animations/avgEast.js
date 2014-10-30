@@ -2,17 +2,25 @@ define(["bibs/imageDataUtils"],
 function(imageDataUtils){
   return {
       draw: function (context, borders){
-          var y0 = borders.east.height / 2;
-          var dy = borders.east.height / 3;
-          var marginx = 100;
+          var y0 = context.canvas.height / 2;
+          var dy = context.canvas.height / 2;
+          var marginx = 10;
+          var source = borders.east;
+
+
+          var avgRectX = context.canvas.width - 1;
+          var avgRectY = y0;
+          var avgRectWidth = 1;
+          var avgRectHeight = dy;
+
 
           var halfBorder = imageDataUtils.sliceImageData(context,
-                                                         borders.east,
+                                                         source,
                                                          y0 ,
                                                          dy);
           var avgColorArray = imageDataUtils.averageColor(halfBorder);
           context.fillStyle = imageDataUtils.array2CSSColor(avgColorArray);
-          context.fillRect(context.canvas.width - 1, y0, 1, dy);
+          context.fillRect(avgRectX, avgRectY, avgRectWidth, avgRectHeight);
 
           //copy image one pixel west
           var fromRectangle = {x: marginx, 
