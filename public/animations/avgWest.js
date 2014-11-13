@@ -2,30 +2,44 @@ define(["bibs/imageDataUtils"],
 function(imageDataUtils){
   return {
       draw: function (context, borders){
-          var y0 = context.canvas.height / 2;
+          var copyDirections = {
+              north: {x:0, y:0},
+              east:  {x:-1, y:0},
+              south: {x:0, y:0},
+              west:  {x:1, y:0}
+          };
+          var direction = "west";
+          var copyDirection = copyDirections[direction];
+          var y0 = context.canvas.height * 2 / 3;
           var dy = context.canvas.height / 3;
-          var marginx = 100;
-          var source = borders.west;
+          var margin = 10;
+          var source = borders[direction];
 
-          var avgRectX = 0;
-          var avgRectY = y0;
-          var avgRectWidth = 1;
-          var avgRectHeight = dy;
+          var avgLineX0 = 0;
+          var avgLineY0 = y0;
+          var avgLineX1 = avgLineX0;
+          var avgLineY1 = avgLineY0 + dy;
+
+          var fromRectangle = {x: 0, 
+                               y: y0, 
+                               width: context.canvas.width - margin, 
+                               height: dy};
+          var toPoint = {x: fromRectangle.x + copyDirection.x,
+                         y: fromRectangle.y + copyDirection.y};
 
           var halfBorder = imageDataUtils.sliceImageData(context,
                                                          source,
                                                          y0 ,
                                                          dy);
           var avgColorArray = imageDataUtils.averageColor(halfBorder);
-          context.fillStyle = imageDataUtils.array2CSSColor(avgColorArray);
-          context.fillRect(avgRectX, avgRectY, avgRectWidth, avgRectHeight);
+          context.strokeStyle = imageDataUtils.array2CSSColor(avgColorArray);
+          context.beginPath();
+          context.moveTo(avgLineX0, avgLineY0);
+          context.lineTo(avgLineX1, avgLineY1);
+          context.closePath();
+          context.stroke();
 
           //copy image one pixel west
-          var fromRectangle = {x: 0, 
-                               y: y0, 
-                               width: context.canvas.width - marginx, 
-                               height: dy};
-          var toPoint = {x: 1, y: y0};
           imageDataUtils.copyContextPixels(context, fromRectangle, toPoint);
       },
       setup: function (context){
