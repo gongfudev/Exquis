@@ -1,4 +1,47 @@
 define({
+      vec2d: function(x, y){
+          return {x: x, y: y};
+      },
+      vec2dAdd:function(a, b){
+          return this.vec2d(a.x + b.x, a.y + b.y);
+      },
+      vec2dSubstract:function(a, b){
+          return this.vec2d(a.x - b.x, a.y - b.y);
+      },
+      rotateVec90cw: function(vec){
+          return { x: -vec.y, y: vec.x };
+      },
+      rotateVec90ccw: function(vec){
+          return { x: vec.y, y: -vec.x };
+      },
+      rectangularPixelFlow: function(startPnt,
+                                     breadth,
+                                     depth,
+                                     directionVec)
+     {
+         var that = this,
+             perpDirection = that.rotateVec90cw(directionVec),
+             copyDirection = that.vec2d(-directionVec.x, -directionVec.y),
+             deltaBreadth = that.vec2d(perpDirection.x * breadth,
+                                       perpDirection.y * breadth),
+             deltaDepth = that.vec2d(directionVec.x * depth,
+                                     directionVec.y * depth),
+             secondPnt = that.vec2dSubstract(startPnt, deltaDepth),
+             thirdPnt = that.vec2dAdd(startPnt, deltaBreadth);
+
+         var rectCorners = [that.vec2d(Math.min(secondPnt.x, thirdPnt.x),
+                                       Math.min(secondPnt.y, thirdPnt.y)),
+                            that.vec2d(Math.max(secondPnt.x, thirdPnt.x),
+                                       Math.max(secondPnt.y, thirdPnt.y))];
+         var fromRectangle = {x: rectCorners[0].x,
+                              y:  rectCorners[0].y,
+                              width: rectCorners[1].x - rectCorners[0].x,
+                              height: rectCorners[1].y - rectCorners[0].y};
+         var toPoint = {x: fromRectangle.x + copyDirection.x,
+                        y: fromRectangle.y + copyDirection.y};
+         return {fromRectangle: fromRectangle, toPoint: toPoint};
+         //imageDataUtils.copyContextPixels(context, fromRectangle, toPoint);
+     },
 
     // return average color in form [r, g, b, 1]
     averageColor: function(imageData){
@@ -28,7 +71,7 @@ define({
        },
 
     copyContextPixels: function(context, fromRectangle, toPoint){
-          var currentImage = context.getImageData(fromRectangle.x, 
+        var currentImage = context.getImageData(fromRectangle.x, 
                                                   fromRectangle.y, 
                                                   fromRectangle.width, 
                                                   fromRectangle.height);

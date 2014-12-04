@@ -4,11 +4,11 @@ function(imageDataUtils){
       draw: function (context, borders){
           var copyDirections = {
               north: {x:0, y:0},
-              east:  {x:-1, y:0},
+              east:  {x:1, y:0},
               south: {x:0, y:0},
-              west:  {x:1, y:0}
+              west:  {x:-1, y:0}
           };
-          var direction = "west";
+          var direction = "east";
           var copyDirection = copyDirections[direction];
           var y0 = context.canvas.height * 2 / 3;
           var dy = context.canvas.height / 3;
