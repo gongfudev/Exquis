@@ -83,7 +83,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
                 var targetCell = exquis.targetCell,
                     evaluatedPromise = new Promise(function(resolve, reject){
                         targetCell.canvasAnim.evaluateCode = function(){
-                            evileval.evalAnimation(exquis, codeString, targetCell.canvasAnim)
+                            evileval.evalAnimation(codeString, targetCell.canvasAnim)
                             .then(function(){
                                 resolve();
                             }, function(err){

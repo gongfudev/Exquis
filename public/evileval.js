@@ -1,6 +1,6 @@
 define([], function(){
 
-    var evalAnimation = function(exquis, codeString, canvasAnim){
+    var evalAnimation = function(codeString, canvasAnim){
         var jsAnimPath = toDataUri(codeString);
         return loadJsAnimOnCanvasAnim(jsAnimPath, canvasAnim, canvasAnim.animationName);
     },

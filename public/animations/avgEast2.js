@@ -35,12 +35,10 @@ function(idu, shapes){
           var breadth = dy;
           var directionVec = idu.vec2d(-copyDirection.x, -copyDirection.y);
           var opts = idu.rectangularPixelFlow(startPoint,
+                                              directionVec,
                                               breadth,
                                               depth,
-                                              directionVec); 
-         var dspeed = speed - 1;
-          opts.fromRectangle.x +=  dspeed;
-          opts.fromRectangle.width -=  dspeed;
+                                              speed); 
           idu.copyContextPixels(context, opts.fromRectangle, opts.toPoint);
       },
       setup: function (context){
