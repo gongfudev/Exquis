@@ -7,6 +7,12 @@ var testRotateVec90cw = function(idu){
     assert.deepEqual(result, expected);
 };
 
+var testRotateVec = function(idu){
+    var result = idu.rotateVec({x: 1, y: 0}, Math.PI / 2);
+    assert.ok(result.x < 0.00001 && result.x > 0); //it's not exactly zero
+    assert.equal(result.y, 1);
+};
+
 var testRectangularPixelFlow = function(idu){
 
     var startPoint = idu.vec2d(12, 3),
@@ -50,6 +56,7 @@ var testRectangularPixelFlowCopyDepth = function(idu){
 
 requirejs(['../public/bibs/imageDataUtils'], function(imageDataUtils){
     testRotateVec90cw(imageDataUtils);
+    testRotateVec(imageDataUtils);
     testRectangularPixelFlow(imageDataUtils);
     testRectangularPixelFlowCopyDepth(imageDataUtils);
 });

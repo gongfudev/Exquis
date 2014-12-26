@@ -1,39 +1,56 @@
 define(["bibs/imageDataUtils", "bibs/shapes"], 
 function(idu, shapes){
   return {
+
+/*
+
+*/
       draw: function (context, borders){
           var copyDirections = {
-              north: {x:0, y:0},
+              north: {x:0, y:-1},
               east:  {x:1, y:0},
-              south: {x:0, y:0},
+              south: {x:0, y:1},
               west:  {x:-1, y:0}
-          };
-//DIFFERENT
-          var cardinalDirection = "west";
-          var copyDirection = copyDirections[cardinalDirection];
-          var y0 = context.canvas.height * 2 / 3;
-          var dy = context.canvas.height / 3;
-          var margin = 10;
-          var source = borders["east"];
-//DIFFERENT
+          },
+              dimensions = idu.vec2d(context.canvas.width, 
+                                     context.canvas.height),
+              center = idu.vec2d(dimensions.x / 2, dimensions.y /2);
           
-          var avgLineX0 = context.canvas.width - 1;
-          var avgLineY0 = y0;
-          var avgLineX1 = avgLineX0;
-          var avgLineY1 = avgLineY0 + dy;
+//DIFFERENT
+          var cardinalDirection = "east",
+              directionVec = copyDirections[cardinalDirection],
+              //this only works when we're in a square: dimensions.x == y
+              diagonal = Math.sqrt(2 * Math.pow(dimensions.x,2)),
+              toStart = idu.scaleVec(
+                  idu.rotateVec(directionVec, -Math.PI / 4), 
+                  diagonal / 2);
+          var startPoint = idu.vec2dAdd(center, toStart);
+          // idu.vec2d(
+          //     context.canvas.width, 
+          //     0);
+              //context.canvas.height * 2 / 3);
+          //var breadth = context.canvas.height / 3;
+          //var depth = context.canvas.width - 10; //margin
+          var depth =  directionVec.x ? 
+              context.canvas.width : context.canvas.height;
+          depth -= 10; //margin
+          var breadth = directionVec.y ? 
+              context.canvas.width : context.canvas.height;
+          
+          var source = borders[cardinalDirection];
+          //only for east...
+          var sourcePixels = idu.sliceImageData(context, source, 
+                                                startPoint.y ,breadth);
+//DIFFERENT
 
-          var sourcePixels = idu.sliceImageData(context, source, y0 ,dy);
           var avgColorArray = idu.averageColor(sourcePixels);
           var lineColor = idu.array2CSSColor(avgColorArray);
           context.fillStyle = lineColor;
           
           var speed = 5;
-          context.fillRect(context.canvas.width - speed, y0, speed, dy);
-
-          var startPoint = idu.vec2d(context.canvas.width, y0);
-          var depth = context.canvas.width - margin;
-          var breadth = dy;
-          var directionVec = idu.vec2d(-copyDirection.x, -copyDirection.y);
+//only for east...
+          context.fillRect(startPoint.x - speed, startPoint.y, speed, breadth);
+//bug with copyDepth when west
           var opts = idu.rectangularPixelFlow(startPoint,
                                               directionVec,
                                               breadth,

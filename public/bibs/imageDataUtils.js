@@ -8,6 +8,16 @@ define({
     vec2dSubstract:function(a, b){
         return this.vec2d(a.x - b.x, a.y - b.y);
     },
+    scaleVec: function(vec, scale){
+        return this.vec2d(vec.x * scale, vec.y *scale);
+    },
+    rotateVec: function(vec, radians){
+        //https://en.wikipedia.org/wiki/Rotation_matrix
+        var r = [[Math.cos(radians), -Math.sin(radians)],
+                 [Math.sin(radians), Math.cos(radians)]]
+        return this.vec2d( vec.x * r[0][0] + vec.y * r[0][1],
+                           vec.x * r[1][0] + vec.y * r[1][1]) ;
+    },
     rotateVec90cw: function(vec){
         return { x: -vec.y, y: vec.x };
     },
@@ -21,44 +31,44 @@ define({
                                    copyDepth)
     {
 
-/*
-Input: 
-      --> directionVec
+     /*
+     Input: 
+        --> directionVec
 
-                     copyDepth
-                      ----- 
-      ---------------------o startPoint             
-           depth           |            
-                           |           
-                   breadth |          
-                           |
+                       copyDepth
+                        ----- 
+        ---------------------o startPoint             
+             depth           |            
+                             |           
+                     breadth |          
+                             |
 
-Internal representation:
+     Internal representation:
 
-      | perpDirection
-      v 
+        | perpDirection
+        v 
 
-      <-- copyDirection
+        <-- copyDirection
                   
-  secondPnt
-  toPoint    recStart
-      o-----o---------------
-       -----               |
-      copyDepth            |
-                           |
-                           o thirdPnt
-                             recEnd
+      secondPnt
+      toPoint  recStart
+        o-----o---------------
+         -----               |
+        copyDepth            |
+                             |
+                             o thirdPnt
+                               recEnd
 
-Output:
+     Output:
 
-  toPoint     fromRectangle
-      o     o---------------
-               width       |
-                           |
-                    height |
-                           |
+      toPoint   fromRectangle
+        o     o---------------
+                 width       |
+                             |
+                      height |
+                             |
 
-*/
+     */
         var that = this,
             perpDirection = that.rotateVec90cw(directionVec),
             copyDirection = that.vec2d(-directionVec.x, -directionVec.y),
