@@ -51,8 +51,8 @@ Internal representation:
 
 Output:
 
-  toPoint   fromRectangle
-      o   o-----------------
+  toPoint     fromRectangle
+      o     o---------------
                width       |
                            |
                     height |
