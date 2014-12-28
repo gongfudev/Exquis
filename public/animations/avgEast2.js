@@ -1,10 +1,6 @@
 define(["bibs/imageDataUtils", "bibs/shapes"], 
 function(idu, shapes){
   return {
-
-/*
-
-*/
       draw: function (context, borders){
           var copyDirections = {
               north: {x:0, y:-1},
@@ -12,40 +8,36 @@ function(idu, shapes){
               south: {x:0, y:1},
               west:  {x:-1, y:0}
           },
-              dimensions = idu.vec2d(context.canvas.width, 
-                                     context.canvas.height),
-              center = idu.vec2d(dimensions.x / 2, dimensions.y /2);
-          
-//DIFFERENT
-          var cardinalDirection = "east",
+              cardinalDirection = "east",
               directionVec = copyDirections[cardinalDirection],
-              //this only works when we're in a square: dimensions.x == y
-              diagonal = Math.sqrt(2 * Math.pow(dimensions.x,2)),
-              toStart = idu.scaleVec(
-                  idu.rotateVec(directionVec, -Math.PI / 4), 
-                  diagonal / 2);
-          var startPoint = idu.vec2dAdd(center, toStart);
-          // idu.vec2d(
-          //     context.canvas.width, 
-          //     0);
-              //context.canvas.height * 2 / 3);
-          //var breadth = context.canvas.height / 3;
-          //var depth = context.canvas.width - 10; //margin
-          var depth =  directionVec.x ? 
-              context.canvas.width : context.canvas.height;
-          depth -= 10; //margin
-          var breadth = directionVec.y ? 
-              context.canvas.width : context.canvas.height;
-          
+              maxDepth = context.canvas.height, 
+              maxBreadth = context.canvas.width;
+          if(directionVec.y){ //vertical flow
+              maxDepth = context.canvas.height;
+              maxBreadth = context.canvas.height;
+          }
+          var depth = maxDepth - 10, //margin
+              breadthStart = 100,
+              breadth = maxBreadth - breadthStart,
+              speed = 5; 
+
+          var centerToSide = idu.scaleVec(directionVec, maxDepth/2),
+              ccwPerp = idu.rotateVec90ccw(directionVec),
+              sideToStart = idu.scaleVec(ccwPerp, maxBreadth/2 - breadthStart),
+              centerToStart = idu.vec2dAdd(centerToSide, sideToStart),
+              center = idu.vec2d(context.canvas.width / 2, 
+                                 context.canvas.height /2 ),
+              startPoint = idu.vec2dAdd(center, centerToStart);
+
           var source = borders[cardinalDirection];
+          //TODO breadthStart should be 0 for south...
           var sourcePixels = idu.sliceImageData(context, source, 
-                                                0 ,breadth);
+                                                breadthStart ,breadth);
           var avgColorArray = idu.averageColor(sourcePixels);
           var lineColor = idu.array2CSSColor(avgColorArray);
           context.fillStyle = lineColor;
           
-          var speed = 5;
-          var copyDirection = idu.rotateVec(directionVec, Math.PI);
+          var copyDirection = idu.vec2d(-directionVec.x, -directionVec.y);
           var copyR = idu.makeRectangle(startPoint, 
                                         copyDirection, 
                                         breadth, 
