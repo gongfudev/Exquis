@@ -38,21 +38,22 @@ function(idu, shapes){
               context.canvas.width : context.canvas.height;
           
           var source = borders[cardinalDirection];
-          //only for east...
           var sourcePixels = idu.sliceImageData(context, source, 
-                                                startPoint.y ,breadth);
-//DIFFERENT
-
+                                                0 ,breadth);
           var avgColorArray = idu.averageColor(sourcePixels);
           var lineColor = idu.array2CSSColor(avgColorArray);
           context.fillStyle = lineColor;
           
           var speed = 5;
-//only for east...
-          context.fillRect(startPoint.x - speed, startPoint.y, speed, breadth);
-//bug with copyDepth when west
+          var copyDirection = idu.rotateVec(directionVec, Math.PI);
+          var copyR = idu.makeRectangle(startPoint, 
+                                        copyDirection, 
+                                        breadth, 
+                                        speed);
+          context.fillRect(copyR.x, copyR.y, copyR.width, copyR.height);
+          
           var opts = idu.rectangularPixelFlow(startPoint,
-                                              directionVec,
+                                              copyDirection,
                                               breadth,
                                               depth,
                                               speed); 

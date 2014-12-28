@@ -25,7 +25,7 @@ define({
         return { x: vec.y, y: -vec.x };
     },
     rectangularPixelFlow: function(startPnt,
-                                   directionVec,
+                                   copyDirection,
                                    breadth,
                                    depth,
                                    copyDepth)
@@ -43,21 +43,6 @@ define({
                      breadth |          
                              |
 
-     Internal representation:
-
-        | perpDirection
-        v 
-
-        <-- copyDirection
-                  
-      secondPnt
-      toPoint  recStart
-        o-----o---------------
-         -----               |
-        copyDepth            |
-                             |
-                             o thirdPnt
-                               recEnd
 
      Output:
 
@@ -70,27 +55,46 @@ define({
 
      */
         var that = this,
-            perpDirection = that.rotateVec90cw(directionVec),
-            copyDirection = that.vec2d(-directionVec.x, -directionVec.y),
-            deltaBreadth = that.vec2d(perpDirection.x * breadth,
-                                      perpDirection.y * breadth),
-            deltaDepth = that.vec2d(directionVec.x * depth,
-                                    directionVec.y * depth),
-            secondPnt = that.vec2dSubstract(startPnt, deltaDepth),
-            thirdPnt = that.vec2dAdd(startPnt, deltaBreadth),
-            toPoint = that.vec2d(Math.min(secondPnt.x, thirdPnt.x),
-                                 Math.min(secondPnt.y, thirdPnt.y)),
             copyDepth = copyDepth ? copyDepth : 1,
-            deltaCopy = that.vec2d(copyDirection.x * copyDepth,
-                                   copyDirection.y * copyDepth),
-            recStart = that.vec2dSubstract(toPoint, deltaCopy),
+            fromRectangle = that.makeRectangle(startPnt, 
+                                               copyDirection,
+                                               breadth,
+                                               depth - copyDepth),
+            deltaCopy = that.scaleVec(copyDirection, copyDepth),
+            toPoint = that.vec2dAdd(fromRectangle, deltaCopy);
+        return {fromRectangle: fromRectangle, toPoint: toPoint};
+    },
+
+    /*
+       Input:
+
+         <- directionVec (length 1, multiple of 90%)
+
+           depth
+         o--------------o startPnt
+         (secondPnt)    |
+                        | breadth
+                        |
+                        o (thirdPnt)
+
+        Output: {x: , y: , width: , height: }
+    */
+    makeRectangle: function(startPnt, directionVec, breadth, depth){
+        var that = this,
+            depthVec = that.scaleVec(directionVec, depth),
+            secondPnt = that.vec2dAdd(startPnt, depthVec),
+            perpendicularVec = that.rotateVec(directionVec, -Math.PI/2),
+            breadthVec = that.scaleVec(perpendicularVec, breadth),
+            thirdPnt = that.vec2dAdd(startPnt, breadthVec),
+            recStart = that.vec2d(Math.min(secondPnt.x, thirdPnt.x),
+                                  Math.min(secondPnt.y, thirdPnt.y)),
             recEnd = that.vec2d(Math.max(secondPnt.x, thirdPnt.x),
                                 Math.max(secondPnt.y, thirdPnt.y)),
-            fromRectangle = {x: recStart.x,
-                             y: recStart.y,
-                             width: recEnd.x - recStart.x,
-                             height: recEnd.y - recStart.y};
-        return {fromRectangle: fromRectangle, toPoint: toPoint};
+            rectangle = {x: recStart.x,
+                         y: recStart.y,
+                         width: recEnd.x - recStart.x,
+                         height: recEnd.y - recStart.y};
+        return rectangle;
     },
     
     // return average color in form [r, g, b, 1]

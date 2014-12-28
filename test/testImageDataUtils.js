@@ -13,12 +13,28 @@ var testRotateVec = function(idu){
     assert.equal(result.y, 1);
 };
 
+var testMakeRectangle = function(idu){
+
+    var startPoint = idu.vec2d(12, 3),
+        depth = 4,
+        breadth = 3,
+        directionVec = idu.vec2d(-1, 0);
+    
+    var result = idu.makeRectangle(startPoint,
+                                   directionVec,
+                                   breadth,
+                                   depth);
+
+    var expected = { x: 8, y: 3, width: 4, height:3 };
+    assert.deepEqual(result, expected);
+};
+
 var testRectangularPixelFlow = function(idu){
 
     var startPoint = idu.vec2d(12, 3),
         depth = 5,
         breadth = 3,
-        directionVec = idu.vec2d(1, 0);
+        directionVec = idu.vec2d(-1, 0);
     
     var result = idu.rectangularPixelFlow(startPoint,
                                           directionVec,
@@ -37,7 +53,7 @@ var testRectangularPixelFlowCopyDepth = function(idu){
     var startPoint = idu.vec2d(12, 3),
         depth = 5,
         breadth = 3,
-        directionVec = idu.vec2d(1, 0),
+        directionVec = idu.vec2d(-1, 0),
         copyDepth = 2;
     
     var result = idu.rectangularPixelFlow(startPoint,
@@ -55,6 +71,7 @@ var testRectangularPixelFlowCopyDepth = function(idu){
 
 
 requirejs(['../public/bibs/imageDataUtils'], function(imageDataUtils){
+    testMakeRectangle(imageDataUtils);
     testRotateVec90cw(imageDataUtils);
     testRotateVec(imageDataUtils);
     testRectangularPixelFlow(imageDataUtils);
