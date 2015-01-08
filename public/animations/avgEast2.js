@@ -16,12 +16,18 @@ function(idu, shapes){
               maxDepth = context.canvas.height;
               maxBreadth = context.canvas.height;
           }
-          var depth = maxDepth - 10, //margin
+          var depthStart = 10,
+              depth = maxDepth - 10 - depthStart, //margin
               breadthStart = 100,
               breadth = maxBreadth - breadthStart,
               speed = 5; 
 
-          
+          var source = borders[cardinalDirection];
+          var isInverted = cardinalDirection == "south" || cardinalDirection == "west";
+          context.fillStyle = idu.averageBorderColor(context, source,
+                                                     breadthStart,
+                                                     breadthStart + breadth,
+                                                     isInverted);
           
           var center = idu.vec2d(context.canvas.width / 2, 
                                  context.canvas.height /2 ),
@@ -29,30 +35,18 @@ function(idu, shapes){
               ccwPerp = idu.rotateVec90ccw(directionVec),
               sideToStart = idu.scaleVec(ccwPerp, maxBreadth/2 - breadthStart),
               centerToStart = idu.vec2dAdd(centerToSide, sideToStart),
-              startPoint = idu.vec2dAdd(center, centerToStart);
-
-          var source = borders[cardinalDirection];
-          //TODO breadthStart should be 0 for south...
-
-          var pixelBreadthStart = breadthStart;
-          if (cardinalDirection == "south" || cardinalDirection == "west"){
-              pixelBreadthStart = 0;
-          }
-
-          var sourcePixels = idu.sliceImageData(context, source, 
-                                                pixelBreadthStart, breadth);
-          var avgColorArray = idu.averageColor(sourcePixels);
-          var lineColor = idu.array2CSSColor(avgColorArray);
-          context.fillStyle = lineColor;
-          
-          var copyDirection = idu.vec2d(-directionVec.x, -directionVec.y);
-          var copyR = idu.makeRectangle(startPoint, 
+              startPoint = idu.vec2dAdd(center, centerToStart),
+              
+              copyDirection = idu.vec2d(-directionVec.x, -directionVec.y),
+              startToCopyStart = idu.scaleVec(copyDirection, depthStart),
+              copyStartPoint = idu.vec2dAdd(startPoint, startToCopyStart),
+              copyR = idu.makeRectangle(copyStartPoint, 
                                         copyDirection, 
                                         breadth, 
                                         speed);
           context.fillRect(copyR.x, copyR.y, copyR.width, copyR.height);
           
-          var opts = idu.rectangularPixelFlow(startPoint,
+          var opts = idu.rectangularPixelFlow(copyStartPoint,
                                               copyDirection,
                                               breadth,
                                               depth,

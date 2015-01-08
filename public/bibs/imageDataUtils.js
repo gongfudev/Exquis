@@ -112,6 +112,18 @@ define({
         avgArray[3] = 1;
         return avgArray;
     },
+
+    averageBorderColor: function(context, source, start, end, isInverted){
+          if (isInverted){
+              var maxBreadth = Math.max(source.width, source.height);
+              start = maxBreadth - end;
+              end = maxBreadth - start;
+          }
+          var sourcePixels = this.sliceImageData(context, source, 
+                                                start, end - start);
+          var avgColorArray = this.averageColor(sourcePixels);
+          return this.array2CSSColor(avgColorArray);
+    },
     
     // TODO: fix for vertical 
     sliceImageData: function(context, imageData, start, length){
