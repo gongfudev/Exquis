@@ -9,9 +9,9 @@ function(idu, shapes){
               west:  {x:-1, y:0}
           },
               cardinalDirection = "east",
-              directionVec = copyDirections[cardinalDirection],
               maxDepth = context.canvas.height, 
-              maxBreadth = context.canvas.width;
+              maxBreadth = context.canvas.width,
+              directionVec = copyDirections[cardinalDirection];
           if(directionVec.y){ //vertical flow
               maxDepth = context.canvas.height;
               maxBreadth = context.canvas.height;
@@ -21,18 +21,26 @@ function(idu, shapes){
               breadth = maxBreadth - breadthStart,
               speed = 5; 
 
-          var centerToSide = idu.scaleVec(directionVec, maxDepth/2),
+          
+          
+          var center = idu.vec2d(context.canvas.width / 2, 
+                                 context.canvas.height /2 ),
+              centerToSide = idu.scaleVec(directionVec, maxDepth/2),
               ccwPerp = idu.rotateVec90ccw(directionVec),
               sideToStart = idu.scaleVec(ccwPerp, maxBreadth/2 - breadthStart),
               centerToStart = idu.vec2dAdd(centerToSide, sideToStart),
-              center = idu.vec2d(context.canvas.width / 2, 
-                                 context.canvas.height /2 ),
               startPoint = idu.vec2dAdd(center, centerToStart);
 
           var source = borders[cardinalDirection];
           //TODO breadthStart should be 0 for south...
+
+          var pixelBreadthStart = breadthStart;
+          if (cardinalDirection == "south" || cardinalDirection == "west"){
+              pixelBreadthStart = 0;
+          }
+
           var sourcePixels = idu.sliceImageData(context, source, 
-                                                breadthStart ,breadth);
+                                                pixelBreadthStart, breadth);
           var avgColorArray = idu.averageColor(sourcePixels);
           var lineColor = idu.array2CSSColor(avgColorArray);
           context.fillStyle = lineColor;

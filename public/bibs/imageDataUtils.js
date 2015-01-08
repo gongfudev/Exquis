@@ -14,7 +14,7 @@ define({
     rotateVec: function(vec, radians){
         //https://en.wikipedia.org/wiki/Rotation_matrix
         var r = [[Math.cos(radians), -Math.sin(radians)],
-                 [Math.sin(radians), Math.cos(radians)]]
+                 [Math.sin(radians), Math.cos(radians)]];
         return this.vec2d( vec.x * r[0][0] + vec.y * r[0][1],
                            vec.x * r[1][0] + vec.y * r[1][1]) ;
     },
@@ -54,14 +54,14 @@ define({
                              |
 
      */
+        copyDepth = copyDepth ? copyDepth : 1;
         var that = this,
-            copyDepth = copyDepth ? copyDepth : 1,
             fromRectangle = that.makeRectangle(startPnt, 
                                                copyDirection,
                                                breadth,
                                                depth - copyDepth),
-            deltaCopy = that.scaleVec(copyDirection, copyDepth),
-            toPoint = that.vec2dAdd(fromRectangle, deltaCopy);
+            fromFromRectangleToPoint = that.scaleVec(copyDirection, copyDepth),
+            toPoint = that.vec2dAdd(fromRectangle, fromFromRectangleToPoint);
         return {fromRectangle: fromRectangle, toPoint: toPoint};
     },
 
