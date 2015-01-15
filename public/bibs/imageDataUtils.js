@@ -1,4 +1,10 @@
 define({
+    copyDirections : {
+        north: {x:0, y:-1},
+        east:  {x:1, y:0},
+        south: {x:0, y:1},
+        west:  {x:-1, y:0}
+    },
     vec2d: function(x, y){
         return {x: x, y: y};
     },
@@ -24,13 +30,24 @@ define({
     rotateVec90ccw: function(vec){
         return { x: vec.y, y: -vec.x };
     },
+    topRightForDirection: function(directionVec, width, height, topOffset, rightOffset){
+        var center = this.vec2d(width / 2, height /2 ),
+            isFlowHorizontal = directionVec.x,
+            maxBreadth = isFlowHorizontal ? height : width  , 
+            maxDepth =  isFlowHorizontal ? width : height,
+            centerToSide = this.scaleVec(directionVec, maxDepth/2 - rightOffset),
+            ccwPerp = this.rotateVec90ccw(directionVec),
+            sideToStart = this.scaleVec(ccwPerp, maxBreadth/2 - topOffset),
+            centerToStart = this.vec2dAdd(centerToSide, sideToStart),
+            startPoint = this.vec2dAdd(center, centerToStart);
+        return startPoint;
+    },
     rectangularPixelFlow: function(startPnt,
                                    copyDirection,
                                    breadth,
                                    depth,
                                    copyDepth)
     {
-
      /*
      Input: 
         --> directionVec
@@ -65,7 +82,8 @@ define({
         return {fromRectangle: fromRectangle, toPoint: toPoint};
     },
 
-    /*
+    makeRectangle: function(startPnt, directionVec, breadth, depth){
+       /*
        Input:
 
          <- directionVec (length 1, multiple of 90%)
@@ -78,8 +96,7 @@ define({
                         o (thirdPnt)
 
         Output: {x: , y: , width: , height: }
-    */
-    makeRectangle: function(startPnt, directionVec, breadth, depth){
+       */
         var that = this,
             depthVec = that.scaleVec(directionVec, depth),
             secondPnt = that.vec2dAdd(startPnt, depthVec),
