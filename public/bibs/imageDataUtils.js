@@ -127,7 +127,7 @@ define({
         return avgArray;
     },
 
-    averageBorderColor: function(context, source, start, end, isInverted){
+    averageColorSliced: function(context, source, start, end, isInverted){
           if (isInverted){
               var maxBreadth = Math.max(source.width, source.height);
               start = maxBreadth - end;
@@ -138,8 +138,17 @@ define({
           var avgColorArray = this.averageColor(sourcePixels);
           return this.array2CSSColor(avgColorArray);
     },
+
+    averageBorderColor: function(context, cardinalDir, borders, start, end){
+          var isInverted = cardinalDir == "south"; 
+              isInverted = isInverted || cardinalDir == "west";
+              return this.averageColorSliced(context,
+                                             borders[cardinalDir],
+                                             start,
+                                             end,
+                                             isInverted);
+    },
     
-    // TODO: fix for vertical 
     sliceImageData: function(context, imageData, start, length){
         var horizontal = imageData.height == 1,
             startIndex = start * 4,
