@@ -14,8 +14,12 @@ define({
     vec2dSubstract:function(a, b){
         return this.vec2d(a.x - b.x, a.y - b.y);
     },
-    scaleVec: function(vec, scale){
+    vec2dScale: function(vec, scale){
         return this.vec2d(vec.x * scale, vec.y *scale);
+    },
+    vec2dAddScaled: function(vec, vecToScale, scale){
+        var scaled = this.vec2dScale(vecToScale, scale);
+        return this.vec2dAdd(vec, scaled);
     },
     rotateVec: function(vec, radians){
         //https://en.wikipedia.org/wiki/Rotation_matrix
@@ -30,17 +34,10 @@ define({
     rotateVec90ccw: function(vec){
         return { x: vec.y, y: -vec.x };
     },
-    topRightForDirection: function(directionVec, width, height, topOffset, rightOffset){
-        var center = this.vec2d(width / 2, height /2 ),
-            isFlowHorizontal = directionVec.x,
-            maxBreadth = isFlowHorizontal ? height : width  , 
-            maxDepth =  isFlowHorizontal ? width : height,
-            centerToSide = this.scaleVec(directionVec, maxDepth/2 - rightOffset),
-            ccwPerp = this.rotateVec90ccw(directionVec),
-            sideToStart = this.scaleVec(ccwPerp, maxBreadth/2 - topOffset),
-            centerToStart = this.vec2dAdd(centerToSide, sideToStart),
-            startPoint = this.vec2dAdd(center, centerToStart);
-        return startPoint;
+    vec2dAddPerpendiculars: function(start, direction, parallelDist, perpDist){
+        var parlPnt = this.vec2dAddScaled(start, direction, parallelDist),
+            perp = this.rotateVec90cw(direction);
+        return this.vec2dAddScaled(parlPnt, perp, perpDist);
     },
     rectangularPixelFlow: function(startPnt,
                                    copyDirection,
@@ -77,7 +74,7 @@ define({
                                                copyDirection,
                                                breadth,
                                                depth - copyDepth),
-            fromFromRectangleToPoint = that.scaleVec(copyDirection, copyDepth),
+            fromFromRectangleToPoint = that.vec2dScale(copyDirection, copyDepth),
             toPoint = that.vec2dAdd(fromRectangle, fromFromRectangleToPoint);
         return {fromRectangle: fromRectangle, toPoint: toPoint};
     },
@@ -98,10 +95,10 @@ define({
         Output: {x: , y: , width: , height: }
        */
         var that = this,
-            depthVec = that.scaleVec(directionVec, depth),
+            depthVec = that.vec2dScale(directionVec, depth),
             secondPnt = that.vec2dAdd(startPnt, depthVec),
             perpendicularVec = that.rotateVec(directionVec, -Math.PI/2),
-            breadthVec = that.scaleVec(perpendicularVec, breadth),
+            breadthVec = that.vec2dScale(perpendicularVec, breadth),
             thirdPnt = that.vec2dAdd(startPnt, breadthVec),
             recStart = that.vec2d(Math.min(secondPnt.x, thirdPnt.x),
                                   Math.min(secondPnt.y, thirdPnt.y)),
