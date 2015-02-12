@@ -1,50 +1,46 @@
-define(["bibs/imageDataUtils"], 
-function(imageDataUtils){
+define(["bibs/imageDataUtils", "bibs/shapes"], 
+function(idu, shapes){
   return {
       draw: function (context, borders){
-          var copyDirections = {
-              north: {x:0, y:0},
-              east:  {x:-1, y:0},
-              south: {x:0, y:0},
-              west:  {x:1, y:0}
-          };
-          var direction = "east";
-          var copyDirection = copyDirections[direction];
-          var y0 = context.canvas.height * 2 / 3;
-          var dy = context.canvas.height / 3;
-          var margin = 10;
-          var source = borders[direction];
-
-          var avgLineX0 = context.canvas.width - 1;
-          var avgLineY0 = y0;
-          var avgLineX1 = avgLineX0;
-          var avgLineY1 = avgLineY0 + dy;
-
-          var fromRectangle = {x: 0, 
-                               y: y0, 
-                               width: context.canvas.width - margin, 
-                               height: dy};
-          var negativeDirection = copyDirection.x === -1 || copyDirection.y === -1;
-          if(negativeDirection){
-              var vertical = copyDirection.x === 0 ;
-              fromRectangle[vertical ? "y" : "x"] += margin;
-          }
-          var toPoint = {x: fromRectangle.x + copyDirection.x,
-                         y: fromRectangle.y + copyDirection.y};
-
-          var halfBorder = imageDataUtils.sliceImageData(context,
-                                                         source,
-                                                         y0 ,
-                                                         dy);
-          var avgColorArray = imageDataUtils.averageColor(halfBorder);
-          context.strokeStyle = imageDataUtils.array2CSSColor(avgColorArray);
-          context.beginPath();
-          context.moveTo(avgLineX0, avgLineY0);
-          context.lineTo(avgLineX1, avgLineY1);
-          context.closePath();
-          context.stroke();
-          //copy image one pixel west
-          imageDataUtils.copyContextPixels(context, fromRectangle, toPoint);
+          var cardinalDirection = "east",
+              directionVec = idu.copyDirections[cardinalDirection],
+              
+              depthStart = 0,
+              isFlowHorizontal = directionVec.x,
+              maxDepth =  context.canvas[isFlowHorizontal ? "width" : "height"],
+              depth = maxDepth - 50 - depthStart, //margin
+              
+              breadthStart = 100,
+              maxBreadth = context.canvas[isFlowHorizontal ? "height" : "width"],
+              breadth = maxBreadth - breadthStart,
+              speed = 5; 
+          
+          // determine start point (top left point of animated rectangle)
+          var center = idu.vec2d(context.canvas.width / 2, 
+                                 context.canvas.height /2 ),
+              startPnt = idu.vec2dAddPerpendiculars(center, directionVec,
+                                                    maxDepth/2 - depthStart,
+                                                    breadthStart - maxBreadth/2);
+          // determine source rectangle
+          var sourceR = idu.makeRectangle(startPnt,
+                                          idu.vec2dScale(directionVec, -1),
+                                          breadth, speed);
+          
+          // determine color
+          var color= idu.averageBorderColor(context,
+                                            cardinalDirection,
+                                            borders,
+                                            breadthStart,
+                                            breadthStart + breadth);
+          // draw source rectangle
+          context.fillStyle = color;
+          context.fillRect(sourceR.x, sourceR.y, sourceR.width, sourceR.height);
+          
+          // copy source + old image
+          var opts = idu.rectangularPixelFlow(startPnt,
+                                              idu.vec2dScale(directionVec, -1),
+                                              breadth, depth, speed); 
+          idu.copyContextPixels(context, opts.fromRectangle, opts.toPoint);
       },
       setup: function (context){
       }

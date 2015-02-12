@@ -124,7 +124,7 @@ define({
         }
         avgArray = totals.map(function(total){ return Math.round(total/pixels.length*4);});
         avgArray[3] = 1;
-        return avgArray;
+        return this.array2CSSColor(avgArray);
     },
 
     averageColorSliced: function(context, source, start, end, isInverted){
@@ -135,8 +135,7 @@ define({
           }
           var sourcePixels = this.sliceImageData(context, source, 
                                                 start, end - start);
-          var avgColorArray = this.averageColor(sourcePixels);
-          return this.array2CSSColor(avgColorArray);
+          return this.averageColor(sourcePixels);
     },
 
     averageBorderColor: function(context, cardinalDir, borders, start, end){
@@ -157,7 +156,7 @@ define({
             slicedData = imageData.data.subarray(startIndex, endIndex);
         result.data.set(slicedData);
         return result;
-       },
+    },
 
     copyContextPixels: function(context, fromRectangle, toPoint){
         var currentImage = context.getImageData(fromRectangle.x, 
