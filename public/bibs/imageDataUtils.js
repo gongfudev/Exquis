@@ -104,10 +104,10 @@ define({
                                   Math.min(secondPnt.y, thirdPnt.y)),
             recEnd = that.vec2d(Math.max(secondPnt.x, thirdPnt.x),
                                 Math.max(secondPnt.y, thirdPnt.y)),
-            rectangle = {x: recStart.x,
-                         y: recStart.y,
-                         width: recEnd.x - recStart.x,
-                         height: recEnd.y - recStart.y};
+            rectangle = {x: Math.round(recStart.x),
+                         y: Math.round(recStart.y),
+                         width: Math.round(recEnd.x - recStart.x),
+                         height: Math.round(recEnd.y - recStart.y)};
         return rectangle;
     },
     
@@ -122,30 +122,32 @@ define({
             totals[1] += pixels[i+1];
             totals[2] += pixels[i+2];
         }
-        avgArray = totals.map(function(total){ return Math.round(total/pixels.length*4);});
+        avgArray = totals.map(function(total){
+            return Math.round(total/pixels.length*4);
+        });
         avgArray[3] = 1;
         return this.array2CSSColor(avgArray);
     },
 
     averageColorSliced: function(context, source, start, end, isInverted){
-          if (isInverted){
-              var maxBreadth = Math.max(source.width, source.height);
-              start = maxBreadth - end;
-              end = maxBreadth - start;
-          }
-          var sourcePixels = this.sliceImageData(context, source, 
-                                                start, end - start);
-          return this.averageColor(sourcePixels);
+        var correctStart = start;
+        if (isInverted){
+            var maxBreadth = Math.max(source.width, source.height);
+            correctStart = maxBreadth - end;
+        }
+        var sourcePixels = this.sliceImageData(context, source, 
+                                               correctStart, end - start);
+        return this.averageColor(sourcePixels);
     },
 
     averageBorderColor: function(context, cardinalDir, borders, start, end){
-          var isInverted = cardinalDir == "south"; 
-              isInverted = isInverted || cardinalDir == "west";
-              return this.averageColorSliced(context,
-                                             borders[cardinalDir],
-                                             start,
-                                             end,
-                                             isInverted);
+        var isInverted = cardinalDir == "south"; 
+        isInverted = isInverted || cardinalDir == "west";
+        return this.averageColorSliced(context,
+                                       borders[cardinalDir],
+                                       start,
+                                       end,
+                                       isInverted);
     },
     
     sliceImageData: function(context, imageData, start, length){
