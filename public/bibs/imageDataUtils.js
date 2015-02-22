@@ -39,6 +39,68 @@ define({
             perp = this.rotateVec90cw(direction);
         return this.vec2dAddScaled(parlPnt, perp, perpDist);
     },
+    pixelFlowParams: function(rectangle, horizontal, speed){
+        /* 
+         Input:
+
+           rectangle: 
+             x---------------------
+             |                    |
+             |                    |
+             |                    |
+             ----------------------
+           
+           horizontal: true
+           speed: 4
+
+         Output:
+
+           out.sourceRectangle
+             x-----
+             |    |
+             |    |
+             |    |
+             ------ 
+
+
+           out.copiedRectangle: 
+             x----------------
+             |               |
+             |               |
+             |               |
+             -----------------
+
+           out.toPoint
+                  x 
+
+         */
+
+        var cardinalDirection = horizontal ? "east" : "south",
+            dimension = horizontal ? "width" : "height",
+            copyDirection = this.copyDirections[cardinalDirection],
+            sourcePoint = this.vec2d(rectangle.x, rectangle.y),
+            copiedPoint = sourcePoint,
+            toPoint = this.vec2dAddScaled(sourcePoint, copyDirection, speed),
+            absSpeed = Math.abs(speed);
+        if(speed < 0){
+            toPoint = sourcePoint;
+            copiedPoint = this.vec2dAddScaled(toPoint, copyDirection, -speed);
+            var srcDist = rectangle[dimension] + speed;
+            sourcePoint = this.vec2dAddScaled(toPoint, copyDirection, srcDist);
+        }
+        var opts = {sourceRectangle: {x: sourcePoint.x,
+                                      y: sourcePoint.y,
+                                      width: rectangle.width,
+                                      height: rectangle.height},
+                    copiedRectangle: {x: copiedPoint.x,
+                                      y: copiedPoint.y,
+                                      width: rectangle.width,
+                                      height: rectangle.height},
+                    toPoint: toPoint};
+        opts.copiedRectangle[dimension] -= absSpeed;
+        opts.sourceRectangle[dimension] = absSpeed;
+        return opts;
+    },
     rectangularPixelFlow: function(startPnt,
                                    copyDirection,
                                    breadth,
@@ -47,7 +109,7 @@ define({
     {
      /*
      Input: 
-        --> directionVec
+        <-- copyDirection
 
                        copyDepth
                         ----- 
@@ -74,7 +136,8 @@ define({
                                                copyDirection,
                                                breadth,
                                                depth - copyDepth),
-            fromFromRectangleToPoint = that.vec2dScale(copyDirection, copyDepth),
+            fromFromRectangleToPoint = that.vec2dScale(copyDirection,
+                                                       copyDepth),
             toPoint = that.vec2dAdd(fromRectangle, fromFromRectangleToPoint);
         return {fromRectangle: fromRectangle, toPoint: toPoint};
     },

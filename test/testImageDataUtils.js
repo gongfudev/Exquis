@@ -29,6 +29,58 @@ var testMakeRectangle = function(idu){
     assert.deepEqual(result, expected);
 };
 
+var testPixelFlowParamsHorizontalPositive = function(idu){
+    var rectangle = {x: 7, y: 3, width: 5, height: 3},
+        horizontal = true,
+        speed = 1;
+    var result = idu.pixelFlowParams(rectangle, horizontal, speed);
+    assert.deepEqual(result.copiedRectangle, 
+                     { x: 7, y: 3, width: 4, height:3 });
+    assert.deepEqual(result.toPoint, 
+                     { x: 8, y: 3 });
+    assert.deepEqual(result.sourceRectangle, 
+                     { x: 7, y: 3, width: 1, height:3 });
+};
+
+var testPixelFlowParamsHorizontalNegative = function(idu){
+    var rectangle = {x: 7, y: 3, width: 5, height: 3},
+        horizontal = true,
+        speed = -1;
+    var result = idu.pixelFlowParams(rectangle, horizontal, speed);
+    assert.deepEqual(result.copiedRectangle, 
+                     { x: 8, y: 3, width: 4, height:3 });
+    assert.deepEqual(result.toPoint, 
+                     { x: 7, y: 3 });
+    assert.deepEqual(result.sourceRectangle, 
+                     { x: 11, y: 3, width: 1, height:3 });
+};
+
+var testPixelFlowParamsVerticalPositive = function(idu){
+    var rectangle = {x: 7, y: 3, width: 5, height: 6},
+        horizontal = false,
+        speed = 2;
+    var result = idu.pixelFlowParams(rectangle, horizontal, speed);
+    assert.deepEqual(result.sourceRectangle, 
+                     { x: 7, y: 3, width: 5, height: 2 });
+    assert.deepEqual(result.copiedRectangle, 
+                     { x: 7, y: 3, width: 5, height: 4 });
+    assert.deepEqual(result.toPoint, 
+                     { x: 7, y: 5 });
+};
+
+var testPixelFlowParamsVerticalNegative = function(idu){
+    var rectangle = {x: 7, y: 3, width: 5, height: 6},
+        horizontal = false,
+        speed = -2;
+    var result = idu.pixelFlowParams(rectangle, horizontal, speed);
+    assert.deepEqual(result.copiedRectangle, 
+                     { x: 7, y: 5, width: 5, height: 4 });
+    assert.deepEqual(result.toPoint, 
+                     { x: 7, y: 3 });
+    assert.deepEqual(result.sourceRectangle, 
+                      { x: 7, y: 7, width: 5, height: 2 });
+};
+
 var testRectangularPixelFlow = function(idu){
 
     var startPoint = idu.vec2d(12, 3),
@@ -75,5 +127,8 @@ requirejs(['../public/bibs/imageDataUtils'], function(imageDataUtils){
     testRotateVec90cw(imageDataUtils);
     testRotateVec(imageDataUtils);
     testRectangularPixelFlow(imageDataUtils);
-    testRectangularPixelFlowCopyDepth(imageDataUtils);
+    testPixelFlowParamsHorizontalPositive(imageDataUtils);
+    testPixelFlowParamsVerticalPositive(imageDataUtils);
+    testPixelFlowParamsVerticalNegative(imageDataUtils);
+    testPixelFlowParamsHorizontalNegative(imageDataUtils);
 });
