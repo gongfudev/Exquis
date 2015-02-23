@@ -34,11 +34,11 @@ var testPixelFlowParamsHorizontalPositive = function(idu){
         horizontal = true,
         speed = 1;
     var result = idu.pixelFlowParams(rectangle, horizontal, speed);
-    assert.deepEqual(result.copiedRectangle, 
+    assert.deepEqual(result.copyRectangle, 
                      { x: 7, y: 3, width: 4, height:3 });
-    assert.deepEqual(result.toPoint, 
+    assert.deepEqual(result.pastePoint, 
                      { x: 8, y: 3 });
-    assert.deepEqual(result.sourceRectangle, 
+    assert.deepEqual(result.changeRectangle, 
                      { x: 7, y: 3, width: 1, height:3 });
 };
 
@@ -47,11 +47,11 @@ var testPixelFlowParamsHorizontalNegative = function(idu){
         horizontal = true,
         speed = -1;
     var result = idu.pixelFlowParams(rectangle, horizontal, speed);
-    assert.deepEqual(result.copiedRectangle, 
+    assert.deepEqual(result.copyRectangle, 
                      { x: 8, y: 3, width: 4, height:3 });
-    assert.deepEqual(result.toPoint, 
+    assert.deepEqual(result.pastePoint, 
                      { x: 7, y: 3 });
-    assert.deepEqual(result.sourceRectangle, 
+    assert.deepEqual(result.changeRectangle, 
                      { x: 11, y: 3, width: 1, height:3 });
 };
 
@@ -60,11 +60,11 @@ var testPixelFlowParamsVerticalPositive = function(idu){
         horizontal = false,
         speed = 2;
     var result = idu.pixelFlowParams(rectangle, horizontal, speed);
-    assert.deepEqual(result.sourceRectangle, 
+    assert.deepEqual(result.changeRectangle, 
                      { x: 7, y: 3, width: 5, height: 2 });
-    assert.deepEqual(result.copiedRectangle, 
+    assert.deepEqual(result.copyRectangle, 
                      { x: 7, y: 3, width: 5, height: 4 });
-    assert.deepEqual(result.toPoint, 
+    assert.deepEqual(result.pastePoint, 
                      { x: 7, y: 5 });
 };
 
@@ -73,11 +73,11 @@ var testPixelFlowParamsVerticalNegative = function(idu){
         horizontal = false,
         speed = -2;
     var result = idu.pixelFlowParams(rectangle, horizontal, speed);
-    assert.deepEqual(result.copiedRectangle, 
+    assert.deepEqual(result.copyRectangle, 
                      { x: 7, y: 5, width: 5, height: 4 });
-    assert.deepEqual(result.toPoint, 
+    assert.deepEqual(result.pastePoint, 
                      { x: 7, y: 3 });
-    assert.deepEqual(result.sourceRectangle, 
+    assert.deepEqual(result.changeRectangle, 
                       { x: 7, y: 7, width: 5, height: 2 });
 };
 

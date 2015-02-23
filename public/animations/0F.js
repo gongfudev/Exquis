@@ -65,12 +65,12 @@ function(idu, shapes){
           var opts = idu.pixelFlowParams(rectangle,
                                                     horizontal, 
                                                     speed), 
-              srcRec = opts.sourceRectangle;
+              srcRec = opts.changeRectangle;
           
           context.fillStyle = color;
           context.fillRect(srcRec.x, srcRec.y, srcRec.width, srcRec.height);
 
-          idu.copyContextPixels(context, opts.copiedRectangle, opts.toPoint);
+          idu.copyContextPixels(context, opts.copyRectangle, opts.pastePoint);
       },
 
       setup: function (context){

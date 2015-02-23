@@ -39,67 +39,76 @@ define({
             perp = this.rotateVec90cw(direction);
         return this.vec2dAddScaled(parlPnt, perp, perpDist);
     },
+
+    /** 
+     Input:
+
+       rectangle: 
+         x--------------------
+         |                    |
+         |                    |
+         |                    |
+          --------------------
+
+       horizontal: true
+       speed: 4
+
+     Output:
+
+       out.changeRectangle
+         x----
+         |    |
+         |    |
+         |    |
+          ---- 
+
+
+       out.copyRectangle: 
+         x---------------
+         |               |
+         |               |
+         |               |
+          ---------------
+
+       out.toPoint
+              x 
+
+     */
     pixelFlowParams: function(rectangle, horizontal, speed){
-        /* 
-         Input:
-
-           rectangle: 
-             x---------------------
-             |                    |
-             |                    |
-             |                    |
-             ----------------------
-           
-           horizontal: true
-           speed: 4
-
-         Output:
-
-           out.sourceRectangle
-             x-----
-             |    |
-             |    |
-             |    |
-             ------ 
-
-
-           out.copiedRectangle: 
-             x----------------
-             |               |
-             |               |
-             |               |
-             -----------------
-
-           out.toPoint
-                  x 
-
-         */
 
         var cardinalDirection = horizontal ? "east" : "south",
-            dimension = horizontal ? "width" : "height",
+            parallDim = horizontal ? "width" : "height",
+            perpenDim = horizontal ? "height" :  "width",
+            changeSize = Math.abs(speed),
+            copySize = rectangle[parallDim] - changeSize,
             copyDirection = this.copyDirections[cardinalDirection],
-            sourcePoint = this.vec2d(rectangle.x, rectangle.y),
-            copiedPoint = sourcePoint,
-            toPoint = this.vec2dAddScaled(sourcePoint, copyDirection, speed),
-            absSpeed = Math.abs(speed);
-        if(speed < 0){
-            toPoint = sourcePoint;
-            copiedPoint = this.vec2dAddScaled(toPoint, copyDirection, -speed);
-            var srcDist = rectangle[dimension] + speed;
-            sourcePoint = this.vec2dAddScaled(toPoint, copyDirection, srcDist);
-        }
-        var opts = {sourceRectangle: {x: sourcePoint.x,
-                                      y: sourcePoint.y,
-                                      width: rectangle.width,
-                                      height: rectangle.height},
-                    copiedRectangle: {x: copiedPoint.x,
-                                      y: copiedPoint.y,
-                                      width: rectangle.width,
-                                      height: rectangle.height},
-                    toPoint: toPoint};
-        opts.copiedRectangle[dimension] -= absSpeed;
-        opts.sourceRectangle[dimension] = absSpeed;
-        return opts;
+            point0 = this.vec2d(rectangle.x, rectangle.y),
+            point1 = this.vec2dAddScaled(point0, copyDirection, changeSize),
+            point2 = this.vec2dAddScaled(point0, copyDirection, copySize),
+         /*
+          horizontal example:
+
+          changeSize  ----           
+            copySize  ---------------
+                     x----x----------x----
+              point0 |  point1     point2 |
+                     |                    |
+                     |                    |
+                     |                    |
+                      --------------------
+          */
+            copyPoint   = speed > 0 ? point0 : point1,
+            changePoint = speed > 0 ? point0 : point2,
+            pastePoint  = speed > 0 ? point1 : point0,
+            changeRectangle = {x: changePoint.x, y: changePoint.y},
+            copyRectangle = {x: copyPoint.x, y: copyPoint.y};
+        changeRectangle[parallDim] = changeSize;
+        changeRectangle[perpenDim] = rectangle[perpenDim];
+        copyRectangle[parallDim] = copySize;
+        copyRectangle[perpenDim] = rectangle[perpenDim];
+        return {changeRectangle: changeRectangle,
+                copyRectangle: copyRectangle,
+                pastePoint: pastePoint};
     },
     rectangularPixelFlow: function(startPnt,
                                    copyDirection,
