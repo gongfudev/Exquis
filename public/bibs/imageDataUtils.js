@@ -21,25 +21,6 @@ define({
         var scaled = this.vec2dScale(vecToScale, scale);
         return this.vec2dAdd(vec, scaled);
     },
-    rotateVec: function(vec, radians){
-        //https://en.wikipedia.org/wiki/Rotation_matrix
-        var r = [[Math.cos(radians), -Math.sin(radians)],
-                 [Math.sin(radians), Math.cos(radians)]];
-        return this.vec2d( vec.x * r[0][0] + vec.y * r[0][1],
-                           vec.x * r[1][0] + vec.y * r[1][1]) ;
-    },
-    rotateVec90cw: function(vec){
-        return { x: -vec.y, y: vec.x };
-    },
-    rotateVec90ccw: function(vec){
-        return { x: vec.y, y: -vec.x };
-    },
-    vec2dAddPerpendiculars: function(start, direction, parallelDist, perpDist){
-        var parlPnt = this.vec2dAddScaled(start, direction, parallelDist),
-            perp = this.rotateVec90cw(direction);
-        return this.vec2dAddScaled(parlPnt, perp, perpDist);
-    },
-
     /** 
      Input:
 
@@ -96,7 +77,7 @@ define({
                      |                    |
                      |                    |
                       --------------------
-          */
+         */
             copyPoint   = speed > 0 ? point0 : point1,
             changePoint = speed > 0 ? point0 : point2,
             pastePoint  = speed > 0 ? point1 : point0,
@@ -110,79 +91,6 @@ define({
                 copyRectangle: copyRectangle,
                 pastePoint: pastePoint};
     },
-    rectangularPixelFlow: function(startPnt,
-                                   copyDirection,
-                                   breadth,
-                                   depth,
-                                   copyDepth)
-    {
-     /*
-     Input: 
-        <-- copyDirection
-
-                       copyDepth
-                        ----- 
-        ---------------------o startPoint             
-             depth           |            
-                             |           
-                     breadth |          
-                             |
-
-
-     Output:
-
-      toPoint   fromRectangle
-        o     o---------------
-                 width       |
-                             |
-                      height |
-                             |
-
-     */
-        copyDepth = copyDepth ? copyDepth : 1;
-        var that = this,
-            fromRectangle = that.makeRectangle(startPnt, 
-                                               copyDirection,
-                                               breadth,
-                                               depth - copyDepth),
-            fromFromRectangleToPoint = that.vec2dScale(copyDirection,
-                                                       copyDepth),
-            toPoint = that.vec2dAdd(fromRectangle, fromFromRectangleToPoint);
-        return {fromRectangle: fromRectangle, toPoint: toPoint};
-    },
-
-    makeRectangle: function(startPnt, directionVec, breadth, depth){
-       /*
-       Input:
-
-         <- directionVec (length 1, multiple of 90%)
-
-           depth
-         o--------------o startPnt
-         (secondPnt)    |
-                        | breadth
-                        |
-                        o (thirdPnt)
-
-        Output: {x: , y: , width: , height: }
-       */
-        var that = this,
-            depthVec = that.vec2dScale(directionVec, depth),
-            secondPnt = that.vec2dAdd(startPnt, depthVec),
-            perpendicularVec = that.rotateVec(directionVec, -Math.PI/2),
-            breadthVec = that.vec2dScale(perpendicularVec, breadth),
-            thirdPnt = that.vec2dAdd(startPnt, breadthVec),
-            recStart = that.vec2d(Math.min(secondPnt.x, thirdPnt.x),
-                                  Math.min(secondPnt.y, thirdPnt.y)),
-            recEnd = that.vec2d(Math.max(secondPnt.x, thirdPnt.x),
-                                Math.max(secondPnt.y, thirdPnt.y)),
-            rectangle = {x: Math.round(recStart.x),
-                         y: Math.round(recStart.y),
-                         width: Math.round(recEnd.x - recStart.x),
-                         height: Math.round(recEnd.y - recStart.y)};
-        return rectangle;
-    },
-    
     // return average color in form [r, g, b, 1]
     averageColor: function(imageData){
         var pixels = imageData.data,
@@ -198,30 +106,8 @@ define({
             return Math.round(total/pixels.length*4);
         });
         avgArray[3] = 1;
-        return this.array2CSSColor(avgArray);
+        return avgArray;
     },
-
-    averageColorSliced: function(context, source, start, end, isInverted){
-        var correctStart = start;
-        if (isInverted){
-            var maxBreadth = Math.max(source.width, source.height);
-            correctStart = maxBreadth - end;
-        }
-        var sourcePixels = this.sliceImageData(context, source, 
-                                               correctStart, end - start);
-        return this.averageColor(sourcePixels);
-    },
-
-    averageBorderColor: function(context, cardinalDir, borders, start, end){
-        var isInverted = cardinalDir == "south"; 
-        isInverted = isInverted || cardinalDir == "west";
-        return this.averageColorSliced(context,
-                                       borders[cardinalDir],
-                                       start,
-                                       end,
-                                       isInverted);
-    },
-    
     sliceImageData: function(context, imageData, start, length){
         var horizontal = imageData.height == 1,
             startIndex = start * 4,
@@ -231,7 +117,6 @@ define({
         result.data.set(slicedData);
         return result;
     },
-
     copyContextPixels: function(context, fromRectangle, toPoint){
         var currentImage = context.getImageData(fromRectangle.x, 
                                                   fromRectangle.y, 
@@ -239,10 +124,37 @@ define({
                                                   fromRectangle.height);
           context.putImageData(currentImage, toPoint.x, toPoint.y);
     },
-
-
     array2CSSColor: function(colorArray){
         var alpha = colorArray.length < 4 ? 1 : colorArray[3];
         return "rgba(" + colorArray[0] + "," + colorArray[1] + "," + colorArray[2] + "," + alpha + ")";
+    },
+    rectangle: function(x, y, width, height){
+        //TODO replace width and height with x,y of opposite point
+        return {x: x, y: y, width: width, height: height} ;
+    },
+    drawFlow: function(context, srcPixels, rectangle, horizontal, speed){
+        var opts = this.pixelFlowParams(rectangle, horizontal, speed); 
+        this.drawPixels(context, opts.changeRectangle, srcPixels, horizontal);
+        this.copyContextPixels(context, opts.copyRectangle, opts.pastePoint);
+    },
+    drawPixels: function(context, chgRec, srcPixels, horizontal){
+        var size = horizontal ? chgRec.width : chgRec.height,
+            d= [0,0];
+        for(var i=0; i<size; i++){
+            d[horizontal? 0 : 1] = i;
+            context.putImageData(srcPixels, chgRec.x + d[0], chgRec.y + d[1]);
+        }
+    },
+    drawAvgFlow: function(context, srcPixels, rectangle, horizontal, speed){
+        var opts = this.pixelFlowParams(rectangle, horizontal, speed); 
+        //TODO write an avg function to transfom the srcPixels
+        // and draw them with drawPixels
+        this.drawAvgColor(context, opts.changeRectangle, srcPixels);
+        this.copyContextPixels(context, opts.copyRectangle, opts.pastePoint);
+    },
+    drawAvgColor: function(context, chgRec, srcPixels){
+        var color = this.averageColor(srcPixels);
+        context.fillStyle = this.array2CSSColor(color);
+        context.fillRect(chgRec.x, chgRec.y, chgRec.width, chgRec.height);
     }
 });

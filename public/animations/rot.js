@@ -28,7 +28,7 @@ define({
         context.translate(axisX, axisY);
 
         context.rotate(this.rotation * this.TO_RADIANS);
-        this.rotation = Math.sin(this.framecount/50);//-5;//(this.rotation - 0.5) % 360;
+        this.rotation = Math.sin(this.framecount/50) *2;//-5;//(this.rotation - 0.5) % 360;
         context.drawImage(this.buffer, -axisX, -axisY, 
                           context.canvas.width, context.canvas.height);
         context.restore();

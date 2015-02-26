@@ -8,83 +8,42 @@ function(idu, shapes){
       draw: function (context, borders){
           
           //bottom left sw
-          var cardinalDirection = "south",
-              // determine start point (top left point of animated rectangle)
-              startPnt = idu.vec2d(this.breadth, this.side),
-              color = idu.averageBorderColor(context,
-                                             cardinalDirection,
-                                             borders,
-                                             this.depth,
-                                             this.depth + this.breadth);
-          this.drawFlow(context, color, cardinalDirection, startPnt, 
-                        this.depth, this.breadth);
+          var rec = idu.rectangle(0, this.breadth, this.breadth, this.depth),
+              srcPixels = idu.sliceImageData(context, borders["south"],
+                                             0, this.breadth);
+          idu.drawAvgFlow(context, srcPixels, rec, false, -this.speed);
           
           //top right ne
-          cardinalDirection = "north";
-          startPnt = idu.vec2d(this.depth, 0);
-          color = idu.averageBorderColor(context,
-                                         cardinalDirection,
-                                         borders,
-                                         this.depth,
-                                         this.depth + this.breadth);
-          this.drawFlow(context, color, cardinalDirection, startPnt, 
-                        this.depth, this.breadth);
-          
+          rec = idu.rectangle(this.depth, 0, this.breadth, this.depth) ;
+          srcPixels = idu.sliceImageData(context, borders["north"],
+                                         this.depth, this.breadth);
+          idu.drawAvgFlow(context, srcPixels, rec, false, this.speed);
+
           //top left nw
-          cardinalDirection = "south",
-          startPnt = idu.vec2d(this.depth, this.breadth);
-          var srcPixels = context.getImageData(0, this.breadth, this.depth, 1);
-          color = idu.averageColor(srcPixels);
-          this.drawFlow(context, color, cardinalDirection, startPnt, 
-                        this.breadth, this.depth);
+          rec = idu.rectangle(0, 0, this.depth, this.breadth) ;
+          srcPixels = context.getImageData(0, this.breadth, this.depth, 1);
+          idu.drawAvgFlow(context, srcPixels, rec, false, -this.speed);
           
           //bottom right se
-          cardinalDirection = "north",
-          startPnt = idu.vec2d(this.breadth, this.depth);
+          rec = idu.rectangle(this.breadth, this.depth,
+                               this.depth, this.breadth) ;
           srcPixels = context.getImageData(this.breadth, this.depth - 1 , 
                                            this.depth, 1);
-          color = idu.averageColor(srcPixels);
-          this.drawFlow(context, color, cardinalDirection, startPnt, 
-                        this.breadth, this.depth);
+          idu.drawAvgFlow(context, srcPixels, rec, false, this.speed);
 
           //middle left
-          cardinalDirection = "west",
-          startPnt = idu.vec2d(this.breadth, this.depth);
+          rec = idu.rectangle(this.breadth, this.breadth,
+                               this.breadth/2, this.breadth) ;
           srcPixels = context.getImageData(this.breadth -1 , this.breadth, 
                                            1, this.breadth);
-          color = idu.averageColor(srcPixels);
-          this.drawFlow(context, color, cardinalDirection, startPnt, 
-                        this.breadth / 2, this.breadth);
+          idu.drawAvgFlow(context, srcPixels, rec, true, this.speed - 2);
+          
           //middle right
-          cardinalDirection = "east", 
-          startPnt = idu.vec2d(this.depth, this.breadth);
+          rec = idu.rectangle(this.breadth * 1.5, this.breadth,
+                               this.breadth/2, this.breadth) ;
           srcPixels = context.getImageData(this.depth +1  , this.breadth, 
                                            1, this.breadth);
-          color = idu.averageColor(srcPixels);
-          this.drawFlow(context, color, cardinalDirection, startPnt, 
-                        this.breadth / 2, this.breadth);
-      },
-
-      drawFlow: function(context, color, cardinalDirection, startPnt,
-                         depth, breadth){
-          var directionVec = idu.copyDirections[cardinalDirection];
-          // determine source rectangle
-          var sourceR = idu.makeRectangle(startPnt,
-                                          idu.vec2dScale(directionVec, -1),
-                                          breadth,
-                                          this.speed);
-          
-          // draw source rectangle
-          context.fillStyle = color;
-          context.fillRect(sourceR.x, sourceR.y, sourceR.width, sourceR.height);
-          
-          // copy source + old image
-          var opts = idu.rectangularPixelFlow(startPnt,
-                                              idu.vec2dScale(directionVec, -1),
-                                              breadth,
-                                              depth, 
-                                              this.speed); 
-          idu.copyContextPixels(context, opts.fromRectangle, opts.toPoint);
+          idu.drawAvgFlow(context, srcPixels, rec, true, -this.speed + 2);
       },
       setup: function (context){
       }
