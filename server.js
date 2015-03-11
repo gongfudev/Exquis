@@ -11,8 +11,9 @@ var fetchFile = function(fileName, response) {
 	    if (err) {
 	    	console.log(err);
 		    response.writeHeader(404);
-		    response.write(err.toString());
-	    }else{
+		    // this crashes the server in some macs...
+		    //response.write(err.toString());
+	   }else{
 		var contentType = guessContentType(fileName);
 		console.log(fileName+" "+contentType["Content-Type"]);
 		response.writeHeader(200, contentType);
