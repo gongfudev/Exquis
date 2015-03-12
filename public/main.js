@@ -30,4 +30,11 @@ var main = function(net, exquisInit, makeEditorView, makeEditorController){
     window.load();
 };
 
+requirejs.config({
+    shim: {
+        'bibs/paper-core' : {
+            exports:'paper'
+        }
+    }
+});
 require(["net", "exquis", "editorView", "editorController", "lib/domReady!"], main);
