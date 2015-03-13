@@ -1,6 +1,16 @@
 var requirejs = require("requirejs"),
     assert = require("assert");
 
+var testRectangle = function(idu){
+    var rectangle = idu.rectangle(7, 3, 5, 3);
+    assert.equal(rectangle.x, 7);
+    assert.equal(rectangle.y, 3);
+    assert.equal(rectangle.width, 5);
+    assert.equal(rectangle.height, 3 );
+    assert.deepEqual(rectangle, 
+                     { x: 7, y: 3, width: 5, height:3});
+};
+
 var testPixelFlowParamsHorizontalPositive = function(idu){
     var rectangle = {x: 7, y: 3, width: 5, height: 3},
         horizontal = true,
@@ -54,6 +64,7 @@ var testPixelFlowParamsVerticalNegative = function(idu){
 };
 
 requirejs(['../public/bibs/imageDataUtils'], function(imageDataUtils){
+    testRectangle(imageDataUtils);
     testPixelFlowParamsHorizontalPositive(imageDataUtils);
     testPixelFlowParamsVerticalPositive(imageDataUtils);
     testPixelFlowParamsVerticalNegative(imageDataUtils);
