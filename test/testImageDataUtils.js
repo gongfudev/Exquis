@@ -11,11 +11,11 @@ var testRectangle = function(idu){
                      { x: 7, y: 3, width: 5, height:3});
 };
 
-var testPixelFlowParamsHorizontalPositive = function(idu){
+var testPixelTranslateParamsHorizontalPositive = function(idu){
     var rectangle = {x: 7, y: 3, width: 5, height: 3},
         horizontal = true,
         speed = 1;
-    var result = idu.pixelFlowParams(rectangle, horizontal, speed);
+    var result = idu.pixelTranslateParams(rectangle, horizontal, speed);
     assert.deepEqual(result.copyRectangle, 
                      { x: 7, y: 3, width: 4, height:3 });
     assert.deepEqual(result.pastePoint, 
@@ -24,11 +24,11 @@ var testPixelFlowParamsHorizontalPositive = function(idu){
                      { x: 7, y: 3, width: 1, height:3 });
 };
 
-var testPixelFlowParamsHorizontalNegative = function(idu){
+var testPixelTranslateParamsHorizontalNegative = function(idu){
     var rectangle = {x: 7, y: 3, width: 5, height: 3},
         horizontal = true,
         speed = -1;
-    var result = idu.pixelFlowParams(rectangle, horizontal, speed);
+    var result = idu.pixelTranslateParams(rectangle, horizontal, speed);
     assert.deepEqual(result.copyRectangle, 
                      { x: 8, y: 3, width: 4, height:3 });
     assert.deepEqual(result.pastePoint, 
@@ -37,11 +37,11 @@ var testPixelFlowParamsHorizontalNegative = function(idu){
                      { x: 11, y: 3, width: 1, height:3 });
 };
 
-var testPixelFlowParamsVerticalPositive = function(idu){
+var testPixelTranslateParamsVerticalPositive = function(idu){
     var rectangle = {x: 7, y: 3, width: 5, height: 6},
         horizontal = false,
         speed = 2;
-    var result = idu.pixelFlowParams(rectangle, horizontal, speed);
+    var result = idu.pixelTranslateParams(rectangle, horizontal, speed);
     assert.deepEqual(result.changeRectangle, 
                      { x: 7, y: 3, width: 5, height: 2 });
     assert.deepEqual(result.copyRectangle, 
@@ -50,23 +50,23 @@ var testPixelFlowParamsVerticalPositive = function(idu){
                      { x: 7, y: 5 });
 };
 
-var testPixelFlowParamsVerticalNegative = function(idu){
+var testPixelTranslateParamsVerticalNegative = function(idu){
     var rectangle = {x: 7, y: 3, width: 5, height: 6},
         horizontal = false,
         speed = -2;
-    var result = idu.pixelFlowParams(rectangle, horizontal, speed);
+    var result = idu.pixelTranslateParams(rectangle, horizontal, speed);
     assert.deepEqual(result.copyRectangle, 
                      { x: 7, y: 5, width: 5, height: 4 });
     assert.deepEqual(result.pastePoint, 
                      { x: 7, y: 3 });
     assert.deepEqual(result.changeRectangle, 
-                      { x: 7, y: 7, width: 5, height: 2 });
+                     { x: 7, y: 7, width: 5, height: 2 });
 };
 
 requirejs(['../public/bibs/imageDataUtils'], function(imageDataUtils){
     testRectangle(imageDataUtils);
-    testPixelFlowParamsHorizontalPositive(imageDataUtils);
-    testPixelFlowParamsVerticalPositive(imageDataUtils);
-    testPixelFlowParamsVerticalNegative(imageDataUtils);
-    testPixelFlowParamsHorizontalNegative(imageDataUtils);
+    testPixelTranslateParamsHorizontalPositive(imageDataUtils);
+    testPixelTranslateParamsVerticalPositive(imageDataUtils);
+    testPixelTranslateParamsVerticalNegative(imageDataUtils);
+    testPixelTranslateParamsHorizontalNegative(imageDataUtils);
 });
