@@ -28,7 +28,7 @@ function(idu, shapes){
           push(topLeft, false, -this.speed, idu.avgColorFilter);
           push(bottomRight, false, this.speed, idu.avgColorFilter);
           push(middleLeft, true, this.speed - 2, idu.avgColorFilter);
-          push(middleRight, true, -this.speed - 2, idu.avgColorFilter);
+          push(middleRight, true, -(this.speed - 2), idu.avgColorFilter);
       },
       setup: function (context){
       }
