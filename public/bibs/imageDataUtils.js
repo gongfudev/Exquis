@@ -110,20 +110,28 @@ define({
             totals = [0,0,0],
             avgArray;
         for(var i = 0; i < pixels.length; i += 4){
-            totals[0] += pixels[i];
-            totals[1] += pixels[i+1];
-            totals[2] += pixels[i+2];
+            for(var j = 0; j < 3; j++){
+                totals[j] += pixels[i + j];
+            }
         }
         avgArray = totals.map(function(total){
             return Math.round(total/pixels.length * 4);
         });
-        avgArray[3] = 1;
+        avgArray[3] = 255;
         return avgArray;
     },
     array2CSSColor: function(colorArray){
         var alpha = colorArray.length < 4 ? 1 : colorArray[3];
         return "rgba(" + colorArray[0] + "," + colorArray[1] + ","
             + colorArray[2] + "," + alpha + ")";
+    },
+    avgColorFilter: function(context, imageData){
+        var avgColor = this.averageColor(imageData),
+            result = context.createImageData(imageData);
+        for(var i = 0; i < imageData.data.length; i += 4){
+            result.data.set(avgColor, i);
+        }
+        return result;
     },
     sliceImageData: function(context, imageData, start, length){
         var horizontal = imageData.height == 1,
@@ -146,10 +154,18 @@ define({
                                                 fromRectangle.height);
         context.putImageData(currentImage, toPoint.x, toPoint.y);
     },
-    drawFlow: function(context, srcPixels, rectangle, horizontal, speed){
-        var opts = this.pixelTranslateParams(rectangle, horizontal, speed); 
-        this.drawPixels(context, opts.changeRectangle, srcPixels, horizontal);
+    drawFlow: function(context, srcPixels, rectangle, horiz, speed, filter){
+        var opts = this.pixelTranslateParams(rectangle, horiz, speed),
+            pixels = srcPixels;
+        if(filter){
+            pixels = filter.call(this, context, srcPixels); 
+        }
+        this.drawPixels(context, opts.changeRectangle, pixels, horiz);
         this.copyContextPixels(context, opts.copyRectangle, opts.pastePoint);
+    },
+    drawAvgFlow: function(context, srcPixels, rectangle, horizontal, speed){
+        this.drawFlow(context, srcPixels, rectangle, horizontal, speed,
+                      this.avgColorFilter);
     },
     drawPixels: function(context, chgRec, srcPixels, horizontal){
         var size = horizontal ? chgRec.width : chgRec.height,
@@ -158,17 +174,5 @@ define({
             d[horizontal? 0 : 1] = i;
             context.putImageData(srcPixels, chgRec.x + d[0], chgRec.y + d[1]);
         }
-    },
-    drawAvgFlow: function(context, srcPixels, rectangle, horizontal, speed){
-        var opts = this.pixelTranslateParams(rectangle, horizontal, speed); 
-        //TODO write an avg function to transfom the srcPixels
-        // and draw them with drawPixels
-        this.drawAvgColor(context, opts.changeRectangle, srcPixels);
-        this.copyContextPixels(context, opts.copyRectangle, opts.pastePoint);
-    },
-    drawAvgColor: function(context, chgRec, srcPixels){
-        var color = this.averageColor(srcPixels);
-        context.fillStyle = this.array2CSSColor(color);
-        context.fillRect(chgRec.x, chgRec.y, chgRec.width, chgRec.height);
     }
 });

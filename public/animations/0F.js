@@ -11,7 +11,7 @@ function(idu, shapes){
           var rec = idu.rectangle(0, this.breadth, this.breadth, this.depth),
               srcPixels = idu.sliceImageData(context, borders["west"],
                                              this.breadth, this.depth);
-          idu.drawFlow(context, srcPixels, rec, true, this.speed);
+         idu.drawFlow(context, srcPixels, rec, true, this.speed);
           
           //top right ne
           rec = idu.rectangle(this.depth, 0, this.breadth, this.depth) ;
