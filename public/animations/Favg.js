@@ -9,6 +9,7 @@ function(idu, shapes){
           this.cornerSpeedCorr = this.depth / this.breadth / 2 + 0.5  ;
       },
       draw: function (context, borders){
+          
           var topLeft = idu.rectangle(0, 0, this.depth, this.breadth),
               topRight = idu.rectangle(this.depth, 0,
                                        this.breadth, this.depth) ,
@@ -23,23 +24,24 @@ function(idu, shapes){
                                           this.side/2 - this.breadth, 
                                           this.side - 2 * this.breadth),
               
-              // closure that binds the arguments context and borders
-              push = function(rec, horiz, speed, filter){
-                  idu.pushLine(context, borders, rec, horiz, speed, filter);
+              // closure that binds the arguments context, borders, filter
+              pushAvg = function(rec, horiz, speed){
+                  idu.pushLine(context, borders, rec, horiz, speed, 
+                               idu.avgColorFilter);
               },
 
               // aliases to make arguments more readable
               horizontal = true,
               vertical = false;
-
-          push(bottomLeft,  horizontal, this.speed);
-          //push(bottomLeft,  vertical,   -this.speed * this.cornerSpeedCorr);
-          push(topRight,    horizontal, -this.speed);
-          //push(topRight,    vertical,   this.speed * this.cornerSpeedCorr);
-          push(topLeft,     vertical,   -this.speed,     idu.avgColorFilter);
-          push(bottomRight, vertical,   this.speed,      idu.avgColorFilter);
-          push(middleLeft,  horizontal, this.speed - 2,  idu.avgColorFilter);
-          push(middleRight, horizontal, -this.speed + 2, idu.avgColorFilter);
+          
+          pushAvg(bottomLeft,  horizontal, this.speed);
+          pushAvg(bottomLeft,  vertical,   -this.speed * this.cornerSpeedCorr);
+          pushAvg(topRight,    horizontal, -this.speed);
+          pushAvg(topRight,    vertical,   this.speed * this.cornerSpeedCorr);
+          pushAvg(topLeft,     vertical,   -this.speed);
+          pushAvg(bottomRight, vertical,   this.speed);
+          pushAvg(middleLeft,  horizontal, this.speed );
+          pushAvg(middleRight, horizontal, -this.speed );
       }
   };
 });
