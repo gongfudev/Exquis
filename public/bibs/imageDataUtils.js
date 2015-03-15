@@ -1,9 +1,6 @@
 define({
-    copyDirections : {
-        north: {x:0, y:-1},
-        east:  {x:1, y:0},
-        south: {x:0, y:1},
-        west:  {x:-1, y:0}
+    direction: function(horizontal) {
+        return horizontal ? this.vec2d(1, 0): this.vec2d(0, 1);
     },
     vec2d: function(x, y){
         return {x: x, y: y};
@@ -56,9 +53,8 @@ define({
 
      */
     pixelTranslateParams: function(rectangle, horizontal, speed){
-        var dirs = this.copyDirections,
-            paralDirection = horizontal ? dirs.east : dirs.south,
-            perpDirection = horizontal ? dirs.south : dirs.east,
+        var paralDirection = this.direction(horizontal),
+            perpDirection = this.direction(!horizontal),
             paralSize = horizontal ? rectangle.width : rectangle.height,
             perpSize =  horizontal ? rectangle.height : rectangle.width,
             changeSize = Math.abs(speed),
@@ -154,19 +150,6 @@ define({
                                                 fromRectangle.height);
         context.putImageData(currentImage, toPoint.x, toPoint.y);
     },
-    drawFlow: function(context, srcPixels, rectangle, horiz, speed, filter){
-        var opts = this.pixelTranslateParams(rectangle, horiz, speed),
-            pixels = srcPixels;
-        if(filter){
-            pixels = filter.call(this, context, srcPixels); 
-        }
-        this.drawPixels(context, opts.changeRectangle, pixels, horiz);
-        this.copyContextPixels(context, opts.copyRectangle, opts.pastePoint);
-    },
-    drawAvgFlow: function(context, srcPixels, rectangle, horizontal, speed){
-        this.drawFlow(context, srcPixels, rectangle, horizontal, speed,
-                      this.avgColorFilter);
-    },
     drawPixels: function(context, chgRec, srcPixels, horizontal){
         var size = horizontal ? chgRec.width : chgRec.height,
             d= [0,0];
@@ -174,5 +157,56 @@ define({
             d[horizontal? 0 : 1] = i;
             context.putImageData(srcPixels, chgRec.x + d[0], chgRec.y + d[1]);
         }
+    },
+    pushPixels: function(ctx, srcPixels, rectangle, horiz, speed, filter){
+        var opts = this.pixelTranslateParams(rectangle, horiz, speed),
+            pixels = srcPixels;
+        if(filter){
+            pixels = filter.call(this, ctx, srcPixels); 
+        }
+        this.drawPixels(ctx, opts.changeRectangle, pixels, horiz);
+        this.copyContextPixels(ctx, opts.copyRectangle, opts.pastePoint);
+    },
+    pushLine: function(ctx, borders, rec, horiz, speed, filter){
+        var positiveDir = speed > 0,
+            pixels = this.linePixels(ctx, borders, rec, horiz, positiveDir);
+        this.pushPixels(ctx, pixels, rec, horiz, speed, filter);
+    },
+    linePixels: function(ctx, borders, rec, horiz, positiveDir){
+        var fromWest  =  horiz &&  positiveDir,
+            fromEast  =  horiz && !positiveDir,
+            fromNorth = !horiz &&  positiveDir,
+            fromSouth = !horiz && !positiveDir,
+            touchesWest  = rec.x <= 0,
+            touchesEast  = rec.x + rec.width >= ctx.canvas.width,
+            touchesNorth = rec.y <= 0,
+            touchesSouth = rec.y + rec.height >= ctx.canvas.height;
+
+        if(      fromEast  &&  touchesEast){
+            return this.sliceImageData(ctx, borders.east, rec.y, rec.height);
+
+        }else if(fromEast  && !touchesEast){
+            return ctx.getImageData(rec.x + rec.width, rec.y, 1, rec.height);
+
+        }else if(fromWest  &&  touchesWest){
+            return this.sliceImageData(ctx, borders.west, rec.y, rec.height);
+
+        }else if(fromWest  && !touchesWest){
+            return ctx.getImageData(rec.x - 1 , rec.y, 1, rec.height);
+
+        }else if(fromNorth &&  touchesNorth){
+            return this.sliceImageData(ctx, borders.north, rec.x, rec.width);
+
+        }else if(fromNorth && !touchesNorth){
+            return ctx.getImageData(rec.x, rec.y - 1, rec.width, 1);
+
+        }else if(fromSouth &&  touchesSouth){
+            return this.sliceImageData(ctx, borders.south, rec.x, rec.width);
+
+        }else if(fromSouth && !touchesSouth){
+            return ctx.getImageData(rec.x, rec.y + rec.height , rec.width, 1);
+
+        }
+        return null;
     }
 });
