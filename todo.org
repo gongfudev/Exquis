@@ -1,4 +1,9 @@
-* editor
+* ui
+** modal plus supportable, qui ne dépasse pas de l'écran
+** filepicker hierarchique 
+** nom de l'assemblage au dessus des animations (avec un moyen de le cacher?)
+** trouver un moyen de laisser une animation réagir aux clicks sans ouvrir l'éditeur
+
 ** mettre le titre de l'assemblage a coté des boutons pour le modifier
 ** rendre le role des boutons plus clair
 par exemple en mettant les boutons de l'animation à coté de son nom, ou les mettre dans un bloc visuel
@@ -6,17 +11,6 @@ par exemple en mettant les boutons de l'animation à coté de son nom, ou les me
 ** mecanisme pour signaler les animations à enregistrer
 * exquis
 ** remplacer setInterval par requestAnimation
-* editorController
-** editorController et editorView se connaissent mutuellement
-*** construction 
-le controller devient une usine de controller.
-l'usine est créé avec exquis en argument.
-la view est créée avec l'usine de controller en argument.
-elle crée le controller en se donnant en argument a l'usine.
-
-*** virer tous les callbacks donnés par la vue
-En ce moment (presque) toutes les actions du controller se font par callbacks.
-Remplacer ça par des appels aux méthodes de la vue
 * new animations
 * bugs
 * implement blockly interface https://code.google.com/p/blockly/

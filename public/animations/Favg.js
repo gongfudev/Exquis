@@ -6,7 +6,6 @@ function(idu, shapes){
           this.depth = 112;
           this.breadth = this.side - this.depth;
           this.speed = 3;
-          this.cornerSpeedCorr = this.depth / this.breadth / 2 + 0.5  ;
       },
       draw: function (context, borders){
           
@@ -33,11 +32,9 @@ function(idu, shapes){
               // aliases to make arguments more readable
               horizontal = true,
               vertical = false;
-          
-          pushAvg(bottomLeft,  horizontal, this.speed);
-          pushAvg(bottomLeft,  vertical,   -this.speed * this.cornerSpeedCorr);
-          pushAvg(topRight,    horizontal, -this.speed);
-          pushAvg(topRight,    vertical,   this.speed * this.cornerSpeedCorr);
+
+          pushAvg(bottomLeft,  vertical, -this.speed);
+          pushAvg(topRight,    vertical, this.speed);
           pushAvg(topLeft,     vertical,   -this.speed);
           pushAvg(bottomRight, vertical,   this.speed);
           pushAvg(middleLeft,  horizontal, this.speed );

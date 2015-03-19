@@ -6,7 +6,6 @@ function(idu, shapes){
           this.depth = 112;
           this.breadth = this.side - this.depth;
           this.speed = 3;
-          this.cornerSpeedCorr = this.depth / this.breadth / 2 + 0.5  ;
       },
       draw: function (context, borders){
           var topLeft = idu.rectangle(0, 0, this.depth, this.breadth),
@@ -33,9 +32,7 @@ function(idu, shapes){
               vertical = false;
 
           push(bottomLeft,  horizontal, this.speed);
-          //push(bottomLeft,  vertical,   -this.speed * this.cornerSpeedCorr);
           push(topRight,    horizontal, -this.speed);
-          //push(topRight,    vertical,   this.speed * this.cornerSpeedCorr);
           push(topLeft,     vertical,   -this.speed,     idu.avgColorFilter);
           push(bottomRight, vertical,   this.speed,      idu.avgColorFilter);
           push(middleLeft,  horizontal, this.speed - 2,  idu.avgColorFilter);
