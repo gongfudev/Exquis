@@ -33,11 +33,14 @@
 
   .ace_editor { 
       position: relative;
-      height: 300px;
+      height: 600px;
+      width: 700px;
   }
     </style>
     <script data-main="/main.js" src="/lib/require.js"></script>
+    <script src="/bibs/require-config.js"></script>
     <script src="/lib/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/promise.js" type="text/javascript" charset="utf-8"></script>
 </head>
 <body>
 
@@ -63,12 +66,7 @@
               <button id="animation_save_button" type="button">save</button>
               <button id="animation_save_as_button" type="button">save as</button>
             </div>
-            <p>libs</p> 
-            <textarea id="text_area_libs" rows="1" cols="80" spellcheck="false"></textarea>
-            <p>setup</p> 
-            <div id="text_area_setup" class="ace_editor"></div>
-            <p>draw</p>
-            <div id="text_area_draw" class="ace_editor"></div>
+            <div id="ace" class="ace_editor"></div>
          </div>
         </div>
     </div>

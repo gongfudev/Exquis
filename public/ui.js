@@ -11,40 +11,47 @@ define(["csshelper"], function( csshelper){
         return cancelButton;
     };
 
-    var buildPrompt = function(promptText, onAccept){
-        var textArea = document.createElement("textarea"),
+    var buildPrompt = function(promptText){
+        return new Promise(function(resolve, reject){
+            var textArea = document.createElement("textarea"),
             promptParagraph = document.createElement("p"),
             buttonRow = document.createElement("div");
-        
-        promptParagraph.textContent = promptText;
-        dialog.innerHTML = "";
-        dialog.appendChild(promptParagraph);
-        dialog.appendChild(textArea);
-        dialog.appendChild(buttonRow);
 
-        textArea.setAttribute("id", "prompt_text_area");
-        
-        var okButton = document.createElement("button");
-	okButton.textContent = "ok";
-        okButton.id = "ok_button";
-	okButton.addEventListener('click', function(){
-            onAccept(textArea.value);
-	    csshelper.addClass(modalScreen, "invisible");
+            promptParagraph.textContent = promptText;
+            dialog.innerHTML = "";
+            dialog.appendChild(promptParagraph);
+            dialog.appendChild(textArea);
+            dialog.appendChild(buttonRow);
+
+            textArea.setAttribute("id", "prompt_text_area");
+
+            var okButton = document.createElement("button");
+            okButton.textContent = "ok";
+            okButton.id = "ok_button";
+            okButton.addEventListener('click', function(){
+                var maybeFilename = textArea.value;
+                if(maybeFilename){
+                    resolve(maybeFilename);
+                }else{
+                    reject();
+                }
+                csshelper.addClass(modalScreen, "invisible");
+            });
+            buttonRow.appendChild(okButton);
+            buttonRow.appendChild(makeCancelButton(modalScreen));
+            csshelper.removeClass(modalScreen, "invisible");
+            textArea.focus();
+
         });
-        buttonRow.appendChild(okButton);
-        buttonRow.appendChild(makeCancelButton(modalScreen));
-	csshelper.removeClass(modalScreen, "invisible");
-        textArea.focus();
     };
-   
-    var populateFilePicker = function(files, clickHandler){
+
+    var populateNamePicker = function(names, clickHandler){
 	dialog.innerHTML = '';
 	
-	for(var i = 0; i < files.length; ++i){
-	    var paragraph = document.createElement("p"),
-		animationName = files[i].replace(/\.json$/, "");
-	    paragraph.textContent = animationName;
-            paragraph.id = animationName;
+	for(var i = 0; i < names.length; ++i){
+	    var paragraph = document.createElement("p");
+	    paragraph.textContent = names[i];
+            paragraph.id = names[i];
 
 	    paragraph.addEventListener('click', clickHandler);
 	    
@@ -65,7 +72,7 @@ define(["csshelper"], function( csshelper){
 
     return {
         buildPrompt: buildPrompt,
-        populateFilePicker: populateFilePicker,
+        populateNamePicker: populateNamePicker,
         showDialog: showDialog
     };
 });
