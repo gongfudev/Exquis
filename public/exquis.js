@@ -21,6 +21,7 @@ define(["iter2d", "csshelper"], function(iter2d, csshelper){
             animationName: animationCode.animationName,
             uri: animationCode.uri,
             currentAnimation: null,
+            context: context, //might be useful to debug
             borders : function(){
                return {
                     north: context.getImageData(0, 0, context.canvas.width, 1),
