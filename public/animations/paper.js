@@ -2,9 +2,9 @@
 define(["paper"], function(paper){
     return {
         setup: function(context){
-            
-            paper.setup(context.canvas);
-            
+            this.paper = new paper.PaperScope(context.canvas);
+            this.paper.setup(context.canvas);
+                  
             // Create a Paper.js Path to draw a line into it:
             this.path = new paper.Path();
             // Give the stroke a color
@@ -17,11 +17,11 @@ define(["paper"], function(paper){
             // in JavaScript. Instead, we need to call the add() function:
             this.path.lineTo(start.add([ 150, 0 ]));
             // Draw the view now:
-            paper.view.draw();
+            this.paper.view.draw();
             
         },
         draw: function(context, borders){
             this.path.rotate(2);
-            paper.view.draw();
+            this.paper.view.draw();
         }};
 });
