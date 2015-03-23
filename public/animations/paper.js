@@ -1,4 +1,5 @@
-define(["bibs/paper-core"], function(paper){
+// define(["bibs/paper-core"], function(paper){
+define(["paper"], function(paper){
     return {
         setup: function(context){
             
