@@ -1,7 +1,8 @@
+// Configure requirejs, for example to use shims of non AMD libraries
 requirejs.config({
     shim: {
-        'bibs/paper-core' : {
-            exports:'paper'
-        }
+        // 'bibs/paper-core' : {
+        //     exports:'paper'
+        // }
     }
 });
