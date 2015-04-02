@@ -1,62 +1,51 @@
 define([], function(){
 
-        var addLibsToCanvasAnim = function(canvasAnim, libsString, callback){
-	    if(typeof libsString == "undefined"){
-		return;
-	    }
-						 
-	    var libs = JSON.parse(libsString),
-		addresses = [],
-		aliases = [];
-	    
-	    for(var name in libs){
-		if(libs.hasOwnProperty(name)){
-		    addresses.push(name);
-		    aliases.push(libs[name]);
-		}
-	    }
-	    // all libraries are reloaded, leave the old ones to the garbage collector
-	    canvasAnim.animation.lib = {};
-            require(addresses, function(lib){
-		for(var i=0; i<addresses.length; i++){
-		    canvasAnim.animation.lib[aliases[i]] = arguments[i];
-		}
-		canvasAnim.animation.libsString = libsString;
-		if(typeof callback != "undefined"){
-		    callback();
-		}
-	    });
-        },
-    
-        addSetupToCanvasAnim = function(canvasAnim, setupString){
-	    eval("canvasAnim.animation.setup = function(context) {" + setupString + "\n};");
-	    canvasAnim.animation.setupString = setupString;
-	},
+    var evalAnimation = function(codeString, canvasAnim){
+        var jsAnimPath = toDataUri(codeString);
+        return loadJsAnimOnCanvasAnim(jsAnimPath, canvasAnim, canvasAnim.animationName);
+    },
+        
+    loadJsAnimOnCanvasAnim = function(jsAnimPath, canvasAnim, animationName){
+        return new Promise(function(resolve, reject){
+            require([jsAnimPath],
+                    function(animation){
+                        var animationClone = Object.create(animation);
+                        canvasAnim.uri = jsAnimPath;
+                        canvasAnim.animationName = animationName;
+                        canvasAnim.animationToSetup = animationClone;
+	                if(canvasAnim.hasOwnProperty("setup")){
+                            canvasAnim.setup();
+                        }
+                        resolve(canvasAnim);
+                    },
+                   function(err){
+                       reject(err);
+                   });
+        });
+    },
+        
+    toDataUri = function(jsCode){
+        return "data:text/javascript;base64," + btoa(jsCode);
+    },
 
-	addDrawToCanvasAnim = function(canvasAnim, drawString){
-	    eval("canvasAnim.animation.draw = function(context, borders) {" + drawString + "\n};");
-	    canvasAnim.animation.drawString = drawString;
-	},
-
-	functionBodyAsString = function(func){
-	    return func.toString().replace(/function\s*\([\w\s,]*\)\s*{\n?(\s*[\s\S]*)}/g,"$1");
-	    //.replace(/\n/g,"\\n");
-	},
-	addAnimationToCanvasAnim = function(animation, canvasAnim){
-            var that = this;
-	    
-	    addLibsToCanvasAnim(canvasAnim, animation.libs, function(){
-	        addSetupToCanvasAnim.call(that, canvasAnim, animation.setup);
-	        addDrawToCanvasAnim.call(that, canvasAnim, animation.draw);
-		canvasAnim.setup();
-	    });
-	};
+    dataUri2text = function(uri){
+        return atob(uri.substr(28));
+    },
+        
+    // this is only used by the json2js script for converting legacy animations
+    stringifyJSON = function (jsonAnim){
+        var string = "define({libs:" + jsonAnim.libs + ",\n";
+        string += "setup: function(context, lib){\n"+ jsonAnim.setup +"},\n";
+        string += "draw: function(context, borders, lib){\n"+ jsonAnim.draw +"}});";
+        return string; 
+    };
 	
     return {
-        addLibsToCanvasAnim: addLibsToCanvasAnim, 
-	addAnimationToCanvasAnim: addAnimationToCanvasAnim,
-	addDrawToCanvasAnim: addDrawToCanvasAnim,
-	addSetupToCanvasAnim: addSetupToCanvasAnim
+        loadJsAnimOnCanvasAnim:loadJsAnimOnCanvasAnim,
+        evalAnimation: evalAnimation,
+        toDataUri: toDataUri,
+        dataUri2text: dataUri2text,
+        stringifyJSON: stringifyJSON  
     };
 
 });

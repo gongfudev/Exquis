@@ -1,7 +1,17 @@
 
-var main = function(net, exquis){
+var main = function(net, exquisInit, makeEditorView, makeEditorController){
     window.load = function(){
-        net.loadAnimations(exquis);
+        net.loadAnimations()
+            .then(function(assemblage){
+                var exquis =  exquisInit(assemblage.name, assemblage.canvasAnims);
+                exquis.addEditor(makeEditorView, makeEditorController);
+                // this is only for debugging in the console
+                window.x = exquis;
+            });
+
+    };
+    window.onerror = function(message, url, lineNumber){
+        //console.log(message +" "+ url +" "+ lineNumber);
     };
     window.test = function(){
         require(["tests/clientTest"],
@@ -20,4 +30,4 @@ var main = function(net, exquis){
     window.load();
 };
 
-require(["net", "exquis", "lib/domReady!"], main);
+require(["net", "exquis", "editorView", "editorController", "lib/domReady!"], main);

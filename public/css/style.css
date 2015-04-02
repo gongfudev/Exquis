@@ -1,0 +1,39 @@
+
+h2, h3 { display: inline;}
+.grid { width: 450px; max-width: 450px; position: absolute}
+#grid_hint{z-index: 1}
+#editor { position: absolute; left: 50%; }
+#dialog {  position: absolute;
+           left: 33%;
+	   top:40px;
+	   background-color: lightgrey;
+	   padding: 5px;
+           width: 400px;
+ }
+#dialog_content {
+           overflow: auto;
+           max-height: 400px;
+}
+#dialog_title { height: 30px; }
+#dialog_footer { height: 30px; }
+#dialog > p { padding: 2%; margin: 0}
+#dialog > p:hover { background-color:darkgrey;}
+#modal { position: fixed;
+         top: 0;
+         right: 0;
+         bottom: 0;
+         left: 0;
+         z-index: 999;
+	 background-color: rgba(100, 100, 100, 0.5); }
+.cell { width: 150px;  height: 150px; position:absolute}
+.hint { width: 148px;  height: 148px; position:absolute;border: 1px solid rgba(0,0,0,0);}
+.visible-grid, .visible-cell{ border: 1px solid rgba(200, 200, 200, 0.5); }
+.code_invalid { border: solid rgb(255, 0, 0); }
+.code_valid { border: solid rgb(25, 125, 255); }
+.invisible { display: none;}
+
+.ace_editor { 
+    position: relative;
+    height: 600px;
+    width: 700px;
+}

@@ -1,8 +1,12 @@
 {
+<<<<<<< HEAD
   "name": "exquis",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "cadavre exquis d'animations",
   "main": "server.js",
+  "dependencies": {
+    "requirejs": "^2.1.15"
+  }
   "directories": {
     "test": "tests"
   },
@@ -12,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/gongfuio/Exquis.git"
+    "url": "https://github.com/andreaskundig/Exquis.git"
   },
   "author": "David Hodgetts et Andreas Kundig",
   "license": ""
