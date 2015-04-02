@@ -2,7 +2,10 @@
 define(["csshelper"], function( csshelper){
 
     var modalScreen = document.getElementById("modal"),
-	dialog = document.getElementById("dialog");
+	dialog = document.getElementById("dialog"),
+        dialogContent = document.getElementById("dialog_content"),
+        dialogTitle = document.getElementById("dialog_title"),
+        dialogFooter = document.getElementById("dialog_footer");
     
     var makeCancelButton = function(modalScreen){
         var cancelButton = document.createElement("button");
@@ -13,23 +16,25 @@ define(["csshelper"], function( csshelper){
 
     var buildPrompt = function(promptText){
         return new Promise(function(resolve, reject){
-            var textArea = document.createElement("textarea"),
+            var input = document.createElement("input"),
             promptParagraph = document.createElement("p"),
             buttonRow = document.createElement("div");
 
             promptParagraph.textContent = promptText;
-            dialog.innerHTML = "";
-            dialog.appendChild(promptParagraph);
-            dialog.appendChild(textArea);
-            dialog.appendChild(buttonRow);
+            dialogTitle.innerHTML = "";
+            dialogContent.innerHTML = "";
+            dialogFooter.innerHTML = "";
+            dialogTitle.appendChild(promptParagraph);
+            dialogContent.appendChild(input);
+            dialogFooter.appendChild(buttonRow);
 
-            textArea.setAttribute("id", "prompt_text_area");
+            input.setAttribute("id", "prompt_input");
 
             var okButton = document.createElement("button");
             okButton.textContent = "ok";
             okButton.id = "ok_button";
             okButton.addEventListener('click', function(){
-                var maybeFilename = textArea.value;
+                var maybeFilename = input.value;
                 if(maybeFilename){
                     resolve(maybeFilename);
                 }else{
@@ -40,13 +45,15 @@ define(["csshelper"], function( csshelper){
             buttonRow.appendChild(okButton);
             buttonRow.appendChild(makeCancelButton(modalScreen));
             csshelper.removeClass(modalScreen, "invisible");
-            textArea.focus();
+            input.focus();
 
         });
     };
 
     var populateNamePicker = function(names, clickHandler){
-	dialog.innerHTML = '';
+        dialogTitle.innerHTML = "";
+        dialogContent.innerHTML = "";
+        dialogFooter.innerHTML = "";
 	
 	for(var i = 0; i < names.length; ++i){
 	    var paragraph = document.createElement("p");
@@ -55,10 +62,10 @@ define(["csshelper"], function( csshelper){
 
 	    paragraph.addEventListener('click', clickHandler);
 	    
-	    dialog.appendChild(paragraph);
+	    dialogContent.appendChild(paragraph);
 	}
 
-        dialog.appendChild(makeCancelButton(modalScreen));
+        dialogFooter.appendChild(makeCancelButton(modalScreen));
 	
     };
 

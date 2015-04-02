@@ -5,38 +5,7 @@
     <meta name="description" content="">
     <!-- Mobile viewport optimized: h5bp.com/viewport -->
     <meta name="viewport" content="width=device-width">
-    <style>
-        h2, h3 { display: inline;}
-        .grid { width: 450px; max-width: 450px; position: absolute}
-        #grid_hint{z-index: 1}
-        #editor { position: absolute; left: 50%; }
-        #dialog {  position: absolute;
-                   left: 33%;
-	           top:120px;
-	           background-color: lightgrey;
-	           padding: 2%}
-	#dialog > p { padding: 2%; margin: 0}
-	#dialog > p:hover { background-color:darkgrey;}
-        #modal { position: fixed;
-                 top: 0;
-                 right: 0;
-                 bottom: 0;
-                 left: 0;
-                 z-index: 999;
-	         background-color: rgba(100, 100, 100, 0.5); }
-    	.cell { width: 150px;  height: 150px; position:absolute}
-        .hint { width: 148px;  height: 148px; position:absolute;border: 1px solid rgba(0,0,0,0);}
-        .visible-grid, .visible-cell{ border: 1px solid rgba(200, 200, 200, 0.5); }
-        .code_invalid { border: solid rgb(255, 0, 0); }
-        .code_valid { border: solid rgb(25, 125, 255); }
-        .invisible { display: none;}
-
-  .ace_editor { 
-      position: relative;
-      height: 600px;
-      width: 700px;
-  }
-    </style>
+    <link href="/css/style.css" rel="stylesheet">
     <script data-main="/main.js" src="/lib/require.js"></script>
     <script src="/bibs/require-config.js"></script>
     <script src="/bibs/include-scripts.js"></script>
@@ -45,11 +14,9 @@
 </head>
 <body>
 
-
     <div id="container">
         <div id="dashboard" class="grid"></div>
 
-    
         <div class="invisible" id="editor">
          <div id="assemblage">
             <h2 id="assemblage_name"></h2> 
@@ -72,8 +39,11 @@
         </div>
     </div>
     <div class="invisible" id="modal">
-      <div id="dialog"></div>
+      <div id="dialog">
+        <div id="dialog_title"></div>
+        <div id="dialog_content"></div>
+        <div id="dialog_footer"></div>
+      </div>
     </div>
 </body>
-
 </html>
