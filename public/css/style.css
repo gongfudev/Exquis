@@ -14,8 +14,8 @@ h2, h3 { display: inline;}
            overflow: auto;
            max-height: 400px;
 }
-#dialog_title { height: 30px; }
-#dialog_footer { height: 30px; }
+#dialog_title { min-height: 30px; }
+#dialog_footer { min-height: 30px; }
 #dialog > p { padding: 2%; margin: 0}
 #dialog > p:hover { background-color:darkgrey;}
 #modal { position: fixed;
