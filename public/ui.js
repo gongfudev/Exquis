@@ -10,6 +10,7 @@ define(["csshelper"], function( csshelper){
     var makeCancelButton = function(modalScreen){
         var cancelButton = document.createElement("button");
 	cancelButton.textContent = "cancel";
+        csshelper.addClass(cancelButton, "btn");
 	cancelButton.addEventListener('click', function() { csshelper.addClass(modalScreen, "invisible"); });
         return cancelButton;
     };
@@ -50,8 +51,8 @@ define(["csshelper"], function( csshelper){
         });
     };
 
-    var populateNamePicker = function(names, clickHandler){
-        dialogTitle.innerHTML = "";
+    var populateNamePicker = function(title, names, clickHandler){
+        dialogTitle.innerHTML = title;
         dialogContent.innerHTML = "";
         dialogFooter.innerHTML = "";
 	

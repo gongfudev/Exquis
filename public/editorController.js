@@ -15,7 +15,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
                     return f.replace(/\.json$/, "");
                 });
                 ui.showDialog(true);
-                ui.populateNamePicker(files, pickAssemblage);		
+                ui.populateNamePicker("choose assemblage", files, pickAssemblage);		
             });
           },
             save: function(){
@@ -57,7 +57,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
                         return f.replace(/\.js$/, "");
                     });
                     ui.showDialog(true);
-		    ui.populateNamePicker(files, pickAnimation);
+		    ui.populateNamePicker("choose animation", files, pickAnimation);
 		});
             },
 
