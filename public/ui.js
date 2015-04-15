@@ -78,11 +78,28 @@ define(["csshelper"], function( csshelper){
         document.getElementsByTagName('body')[0].onkeyup = handler;
     };
 
+    var hideOnBackgroundClick = function(activate){
+        var handler = function(e){
+            if(e.target === modalScreen){
+                showDialog(false);
+            }
+        };
+        modalScreen.onclick = activate ? handler : null;
+    };
+
     var showDialog = function(visible){
         if (visible){
             csshelper.removeClass(modalScreen, "invisible"); 
+            setKeyHandler(function(e){
+                if(e.key === "Escape"){
+                    showDialog(false);
+                }
+            });
+            hideOnBackgroundClick(true); 
         }else{
             csshelper.addClass(modalScreen, "invisible"); 
+            setKeyHandler(null);
+            hideOnBackgroundClick(false); 
         }
     };
 
