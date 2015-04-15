@@ -1,9 +1,9 @@
 var http = require('http'),
-    requestListener = require('./request-listener.js');
+    createListener = require('./create-listener.js');
 
 var startServer = function (){
     var port = Number(process.env.PORT || 8000);
-    http.createServer(requestListener).listen(port);
+    http.createServer(createListener()).listen(port);
     console.log("server on port "+port);
 };
 
