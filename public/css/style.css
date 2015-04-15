@@ -1,23 +1,37 @@
-
+body{
+    font-family: Sans-Serif;
+}
 h2, h3 { display: inline;}
 .grid { width: 450px; max-width: 450px; position: absolute}
 #grid_hint{z-index: 1}
 #editor { position: absolute; left: 50%; }
-#dialog {  position: absolute;
-           left: 33%;
-	   top:40px;
-	   background-color: white;
-	   padding: 5px;
-           width: 400px;
-           border-radius: 4px;
+#dialog {  
+    position: absolute;
+    left: 33%;
+    top:40px;
+    background-color: white;
+    padding: 10px ;
+    width: 400px;
+    border-radius: 4px;
  }
 #dialog_content {
-           overflow: auto;
-           max-height: 400px;
+    overflow: auto;
+    max-height: 400px;
+}
+#dialog_content > ul {
+    padding-left: 10px;
+    margin: 0px;
+}
+#dialog_content > ul > li {
+    list-style: none;
+    padding-bottom: 5px;
+    cursor: pointer;
 }
 #dialog_title { min-height: 30px;
+                padding-bottom: 10px;
                 font-size: 200%; }
-#dialog_footer { min-height: 30px; }
+#dialog_footer { min-height: 30px; 
+                 padding-top: 10px;}
 #dialog > p { padding: 2%; margin: 0}
 #dialog > p:hover { background-color:darkgrey;}
 #modal { position: fixed;

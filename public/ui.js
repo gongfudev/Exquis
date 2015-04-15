@@ -20,14 +20,12 @@ define(["csshelper"], function( csshelper){
     var buildPrompt = function(promptText){
         return new Promise(function(resolve, reject){
             var input = document.createElement("input"),
-            promptParagraph = document.createElement("p"),
             buttonRow = document.createElement("div");
 
-            promptParagraph.textContent = promptText;
             dialogTitle.innerHTML = "";
             dialogContent.innerHTML = "";
             dialogFooter.innerHTML = "";
-            dialogTitle.appendChild(promptParagraph);
+            dialogTitle.textContent = promptText;
             dialogContent.appendChild(input);
             dialogFooter.appendChild(buttonRow);
 
@@ -36,6 +34,7 @@ define(["csshelper"], function( csshelper){
             var okButton = document.createElement("button");
             okButton.textContent = "ok";
             okButton.id = "ok_button";
+            csshelper.addClass(okButton, "btn");
             okButton.addEventListener('click', function(){
                 var maybeFilename = input.value;
                 if(maybeFilename){
@@ -58,16 +57,19 @@ define(["csshelper"], function( csshelper){
         dialogContent.innerHTML = "";
         dialogFooter.innerHTML = "";
 	
+	var list = document.createElement("ul");
+	dialogContent.appendChild(list);
+
 	for(var i = 0; i < names.length; ++i){
-	    var paragraph = document.createElement("p");
-	    paragraph.textContent = names[i];
-            paragraph.id = names[i];
-            paragraph.addEventListener('click', function(e){
+	    var item = document.createElement("li");
+	    item.textContent = names[i];
+            item.id = names[i];
+            item.addEventListener('click', function(e){
                 clickHandler(e);
                 showDialog(false);
             });
 	    
-	    dialogContent.appendChild(paragraph);
+	    list.appendChild(item);
 	}
 
         dialogFooter.appendChild(makeCancelButton(modalScreen));
