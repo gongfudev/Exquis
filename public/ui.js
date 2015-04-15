@@ -11,7 +11,9 @@ define(["csshelper"], function( csshelper){
         var cancelButton = document.createElement("button");
 	cancelButton.textContent = "cancel";
         csshelper.addClass(cancelButton, "btn");
-	cancelButton.addEventListener('click', function() { csshelper.addClass(modalScreen, "invisible"); });
+	cancelButton.addEventListener('click', function() {
+            showDialog(false); 
+        });
         return cancelButton;
     };
 
@@ -41,11 +43,11 @@ define(["csshelper"], function( csshelper){
                 }else{
                     reject();
                 }
-                csshelper.addClass(modalScreen, "invisible");
+                showDialog(false);
             });
             buttonRow.appendChild(okButton);
             buttonRow.appendChild(makeCancelButton(modalScreen));
-            csshelper.removeClass(modalScreen, "invisible");
+            showDialog(true);
             input.focus();
 
         });
@@ -60,14 +62,20 @@ define(["csshelper"], function( csshelper){
 	    var paragraph = document.createElement("p");
 	    paragraph.textContent = names[i];
             paragraph.id = names[i];
-
-	    paragraph.addEventListener('click', clickHandler);
+            paragraph.addEventListener('click', function(e){
+                clickHandler(e);
+                showDialog(false);
+            });
 	    
 	    dialogContent.appendChild(paragraph);
 	}
 
         dialogFooter.appendChild(makeCancelButton(modalScreen));
-	
+        showDialog(true);
+    };
+
+    var setKeyHandler = function(handler){
+        document.getElementsByTagName('body')[0].onkeyup = handler;
     };
 
     var showDialog = function(visible){
@@ -80,7 +88,6 @@ define(["csshelper"], function( csshelper){
 
     return {
         buildPrompt: buildPrompt,
-        populateNamePicker: populateNamePicker,
-        showDialog: showDialog
+        populateNamePicker: populateNamePicker
     };
 });

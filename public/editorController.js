@@ -14,7 +14,6 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
                 }).map(function(f){
                     return f.replace(/\.json$/, "");
                 });
-                ui.showDialog(true);
                 ui.populateNamePicker("choose assemblage", files, pickAssemblage);		
             });
           },
@@ -46,7 +45,6 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
                         canvasAnim = exquis.targetCell.canvasAnim;
                     canvasAnim.uri = net.makeAnimationFileUri(chosenAnimationName);
                     updateWithCanvasAnim(canvasAnim, chosenAnimationName);
-                    ui.showDialog(false);
                 };
                 
                 // load the list of animation files available on the server
@@ -56,7 +54,6 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
                     }).map(function(f){
                         return f.replace(/\.js$/, "");
                     });
-                    ui.showDialog(true);
 		    ui.populateNamePicker("choose animation", files, pickAnimation);
 		});
             },
