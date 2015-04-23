@@ -104,7 +104,31 @@ define(["iter2d", "csshelper"], function(iter2d, csshelper){
     };
 
 
-    var init = function (assName, animCodes) {
+    var addEditor = function(exquis, makeEditorView, makeEditorController){
+        exquis.editorController = makeEditorController(exquis, makeEditorView);
+        
+        iter2d.forEach2dArray(exquis.cells, function(cell){
+            var edit = function(){ 
+                if (exquis.targetCell) { csshelper.removeClass(exquis.targetCell.hint, "visible-cell"); }
+                exquis.targetCell = cell;
+                csshelper.addClass(exquis.targetCell.hint, "visible-cell");
+                exquis.editorController.updateWithCanvasAnim(cell.canvasAnim);
+                exquis.editorController.show();
+            };
+            cell.hint.addEventListener('click', edit, false);
+        });
+        
+        var possiblyHideEditor = function(event){
+            if (event.target.tagName === "HTML"){
+                // unselect edition
+                exquis.editorController.hide();
+                if (exquis.targetCell) { csshelper.removeClass(exquis.targetCell.hint, "visible-cell"); }
+            }
+        };
+        document.addEventListener('click', possiblyHideEditor, true);
+    };
+
+    var init = function (assName, animCodes, makeEditorView, makeEditorController) {
         var container = document.getElementById("container"),
             exquis = {};
         exquis.assName = assName;
@@ -115,32 +139,6 @@ define(["iter2d", "csshelper"], function(iter2d, csshelper){
             return makeCell(row, col, height, width, animCode);
         });
         
-        exquis.addEditor = function(makeEditorView, makeEditorController){
-            var that = this;
-                
-            that.editorController = makeEditorController(that, makeEditorView);
-            
-            iter2d.forEach2dArray(that.cells, function(cell){
-                var edit = function(){ 
-                    if (that.targetCell) { csshelper.removeClass(that.targetCell.hint, "visible-cell"); }
-                    that.targetCell = cell;
-                    csshelper.addClass(that.targetCell.hint, "visible-cell");
-                    that.editorController.updateWithCanvasAnim(cell.canvasAnim);
-                };
-                cell.hint.addEventListener('click', edit, false);
-            });
-            
-            var toggleEditorView = function(event){
-                if (event.target.tagName === "HTML"){
-                    // unselect edition
-                    that.editorController.hide();
-                    if (that.targetCell) { csshelper.removeClass(that.targetCell.hint, "visible-cell"); }
-                }else{
-                    that.editorController.show();
-                }
-            };
-            document.addEventListener('click', toggleEditorView, true);
-        };
         
         addHintListeners(exquis.cells);
         
@@ -185,6 +183,7 @@ define(["iter2d", "csshelper"], function(iter2d, csshelper){
         };
 
         setInterval(draw, 50);
+        addEditor(exquis, makeEditorView, makeEditorController);
         return exquis;
     };
 

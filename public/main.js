@@ -5,8 +5,8 @@ var main = function(net, exquisInit, makeEditorView, makeEditorController){
     };
     net.loadAnimations()
         .then(function(assemblage){
-            var exquis =  exquisInit(assemblage.name, assemblage.canvasAnims);
-            exquis.addEditor(makeEditorView, makeEditorController);
+            var exquis =  exquisInit(assemblage.name, assemblage.canvasAnims,
+                                     makeEditorView, makeEditorController);
             // this is only for debugging in the console
             window.x = exquis;
         });
