@@ -93,7 +93,8 @@ define(["csshelper"], function( csshelper){
         if (visible){
             csshelper.removeClass(modalScreen, "invisible"); 
             setKeyHandler(function(e){
-                if(e.key === "Escape"){
+                // 27 = escape
+                if(e.keyCode === 27){
                     showDialog(false);
                 }
             });
