@@ -9,7 +9,8 @@ define(["iter2d", "csshelper"], function(iter2d, csshelper){
             cell = {};
 
         cell.canvasAnim = makeCanvasAnimation(context, animationCode);
-        cell.hint = makeHint(row, col, height, width);
+        cell.hint = createCellDiv("hint", row, col, height, width);
+        cell.ui = makeCellUi(row, col, height, width);
 
         return cell;
     };
@@ -36,7 +37,7 @@ define(["iter2d", "csshelper"], function(iter2d, csshelper){
                     return;
                 }
 
-                // force reset matrix
+                // force reset matrix/
                 context.setTransform(1, 0, 0, 1, 0, 0);
                 this.currentAnimation.draw(context, borders, this.lib);
             },
@@ -76,17 +77,34 @@ define(["iter2d", "csshelper"], function(iter2d, csshelper){
         return canvas;
     };
 
-    var makeHint = function(row, col, height, width){
-        var gridHint = document.createElement('div');
-        gridHint.id = "hint-" + row + "-" + col;
-        gridHint.className = "hint";
-        gridHint.style.top = (height * row)+"px";
-        gridHint.style.left = (width * col)+"px";
-
-        document.getElementById('dashboard').appendChild(gridHint);
-        return gridHint;
+    var createCellDiv = function(className, row, col, height, width){
+        var cellDiv = document.createElement('div');
+        cellDiv.id = className + "-" + row + "-" + col;
+        cellDiv.className = className;
+        cellDiv.style.top = (height * row)+"px";
+        cellDiv.style.left = (width * col)+"px";
+        
+        document.getElementById('dashboard').appendChild(cellDiv);
+        return cellDiv;
     };
 
+
+    var makeIcon = function(classNames){
+        var icon = document.createElement('span');
+        icon.className = classNames;
+        return icon;
+    };
+    
+    var makeCellUi = function(row, col, height, width){
+        var cellUi = createCellDiv("cellUi", row, col, height, width);
+
+        var edit = makeIcon("fa fa-pencil-square-o fa-2x");
+        var loadAnimation = makeIcon("fa fa-folder-open-o fa-2x");
+       
+        cellUi.appendChild(loadAnimation);
+        cellUi.appendChild(edit);
+    };
+    
     var addHintListeners = function(cells){
         var showGridHint = function(show){
 

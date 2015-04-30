@@ -3,7 +3,6 @@ body{
 }
 h2, h3 { display: inline;}
 .grid { width: 450px; max-width: 450px; position: absolute}
-#grid_hint{z-index: 1}
 #editor { position: absolute; left: 50%; }
 #dialog {  
     position: absolute;
@@ -41,7 +40,8 @@ h2, h3 { display: inline;}
          left: 0;
          z-index: 999;
 	 background-color: rgba(100, 100, 100, 0.5); }
-.cell { width: 150px;  height: 150px; position:absolute}
+.cell, .cellUi { width: 150px;  height: 150px; position:absolute}
+.cellUi > span{ position: relative; margin: 5px; float: right }
 .hint { width: 148px;  height: 148px; position:absolute;border: 1px solid rgba(0,0,0,0);}
 .visible-grid, .visible-cell{ border: 1px solid rgba(200, 200, 200, 0.5); }
 .code_invalid { border: solid rgb(255, 0, 0); }
