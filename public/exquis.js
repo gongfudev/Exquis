@@ -3,15 +3,13 @@
 define(["iter2d", "csshelper"], function(iter2d, csshelper){
             
 
-    var makeCell = function(row, col, height, width, animationCode){
+    var makeCellDom = function(row, col, height, width){
         var canvas = makeCanvas(row, col, height, width), 
             context = canvas.getContext("2d"), 
             cell = {};
-
-        cell.canvasAnim = makeCanvasAnimation(context, animationCode);
+        cell.context = context;
         cell.hint = createCellDiv("hint", row, col, height, width);
         cell.ui = makeCellUi(row, col, height, width);
-
         return cell;
     };
 
@@ -54,8 +52,6 @@ define(["iter2d", "csshelper"], function(iter2d, csshelper){
 
     };
 
-
-
     var relativeCoordinates = {
         north : {row: -1, col: 0, opposite: "south"},
         south : {row: 1, col: 0, opposite: "north"},
@@ -88,26 +84,23 @@ define(["iter2d", "csshelper"], function(iter2d, csshelper){
         return cellDiv;
     };
 
-
     var makeIcon = function(classNames){
         var icon = document.createElement('span');
+        icon.style.visibility = "hidden";
+        icon.style.cursor = "pointer"; 
         icon.className = classNames;
         return icon;
     };
     
     var makeCellUi = function(row, col, height, width){
         var cellUi = createCellDiv("cellUi", row, col, height, width);
-
-        var edit = makeIcon("fa fa-pencil-square-o fa-2x");
-        var loadAnimation = makeIcon("fa fa-folder-open-o fa-2x");
-       
+        var loadAnimation = makeIcon("fa fa-folder-open-o fa-lg");
         cellUi.appendChild(loadAnimation);
-        cellUi.appendChild(edit);
+        return cellUi;
     };
     
     var addHintListeners = function(cells){
         var showGridHint = function(show){
-
             iter2d.forEach2dArray(cells, function(cell, row,col){
                 (show ? csshelper.addClass : csshelper.removeClass)(cell.hint, "visible-grid");
             });
@@ -119,6 +112,20 @@ define(["iter2d", "csshelper"], function(iter2d, csshelper){
         document.getElementById("dashboard").addEventListener("mouseover", onDashboardOver, false);
         document.getElementById("dashboard").addEventListener("mouseout", onDashboardOut, false);
 
+    };
+
+    var addCellUiListener = function(cellUi){
+        var childNodes = cellUi.childNodes;
+        cellUi.addEventListener("mouseover", function(e){
+            for(var i = 0; i < childNodes.length; i++){
+                childNodes[i].style.visibility = "visible";
+            };
+        });
+        cellUi.addEventListener("mouseout", function(e){
+            for(var i = 0; i < childNodes.length; i++){
+                childNodes[i].style.visibility = "hidden";
+            };
+        });
     };
 
 
@@ -133,7 +140,11 @@ define(["iter2d", "csshelper"], function(iter2d, csshelper){
                 exquis.editorController.updateWithCanvasAnim(cell.canvasAnim);
                 exquis.editorController.show();
             };
-            cell.hint.addEventListener('click', edit, false);
+
+            var editIcon = makeIcon("fa fa-pencil-square-o fa-lg");
+            editIcon.addEventListener('click', edit, false);
+            //cell.hint.addEventListener('click', edit, false);
+            cell.ui.appendChild(editIcon);
         });
         
         var possiblyHideEditor = function(event){
@@ -153,17 +164,22 @@ define(["iter2d", "csshelper"], function(iter2d, csshelper){
 
         exquis.cells = iter2d.map2dArray(animCodes,function(animCode,row,col){
             var height = 150,
-                width = 150;
-            return makeCell(row, col, height, width, animCode);
+                width = 150,
+                cell = makeCellDom(row, col, height, width);
+            cell.canvasAnim = makeCanvasAnimation(cell.context, animCode);
+            addCellUiListener(cell.ui); 
+            return cell;
         });
         
         
         addHintListeners(exquis.cells);
         
         exquis.assemblage = function(){
-            var animationNames = iter2d.map2dArray(this.cells, function(cell, row, col){
-                return cell.canvasAnim.animationName;
-            });
+            var animationNames = iter2d.map2dArray(
+                this.cells, 
+                function(cell, row, col){
+                    return cell.canvasAnim.animationName;
+                });
 
             return animationNames;
         };
