@@ -77,19 +77,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
     var makeTextAreaController = function(exquis){
         var controller = {
             onCodeChange: function(codeString){
-                var targetCell = exquis.targetCell,
-                    evaluatedPromise = new Promise(function(resolve, reject){
-                        targetCell.canvasAnim.evaluateCode = function(){
-                            evileval.evalAnimation(codeString, targetCell.canvasAnim)
-                            .then(function(){
-                                resolve();
-                            }, function(err){
-                                console.log(err);
-                                reject(err);
-                            });
-                        };
-                    });
-                    return evaluatedPromise;
+                return exquis.targetCell.canvasAnim.addCodeToEvaluate(codeString);
             }
         };
         return controller;
@@ -104,10 +92,11 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
             canvasAnim.animationName = animationName;
         }else{
             net.HTTPget(canvasAnim.uri).then(function(animCode){
-                var uri = evileval.toDataUri(animCode);
-                canvasAnim.uri = uri;
                 canvasAnim.animationName = animationName;
-                view.setEditorContent(animationName, animCode); 
+                return animCode;
+            }).then(function(animCode){
+                view.setEditorContent(animationName, animCode);
+                canvasAnim.uri = evileval.toDataUri(animCode);
             });
         }
     };

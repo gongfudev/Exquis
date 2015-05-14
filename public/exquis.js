@@ -1,6 +1,6 @@
 "use strict";
 
-define(["iter2d", "csshelper"], function(iter2d, csshelper){
+define(["iter2d", "csshelper", "evileval"], function(iter2d, csshelper, evileval){
             
 
     var makeCellDom = function(row, col, height, width){
@@ -45,8 +45,34 @@ define(["iter2d", "csshelper"], function(iter2d, csshelper){
                 context.setTransform(1, 0, 0, 1, 0, 0);
                 this.animationToSetup.setup(context, this.lib);
                 this.currentAnimation = this.animationToSetup;
+            },
+
+            addCodeToEvaluate: function(codeString){
+                var canvasAnim = this; 
+                return new Promise(function(resolve, reject){
+                    canvasAnim.evaluateCode = function(){
+                        evileval.evalAnimation(codeString, canvasAnim)
+                            .then(function(){
+                                resolve();
+                            }, function(err){
+                                console.log(err);
+                                reject(err);
+                            });
+                    };
+                });
             }
+/*TODO get the name of the animation somehow?
+            ,
+ 
+            loadAnimation : function(uri){ 
+                return net.HTTPget(canvasAnim.uri).then(function(animCode){
+                    canvasAnim.animationName = animationName;
+                    canvasAnim.addCodeToEvaluate(animCode);
+                return animCode;});
+              
+ */
         };
+        
         canvasAnim.setup();
         return canvasAnim;
 
@@ -126,6 +152,7 @@ define(["iter2d", "csshelper"], function(iter2d, csshelper){
                 childNodes[i].style.visibility = "hidden";
             };
         });
+
     };
 
 
@@ -143,7 +170,6 @@ define(["iter2d", "csshelper"], function(iter2d, csshelper){
 
             var editIcon = makeIcon("fa fa-pencil-square-o fa-lg");
             editIcon.addEventListener('click', edit, false);
-            //cell.hint.addEventListener('click', edit, false);
             cell.ui.appendChild(editIcon);
         });
         
