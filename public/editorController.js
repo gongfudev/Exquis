@@ -93,6 +93,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
         }else{
             net.HTTPget(canvasAnim.uri).then(function(animCode){
                 canvasAnim.animationName = animationName;
+                canvasAnim.addCodeToEvaluate(animCode);
                 return animCode;
             }).then(function(animCode){
                 view.setEditorContent(animationName, animCode);
