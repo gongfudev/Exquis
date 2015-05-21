@@ -1,6 +1,7 @@
 define([], function(){
 
     var evalAnimation = function(codeString, canvasAnim){
+        // TODO this is not a path, rename
         var jsAnimPath = toDataUri(codeString);
         return loadJsAnimOnCanvasAnim(jsAnimPath, canvasAnim, canvasAnim.animationName);
     },
@@ -8,11 +9,12 @@ define([], function(){
     loadJsAnimOnCanvasAnim = function(jsAnimPath, canvasAnim, animationName){
         return new Promise(function(resolve, reject){
             require([jsAnimPath],
-                    function(animation){
-                        var animationClone = Object.create(animation);
+                    function(animationCode){
+                        var animationCodeClone = Object.create(animationCode);
+                        //TODO this is not a canvasAnim but an Animation
                         canvasAnim.uri = jsAnimPath;
                         canvasAnim.animationName = animationName;
-                        canvasAnim.animationToSetup = animationClone;
+                        canvasAnim.codeToSetup = animationCodeClone;
 	                if(canvasAnim.hasOwnProperty("setup")){
                             canvasAnim.setup();
                         }

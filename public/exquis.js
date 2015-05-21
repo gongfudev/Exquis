@@ -1,6 +1,6 @@
 "use strict";
 
-define(["iter2d", "csshelper", "evileval"], function(iter2d, csshelper, evileval){
+define(["iter2d", "csshelper", "evileval", "net"], function(iter2d, csshelper, evileval, net){
             
 
     var makeCellDom = function(row, col, height, width){
@@ -13,13 +13,13 @@ define(["iter2d", "csshelper", "evileval"], function(iter2d, csshelper, evileval
         return cell;
     };
 
-    var makeCanvasAnimation = function(context, animationCode){
+    var makeCanvasAnimation = function(context, animation){
         var isJsAnim = true; 
         var canvasAnim = {
-            animationToSetup : animationCode.animationToSetup,
-            animationName: animationCode.animationName,
-            uri: animationCode.uri,
-            currentAnimation: null,
+            codeToSetup : animation.codeToSetup,
+            animationName: animation.animationName,
+            uri: animation.uri,
+            currentCode: null,
             context: context, //might be useful to debug
             borders : function(){
                return {
@@ -31,24 +31,23 @@ define(["iter2d", "csshelper", "evileval"], function(iter2d, csshelper, evileval
             },
 
             draw : function(borders){
-                if(!this.currentAnimation || !this.currentAnimation.draw){
+                if(!this.currentCode || !this.currentCode.draw){
                     return;
                 }
 
                 // force reset matrix/
                 context.setTransform(1, 0, 0, 1, 0, 0);
-                this.currentAnimation.draw(context, borders, this.lib);
+                this.currentCode.draw(context, borders, this.lib);
             },
 
             setup : function(){
                 // force reset matrix
                 context.setTransform(1, 0, 0, 1, 0, 0);
-                this.animationToSetup.setup(context, this.lib);
-                this.currentAnimation = this.animationToSetup;
+                this.codeToSetup.setup(context, this.lib);
+                this.currentCode = this.codeToSetup;
             },
 
-            addCodeToEvaluate: function(codeString){
-                var canvasAnim = this; 
+            addCodeStringToEvaluate: function(codeString){
                 return new Promise(function(resolve, reject){
                     canvasAnim.evaluateCode = function(){
                         evileval.evalAnimation(codeString, canvasAnim)
@@ -60,17 +59,19 @@ define(["iter2d", "csshelper", "evileval"], function(iter2d, csshelper, evileval
                             });
                     };
                 });
-            }
-/*TODO get the name of the animation somehow?
-            ,
+            },
  
-            loadAnimation : function(uri){ 
-                return net.HTTPget(canvasAnim.uri).then(function(animCode){
+            loadAnimation : function(uri){
+                var canvasAnim = this,
+                    animationName = net.extractAnimationNameFromUri(uri) ;
+                return net.HTTPget(uri).then(function(animCodeString){
                     canvasAnim.animationName = animationName;
-                    canvasAnim.addCodeToEvaluate(animCode);
-                return animCode;});
+                    canvasAnim.addCodeStringToEvaluate(animCodeString);
+                    return animCodeString;
+                });
+            }
               
- */
+ 
         };
         
         canvasAnim.setup();
@@ -120,8 +121,8 @@ define(["iter2d", "csshelper", "evileval"], function(iter2d, csshelper, evileval
     
     var makeCellUi = function(row, col, height, width){
         var cellUi = createCellDiv("cellUi", row, col, height, width);
-        var loadAnimation = makeIcon("fa fa-folder-open-o fa-lg");
-        cellUi.appendChild(loadAnimation);
+        var loadAnimationIcon = makeIcon("fa fa-folder-open-o fa-lg");
+        cellUi.appendChild(loadAnimationIcon);
         return cellUi;
     };
     

@@ -77,28 +77,22 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
     var makeTextAreaController = function(exquis){
         var controller = {
             onCodeChange: function(codeString){
-                return exquis.targetCell.canvasAnim.addCodeToEvaluate(codeString);
+                return exquis.targetCell.canvasAnim.addCodeStringToEvaluate(codeString);
             }
         };
         return controller;
     };
 
     var updateWithCanvasAnim = function(canvasAnim, newAnimationName){
-        var animationName = newAnimationName || canvasAnim.animationName;
-        
         if (canvasAnim.uri.match(/^data:/)){
-            var animCode = evileval.dataUri2text(canvasAnim.uri);
-            view.setEditorContent(animationName, animCode); 
-            canvasAnim.animationName = animationName;
+            var animCodeString = evileval.dataUri2text(canvasAnim.uri);
+            view.setEditorContent(canvasAnim.animationName, animCodeString); 
         }else{
-            net.HTTPget(canvasAnim.uri).then(function(animCode){
-                canvasAnim.animationName = animationName;
-                canvasAnim.addCodeToEvaluate(animCode);
-                return animCode;
-            }).then(function(animCode){
-                view.setEditorContent(animationName, animCode);
-                canvasAnim.uri = evileval.toDataUri(animCode);
-            });
+            canvasAnim.loadAnimation(canvasAnim.uri)
+                .then(function(animCodeString){
+                    view.setEditorContent(canvasAnim.animationName, animCodeString);
+                    canvasAnim.uri = evileval.toDataUri(animCodeString);
+                });
         }
     };
     

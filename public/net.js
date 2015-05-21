@@ -39,6 +39,11 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
         return "/animations/"+animationName + ".js";
     };
 
+    var extractAnimationNameFromUri = function(uri){
+        var match = uri.match(/([^\/]+)\.js/);
+        return match ? match[1] : uri;
+    };
+
     var loadAssemblage = function(assName){
 	var assemblagePath = "/assemblages/";
 	
@@ -121,6 +126,7 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
     return {saveAnimation: saveAnimation,
 	    loadAnimations: loadAnimations,
 	    makeAnimationFileUri: makeAnimationFileUri,
+            extractAnimationNameFromUri : extractAnimationNameFromUri, 
             saveAssemblage: saveAssemblage,
             HTTPgetJSON: HTTPgetJSON,
             HTTPget: HTTPget
