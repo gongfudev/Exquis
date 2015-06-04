@@ -11,7 +11,6 @@ define([], function(){
             require([jsAnimPath],
                     function(animationCode){
                         var animationCodeClone = Object.create(animationCode);
-                        //TODO this is not a canvasAnim but an Animation
                         canvasAnim.uri = jsAnimPath;
                         canvasAnim.animationName = animationName;
                         canvasAnim.codeToSetup = animationCodeClone;

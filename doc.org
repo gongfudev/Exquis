@@ -14,5 +14,34 @@ net.loadAssemblage(x, assName, init)
 
 
 exquis.init is called with all the loaded animations as argument
-exquis.init creates an exquis object and calls makeEditor(exquis)b
+exquis.init creates an exquis object and calls makeEditor(exquis)
 
+* ev.loadJsAnimOnCanvasAnim
+loads animationCode from uri with requirejs
+** evileval.evalAnimation
+converts codeString to data uri
+TODO this is already done by one of the callers (updateWithCanvasAnim) 
+does that make any sense? yes because onCodeChange needs it
+can we move the data uri updating to onCodeChange? 
+*** exquis.canvasAnim.addCodeStringToEvaluate
+creates an evaluateCode method to be called at the next iteration
+**** editorController.textAreaController.onCodeChange
+you have typed something
+**** exquis.canvasAnim.loadAnimation
+loads the animation codeString from an uri without evaluating it
+***** editorController.textAreaController.updateWithCanvasAnim (if ! match data:)
+finds and puts the codeString in the editor and stores it in a data uri
+TODO this should be the job of the canvasAnim, or not?
+TODO find a better name for this method 
+****** editorController...load...pickanimation
+you click the button to load a new animation
+TODO pickanimation is no longer on the editor, we're moving that button 
+****** exquis.addEditor...edit
+you open the editor to look at the code
+TODO edit should be called with the codeString as argument 
+(or do we want to keep the responsibility for codeString in the editor?
+no one else needs it, and the canvasAnim could refer to it through an uri,
+but maybe this exposes too much to the editor?)
+** net.loadAssemblage
+*** net.findAndLoadAssemblage
+**** main

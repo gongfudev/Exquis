@@ -79,7 +79,7 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
         return output;
     };
 
-    var loadAnimations = function(){
+    var findAndLoadAssemblage = function(){
 	var name = window.location.pathname.substr("/assemblage/".length);
         if(!name){
             name =  "assemblageAvecSinus",
@@ -124,7 +124,7 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
     };
 
     return {saveAnimation: saveAnimation,
-	    loadAnimations: loadAnimations,
+            findAndLoadAssemblage: findAndLoadAssemblage,
 	    makeAnimationFileUri: makeAnimationFileUri,
             extractAnimationNameFromUri : extractAnimationNameFromUri, 
             saveAssemblage: saveAssemblage,

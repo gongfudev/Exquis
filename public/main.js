@@ -3,7 +3,7 @@ var main = function(net, exquisInit, makeEditorView, makeEditorController){
     window.onerror = function(message, url, lineNumber){
         //console.log(message +" "+ url +" "+ lineNumber);
     };
-    net.loadAnimations()
+    net.findAndLoadAssemblage()
         .then(function(assemblage){
             var exquis =  exquisInit(assemblage.name, assemblage.canvasAnims,
                                      makeEditorView, makeEditorController);
