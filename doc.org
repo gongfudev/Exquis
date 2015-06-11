@@ -20,6 +20,7 @@ exquis.init creates an exquis object and calls makeEditor(exquis)
 loads animationCode from uri with requirejs
 ** evileval.evalAnimation
 converts codeString to data uri
+TODO does the data uri represent the running code or the code from the editor?
 TODO this is already done by one of the callers (updateWithCanvasAnim) 
 does that make any sense? yes because onCodeChange needs it
 can we move the data uri updating to onCodeChange? 
@@ -27,12 +28,41 @@ can we move the data uri updating to onCodeChange?
 creates an evaluateCode method to be called at the next iteration
 **** editorController.textAreaController.onCodeChange
 you have typed something
+TODO: the editor should know CanvasAnim, but should not access exquis
 **** exquis.canvasAnim.loadAnimation
 loads the animation codeString from an uri without evaluating it
 ***** editorController.textAreaController.updateWithCanvasAnim (if ! match data:)
-finds and puts the codeString in the editor and stores it in a data uri
-TODO this should be the job of the canvasAnim, or not?
-TODO find a better name for this method 
+- loads the code as text (codeString) from the url TODO put this in canvasAnim.getCodeString
+- stores it in a data uri  TODO put this on canvasAnim.setCodeString
+- puts the codeString in the editor
+
+******* TODO canvasAnim.getCodeString
+returns the code as a string
+reads it from the codeUri if it exists
+or else loads it from the originalUrl and calls setCodeString
+
+******* TODO canvasAnim.setCodeString
+stores the codeString in the codeUri (method updateCodeUriFromString)
+ 
+
+******* TODO give the canvasAnim object to the editor.
+TODO the editor calls canvasAnim.getCodeString, 
+TODO which calls .setCodeString  
+
+******* TODO canvasAnim.originalUrl .codeUri
+originalUrl is the address from where the animation is first loaded
+codeUri is a data uri that contains the code being edited
+
+******* TODO a new component: the store
+different implementations of the store would save the animation in different places.
+The original url of the animation is independent of the store
+because we want exquis to be able to just display animations from any url.
+The store needs to know where to save an animation based on its url.
+Currently the original url is replaced by a data uri when it is first edited,
+because it's only used to load the code. We need to keep in order to save it.
+
+******* TODO find a better name for this method
+ 
 ****** editorController...load...pickanimation
 you click the button to load a new animation
 TODO pickanimation is no longer on the editor, we're moving that button 
