@@ -63,7 +63,7 @@ define(["iter2d", "csshelper", "evileval", "net"], function(iter2d, csshelper, e
  
             loadAnimation : function(uri){
                 var canvasAnim = this,
-                    animationName = net.extractAnimationNameFromUri(uri) ;
+                    animationName = net.extractAnimationNameFromUri(uri);
                 return net.HTTPget(uri).then(function(animCodeString){
                     canvasAnim.animationName = animationName;
                     canvasAnim.addCodeStringToEvaluate(animCodeString);

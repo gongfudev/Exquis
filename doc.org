@@ -18,40 +18,42 @@ exquis.init creates an exquis object and calls makeEditor(exquis)
 
 * ev.loadJsAnimOnCanvasAnim
 loads animationCode from uri with requirejs
+sets canvasAnim.animationName 
+TODO compute the animation name from the url instead of taking an argument 
 ** evileval.evalAnimation
 converts codeString to data uri
-TODO does the data uri represent the running code or the code from the editor?
-TODO this is already done by one of the callers (updateWithCanvasAnim) 
-does that make any sense? yes because onCodeChange needs it
-can we move the data uri updating to onCodeChange? 
+TODO converting the codeString to data uri is now the job of canvasAnim.setCodeString
+     delete this method
 *** exquis.canvasAnim.addCodeStringToEvaluate
 creates an evaluateCode method to be called at the next iteration
 **** editorController.textAreaController.onCodeChange
 you have typed something
-TODO: the editor should know CanvasAnim, but should not access exquis
+TODO: the editor should know CanvasAnim, but should not access exquis. 
+      canvasAnim is given to the editor by editorController.loadCodeString(canvasAnim)
+TODO onCodeChange should call canvasAnim.setCodeString instead.
+
 **** exquis.canvasAnim.loadAnimation
-loads the animation codeString from an uri without evaluating it
+loads the animation codeString from an uri. TODO this is now the job of canvasAnim.getCodeString
+and sets up the canvasAnim to evaluate it. TODO this is now the job of canvasAnim.setCodeString
+
 ***** editorController.textAreaController.updateWithCanvasAnim (if ! match data:)
 - loads the code as text (codeString) from the url TODO put this in canvasAnim.getCodeString
 - stores it in a data uri  TODO put this on canvasAnim.setCodeString
 - puts the codeString in the editor
 
-******* TODO canvasAnim.getCodeString
-returns the code as a string
-reads it from the codeUri if it exists
+******* TODO canvasAnim.getSourceCodeString
+returns the code as a string in whatever original language it was written in
+reads it from its own cache if present (use a data uri)
 or else loads it from the originalUrl and calls setCodeString
 
-******* TODO canvasAnim.setCodeString
-stores the codeString in the codeUri (method updateCodeUriFromString)
- 
+******* TODO canvasAnim.setJavaScriptCodeString
+- stores the codeString in the codeUri (method updateCodeUriFromString)
+- sets up the canvasAnim to evaluate it: canvasAnim._addCodeStringToEvaluate
+- is called every time a key is pressed on the editor
 
 ******* TODO give the canvasAnim object to the editor.
 TODO the editor calls canvasAnim.getCodeString, 
 TODO which calls .setCodeString  
-
-******* TODO canvasAnim.originalUrl .codeUri
-originalUrl is the address from where the animation is first loaded
-codeUri is a data uri that contains the code being edited
 
 ******* TODO a new component: the store
 different implementations of the store would save the animation in different places.
@@ -59,13 +61,18 @@ The original url of the animation is independent of the store
 because we want exquis to be able to just display animations from any url.
 The store needs to know where to save an animation based on its url.
 Currently the original url is replaced by a data uri when it is first edited,
-because it's only used to load the code. We need to keep in order to save it.
+because it's only used to load the code. We need to keep it in order to save it.
 
-******* TODO find a better name for this method
+******* TODO canvasAnim.originalUrl .codeUri
+originalUrl is the address from where the animation is first loaded
+codeUri is a data uri that contains the code being edited
+
+******* TODO find a better name for this method: editorController.loadCodeString(canvasAnim)?
  
 ****** editorController...load...pickanimation
 you click the button to load a new animation
 TODO pickanimation is no longer on the editor, we're moving that button 
+TODO pickanimation is followed by canvasAnim.setCodeString
 ****** exquis.addEditor...edit
 you open the editor to look at the code
 TODO edit should be called with the codeString as argument 
@@ -75,3 +82,14 @@ but maybe this exposes too much to the editor?)
 ** net.loadAssemblage
 *** net.findAndLoadAssemblage
 **** main
+
+* blockly
+Blockly code is something else than javascript, xml I think.
+We want a blockly animation editor that generates javascript and gives it to the canvas anim
+The xml of the currently edited animation should be stored somewhere when we edit another animation
+When we want to save the xml it should be persisted by the store.
+When exquis loads an xml animation, it asks a blockly object to translate it.
+The type of code could be specified in a comment at the beginning of the file, or in any other way 
+<!--blockly--> ;clojure 
+
+
