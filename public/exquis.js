@@ -3,14 +3,30 @@
 define(["iter2d", "csshelper", "evileval", "net"], function(iter2d, csshelper, evileval, net){
             
 
-    var makeCellDom = function(row, col, height, width){
+    var makeCell = function(row, col, height, width){
         var canvas = makeCanvas(row, col, height, width), 
             context = canvas.getContext("2d"), 
             cell = {};
         cell.context = context;
         cell.hint = createCellDiv("hint", row, col, height, width);
         cell.ui = makeCellUi(row, col, height, width);
+        addCellUiListener(cell.ui); 
         return cell;
+    };
+
+    var addCellUiListener = function(cellUi){
+        var childNodes = cellUi.childNodes;
+        cellUi.addEventListener("mouseover", function(e){
+            for(var i = 0; i < childNodes.length; i++){
+                childNodes[i].style.visibility = "visible";
+            };
+        });
+        cellUi.addEventListener("mouseout", function(e){
+            for(var i = 0; i < childNodes.length; i++){
+                childNodes[i].style.visibility = "hidden";
+            };
+        });
+
     };
 
     var makeCanvasAnimation = function(context, animation){
@@ -123,6 +139,9 @@ define(["iter2d", "csshelper", "evileval", "net"], function(iter2d, csshelper, e
         var cellUi = createCellDiv("cellUi", row, col, height, width);
         var loadAnimationIcon = makeIcon("fa fa-folder-open-o fa-lg");
         cellUi.appendChild(loadAnimationIcon);
+
+        loadAnimationIcon.addEventListener('click', function(){ alert("not today"); });
+        
         return cellUi;
     };
     
@@ -141,20 +160,6 @@ define(["iter2d", "csshelper", "evileval", "net"], function(iter2d, csshelper, e
 
     };
 
-    var addCellUiListener = function(cellUi){
-        var childNodes = cellUi.childNodes;
-        cellUi.addEventListener("mouseover", function(e){
-            for(var i = 0; i < childNodes.length; i++){
-                childNodes[i].style.visibility = "visible";
-            };
-        });
-        cellUi.addEventListener("mouseout", function(e){
-            for(var i = 0; i < childNodes.length; i++){
-                childNodes[i].style.visibility = "hidden";
-            };
-        });
-
-    };
 
 
     var addEditor = function(exquis, makeEditorView, makeEditorController){
@@ -189,12 +194,14 @@ define(["iter2d", "csshelper", "evileval", "net"], function(iter2d, csshelper, e
             exquis = {};
         exquis.assName = assName;
 
+        //TODO give the code url as argument instead of animCode
+        // canvasAnim should have a method to load the code from the url:
+        // getSourceCodeString (which reads from the cache of the canvasAnim, or the store)
         exquis.cells = iter2d.map2dArray(animCodes,function(animCode,row,col){
             var height = 150,
                 width = 150,
-                cell = makeCellDom(row, col, height, width);
+                cell = makeCell(row, col, height, width);
             cell.canvasAnim = makeCanvasAnimation(cell.context, animCode);
-            addCellUiListener(cell.ui); 
             return cell;
         });
         
