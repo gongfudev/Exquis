@@ -23,28 +23,28 @@ TODO compute the animation name from the url instead of taking an argument
 ** evileval.evalAnimation
 converts codeString to data uri
 TODO converting the codeString to data uri is now the job of canvasAnim.setCodeString
-     delete this method
+delete this method
 *** exquis.canvasAnim.addCodeStringToEvaluate
 creates an evaluateCode method to be called at the next iteration
 **** editorController.textAreaController.onCodeChange
 you have typed something
 TODO: the editor should know CanvasAnim, but should not access exquis. 
       canvasAnim is given to the editor by editorController.loadCodeString(canvasAnim)
-TODO onCodeChange should call canvasAnim.setCodeString instead.
+TODO onCodeChange should call canvasAnim.setJavaScriptCodeString instead.
 
 **** exquis.canvasAnim.loadAnimation
 loads the animation codeString from an uri. TODO this is now the job of canvasAnim.getCodeString
 and sets up the canvasAnim to evaluate it. TODO this is now the job of canvasAnim.setCodeString
 
 ***** editorController.textAreaController.updateWithCanvasAnim (if ! match data:)
-- loads the code as text (codeString) from the url TODO put this in canvasAnim.getCodeString
+- loads the code as text (codeString) from the url TODO put this in canvasAnim.getSourceCodeString
 - stores it in a data uri  TODO put this on canvasAnim.setCodeString
 - puts the codeString in the editor
 
 ******* TODO canvasAnim.getSourceCodeString
 returns the code as a string in whatever original language it was written in
 reads it from its own cache if present (use a data uri)
-or else loads it from the originalUrl and calls setCodeString
+or else loads it from the store with originalUrl and calls setCodeString
 
 ******* TODO canvasAnim.setJavaScriptCodeString
 - stores the codeString in the codeUri (method updateCodeUriFromString)
@@ -72,7 +72,7 @@ codeUri is a data uri that contains the code being edited
 ****** editorController...load...pickanimation
 you click the button to load a new animation
 TODO pickanimation is no longer on the editor, we're moving that button 
-TODO pickanimation is followed by canvasAnim.setCodeString
+TODO pickanimation is followed by canvasAnim.setJavaScriptCodeString
 ****** exquis.addEditor...edit
 you open the editor to look at the code
 TODO edit should be called with the codeString as argument 
