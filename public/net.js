@@ -48,23 +48,10 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
 	var assemblagePath = "/assemblages/";
 	
 	assemblagePath += assName + ".json";
-        return HTTPgetJSON(assemblagePath)
-            .then(function(animationNames){
-                var animNamesList = animationNames.reduce(function(a, b) {
-                    return a.concat(b);
-                }),
-                    animPromises =  animNamesList.map(function(animName){
-                        var animPath = makeAnimationPath(animName);
-                        return evileval.loadJsAnimOnCanvasAnim(animPath, {}, animName);
-                    });
-                return Promise.all(animPromises);
-            }).then(function(canvasAnims){
-                return { name: assName,
-                         canvasAnims: splitarray(canvasAnims, 3)};
-            });
+        return HTTPgetJSON(assemblagePath);
     };
     
-    var makeAnimationPath = function (animName){
+   var makeAnimationPath = function (animName){
         if(/^https?:\/\//.exec(animName)){
             return animName;
         }
@@ -79,13 +66,10 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
         return output;
     };
 
-    var findAndLoadAssemblage = function(){
-	var name = window.location.pathname.substr("/assemblage/".length);
-        if(!name){
-            name =  "assemblageAvecSinus",
-            history.pushState({},"...", "/assemblage/" + name);
-        }
-	return loadAssemblage(name);
+    var getAssemblageNameFromUrlOrDefaultWithUrlChange= function(){
+	var name = window.location.pathname.substr("/assemblage/".length) || "assemblageAvecSinus";
+        history.pushState({},"...", "/assemblage/" + name);
+	return name;
     };
     
     var HTTPget = function(url) {
@@ -124,7 +108,8 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
     };
 
     return {saveAnimation: saveAnimation,
-            findAndLoadAssemblage: findAndLoadAssemblage,
+            getAssemblageNameFromUrlOrDefaultWithUrlChange: getAssemblageNameFromUrlOrDefaultWithUrlChange,
+            loadAssemblage: loadAssemblage,
 	    makeAnimationFileUri: makeAnimationFileUri,
             extractAnimationNameFromUri : extractAnimationNameFromUri, 
             saveAssemblage: saveAssemblage,

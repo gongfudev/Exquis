@@ -29,12 +29,8 @@ define(["iter2d", "csshelper", "evileval", "net"], function(iter2d, csshelper, e
 
     };
 
-    var makeCanvasAnimation = function(context, animation){
-        var isJsAnim = true; 
-        var canvasAnim = {
-            codeToSetup : animation.codeToSetup,
-            animationName: animation.animationName,
-            uri: animation.uri,
+    var makeCanvasAnimation = function(context){
+        return {
             currentCode: null,
             context: context, //might be useful to debug
             borders : function(){
@@ -56,14 +52,8 @@ define(["iter2d", "csshelper", "evileval", "net"], function(iter2d, csshelper, e
                 this.currentCode.draw(context, borders, this.lib);
             },
 
-            setup : function(){
-                // force reset matrix
-                context.setTransform(1, 0, 0, 1, 0, 0);
-                this.codeToSetup.setup(context, this.lib);
-                this.currentCode = this.codeToSetup;
-            },
-
             addCodeStringToEvaluate: function(codeString){
+                var canvasAnim = this;
                 return new Promise(function(resolve, reject){
                     canvasAnim.evaluateCode = function(){
                         evileval.evalAnimation(codeString, canvasAnim)
@@ -85,14 +75,22 @@ define(["iter2d", "csshelper", "evileval", "net"], function(iter2d, csshelper, e
                     canvasAnim.addCodeStringToEvaluate(animCodeString);
                     return animCodeString;
                 });
-            }
-              
- 
-        };
-        
-        canvasAnim.setup();
-        return canvasAnim;
+            },
+            
+            setAnimation: function(codeToSetup, uri){
+                this.codeToSetup = codeToSetup;
+                this.animationName = net.extractAnimationNameFromUri(uri),
+                this.uri = uri;
+                this.setup = function(){
+                    // force reset matrix
+                    context.setTransform(1, 0, 0, 1, 0, 0);
+                    this.codeToSetup.setup(context, this.lib);
+                    this.currentCode = this.codeToSetup;
+                };
 
+                this.setup();
+            }
+        };
     };
 
     var relativeCoordinates = {
@@ -139,8 +137,12 @@ define(["iter2d", "csshelper", "evileval", "net"], function(iter2d, csshelper, e
         var cellUi = createCellDiv("cellUi", row, col, height, width);
         var loadAnimationIcon = makeIcon("fa fa-folder-open-o fa-lg");
         cellUi.appendChild(loadAnimationIcon);
-
-        loadAnimationIcon.addEventListener('click', function(){ alert("not today"); });
+        loadAnimationIcon.addEventListener('click', function(){
+            alert("not today");
+            //TODO load list of animations from store
+            //TODO display list in dialog
+            //TODO load animation on canvasAnim
+        });
         
         return cellUi;
     };
@@ -189,7 +191,7 @@ define(["iter2d", "csshelper", "evileval", "net"], function(iter2d, csshelper, e
         document.addEventListener('click', possiblyHideEditor, true);
     };
 
-    var init = function (assName, animCodes, makeEditorView, makeEditorController) {
+    var init = function (assName, animUris, makeEditorView, makeEditorController) {
         var container = document.getElementById("container"),
             exquis = {};
         exquis.assName = assName;
@@ -197,11 +199,14 @@ define(["iter2d", "csshelper", "evileval", "net"], function(iter2d, csshelper, e
         //TODO give the code url as argument instead of animCode
         // canvasAnim should have a method to load the code from the url:
         // getSourceCodeString (which reads from the cache of the canvasAnim, or the store)
-        exquis.cells = iter2d.map2dArray(animCodes,function(animCode,row,col){
+        exquis.cells = iter2d.map2dArray(animUris,function(animUri,row,col){
             var height = 150,
                 width = 150,
                 cell = makeCell(row, col, height, width);
-            cell.canvasAnim = makeCanvasAnimation(cell.context, animCode);
+            cell.canvasAnim = makeCanvasAnimation(cell.context);
+            evileval.loadJsAnim(animUri).then(function(animationCodeClone){
+                cell.canvasAnim.setAnimation(animationCodeClone, animUri);
+            });
             return cell;
         });
         

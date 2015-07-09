@@ -5,24 +5,30 @@ define([], function(){
         var jsAnimPath = toDataUri(codeString);
         return loadJsAnimOnCanvasAnim(jsAnimPath, canvasAnim, canvasAnim.animationName);
     },
+
+        loadJsAnim = function(jsAnimPath){
+            return new Promise(function(resolve, reject){
+                require([jsAnimPath],
+                        function(animationCode){
+                            resolve(Object.create(animationCode));
+                        },
+                        function(err){
+                            reject(err);
+                        });
+            });
+        },
         
     loadJsAnimOnCanvasAnim = function(jsAnimPath, canvasAnim, animationName){
-        return new Promise(function(resolve, reject){
-            require([jsAnimPath],
-                    function(animationCode){
-                        var animationCodeClone = Object.create(animationCode);
-                        canvasAnim.uri = jsAnimPath;
-                        canvasAnim.animationName = animationName;
-                        canvasAnim.codeToSetup = animationCodeClone;
-	                if(canvasAnim.hasOwnProperty("setup")){
-                            canvasAnim.setup();
-                        }
-                        resolve(canvasAnim);
-                    },
-                   function(err){
-                       reject(err);
-                   });
-        });
+        return loadJsAnim(jsAnimPath)
+            .then(function(animationCodeClone){
+                canvasAnim.uri = jsAnimPath;
+                canvasAnim.animationName = animationName;
+                canvasAnim.codeToSetup = animationCodeClone;
+	        if(canvasAnim.hasOwnProperty("setup")){
+                    canvasAnim.setup();
+                }
+                return canvasAnim;
+            });
     },
         
     toDataUri = function(jsCode){
@@ -42,7 +48,7 @@ define([], function(){
     };
 	
     return {
-        loadJsAnimOnCanvasAnim:loadJsAnimOnCanvasAnim,
+        loadJsAnim: loadJsAnim,
         evalAnimation: evalAnimation,
         toDataUri: toDataUri,
         dataUri2text: dataUri2text,
