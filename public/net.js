@@ -31,10 +31,6 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
         ajax.send(params);
     };
     
-    var makeAnimationFileName = function(animationName){
-        return "/animations/"+animationName + ".js";
-    };
-
     var makeAnimationFileUri = function(animationName){
         return "/animations/"+animationName + ".js";
     };
@@ -111,7 +107,8 @@ define(["iter2d", "evileval"], function(iter2d, evileval){
             getAssemblageNameFromUrlOrDefaultWithUrlChange: getAssemblageNameFromUrlOrDefaultWithUrlChange,
             loadAssemblage: loadAssemblage,
 	    makeAnimationFileUri: makeAnimationFileUri,
-            extractAnimationNameFromUri : extractAnimationNameFromUri, 
+            makeAnimationPath: makeAnimationPath ,
+            extractAnimationNameFromUri: extractAnimationNameFromUri, 
             saveAssemblage: saveAssemblage,
             HTTPgetJSON: HTTPgetJSON,
             HTTPget: HTTPget

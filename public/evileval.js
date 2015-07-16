@@ -4,21 +4,21 @@ define([], function(){
         // TODO this is not a path, rename
         var jsAnimPath = toDataUri(codeString);
         return loadJsAnimOnCanvasAnim(jsAnimPath, canvasAnim, canvasAnim.animationName);
-    },
+    };
 
-        loadJsAnim = function(jsAnimPath){
-            return new Promise(function(resolve, reject){
-                require([jsAnimPath],
-                        function(animationCode){
-                            resolve(Object.create(animationCode));
-                        },
-                        function(err){
-                            reject(err);
-                        });
-            });
-        },
-        
-    loadJsAnimOnCanvasAnim = function(jsAnimPath, canvasAnim, animationName){
+    var loadJsAnim = function(jsAnimPath){
+        return new Promise(function(resolve, reject){
+            require([jsAnimPath],
+                    function(animationCode){
+                        resolve(Object.create(animationCode));
+                    },
+                    function(err){
+                        reject(err);
+                    });
+        });
+    };
+    
+    var loadJsAnimOnCanvasAnim = function(jsAnimPath, canvasAnim, animationName){
         return loadJsAnim(jsAnimPath)
             .then(function(animationCodeClone){
                 canvasAnim.uri = jsAnimPath;
@@ -29,9 +29,9 @@ define([], function(){
                 }
                 return canvasAnim;
             });
-    },
-        
-    toDataUri = function(jsCode){
+    };
+    
+    var toDataUri = function(jsCode){
         return "data:text/javascript;base64," + btoa(jsCode);
     },
 

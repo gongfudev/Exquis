@@ -10,11 +10,10 @@ define(["iter2d", "csshelper", "evileval", "net"], function(iter2d, csshelper, e
         cell.context = context;
         cell.hint = createCellDiv("hint", row, col, height, width);
         cell.ui = makeCellUi(row, col, height, width);
-        addCellUiListener(cell.ui); 
         return cell;
     };
 
-    var addCellUiListener = function(cellUi){
+    var addCellUiListeners = function(cellUi, store){
         var childNodes = cellUi.childNodes;
         cellUi.addEventListener("mouseover", function(e){
             for(var i = 0; i < childNodes.length; i++){
@@ -26,7 +25,7 @@ define(["iter2d", "csshelper", "evileval", "net"], function(iter2d, csshelper, e
                 childNodes[i].style.visibility = "hidden";
             };
         });
-
+        addLoadAnimationHandler(cellUi.id, store); 
     };
 
     var makeCanvasAnimation = function(context){
@@ -125,26 +124,34 @@ define(["iter2d", "csshelper", "evileval", "net"], function(iter2d, csshelper, e
         return cellDiv;
     };
 
-    var makeIcon = function(classNames){
+    var makeIcon = function(classNames, id){
         var icon = document.createElement('span');
         icon.style.visibility = "hidden";
         icon.style.cursor = "pointer"; 
         icon.className = classNames;
+        if(id){
+            icon.id = id;
+        }
         return icon;
     };
     
+    var loadIconSuffix = "-load-icon"; 
     var makeCellUi = function(row, col, height, width){
         var cellUi = createCellDiv("cellUi", row, col, height, width);
-        var loadAnimationIcon = makeIcon("fa fa-folder-open-o fa-lg");
+        var loadAnimationIcon = makeIcon("fa fa-folder-open-o fa-lg", cellUi.id + loadIconSuffix);
         cellUi.appendChild(loadAnimationIcon);
+        return cellUi;
+    };
+
+    var addLoadAnimationHandler = function(cellUiId, store){
+        var loadAnimationIcon = document.getElementById(cellUiId + loadIconSuffix);
         loadAnimationIcon.addEventListener('click', function(){
-            alert("not today");
-            //TODO load list of animations from store
+            store.loadAnimationList().then(function(fileUris){
+                alert(fileUris);
+            });
             //TODO display list in dialog
             //TODO load animation on canvasAnim
         });
-        
-        return cellUi;
     };
     
     var addHintListeners = function(cells){
@@ -176,7 +183,7 @@ define(["iter2d", "csshelper", "evileval", "net"], function(iter2d, csshelper, e
                 exquis.editorController.show();
             };
 
-            var editIcon = makeIcon("fa fa-pencil-square-o fa-lg");
+            var editIcon = makeIcon("fa fa-pencil-square-o fa-lg", cell.ui.id + "-edit-icon");
             editIcon.addEventListener('click', edit, false);
             cell.ui.appendChild(editIcon);
         });
@@ -191,18 +198,19 @@ define(["iter2d", "csshelper", "evileval", "net"], function(iter2d, csshelper, e
         document.addEventListener('click', possiblyHideEditor, true);
     };
 
-    var init = function (assName, animUris, makeEditorView, makeEditorController) {
+    var init = function (assName, animUris, makeEditorView, makeEditorController, store) {
         var container = document.getElementById("container"),
             exquis = {};
         exquis.assName = assName;
 
-        //TODO give the code url as argument instead of animCode
-        // canvasAnim should have a method to load the code from the url:
+        //TODO canvasAnim should have a method to load the source code from the url:
         // getSourceCodeString (which reads from the cache of the canvasAnim, or the store)
+        // This becomes necessary when start to have code other than javascript
         exquis.cells = iter2d.map2dArray(animUris,function(animUri,row,col){
             var height = 150,
                 width = 150,
                 cell = makeCell(row, col, height, width);
+            addCellUiListeners(cell.ui, store); 
             cell.canvasAnim = makeCanvasAnimation(cell.context);
             evileval.loadJsAnim(animUri).then(function(animationCodeClone){
                 cell.canvasAnim.setAnimation(animationCodeClone, animUri);
