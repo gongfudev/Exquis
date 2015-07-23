@@ -8,13 +8,25 @@ Currently the original url is replaced by a data uri when it is first edited,
 because it's only used to load the code. We need to keep it in order to save it.
 */
 define(["net", "evileval"], function(net, evileval){
-    //TODO load list of animations from store
+    var animationNameToUri = function(animationName){
+        return "/animations/"+animationName + ".js";
+    };
+    
+    var uriToAnimationName = function(uri){
+        var match = uri.match(/([^\/]+)\.js/);
+        return match ? match[1] : uri;
+    };
+    
     var loadAnimationList = function(){
         return net.HTTPgetJSON("/animations/").then(function(files){
             return files.filter(function(f){
                 return f.match(/\.js$/);
+            }).map(function(storeFileUri){
+                return "/animations/" + storeFileUri; 
             });
 	});
     };
-    return {loadAnimationList: loadAnimationList};
+    return {loadAnimationList: loadAnimationList,
+            uriToAnimationName: uriToAnimationName,
+            animationNameToUri: animationNameToUri };
 });

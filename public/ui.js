@@ -7,7 +7,7 @@ define(["csshelper"], function( csshelper){
         dialogTitle = document.getElementById("dialog_title"),
         dialogFooter = document.getElementById("dialog_footer");
     
-    var makeCancelButton = function(modalScreen){
+    var makeCancelButton = function(){
         var cancelButton = document.createElement("button");
 	cancelButton.textContent = "cancel";
         csshelper.addClass(cancelButton, "btn");
@@ -45,35 +45,47 @@ define(["csshelper"], function( csshelper){
                 showDialog(false);
             });
             buttonRow.appendChild(okButton);
-            buttonRow.appendChild(makeCancelButton(modalScreen));
+            var cancelButton = makeCancelButton();
+            cancelButton.addEventListener('click', function(){
+                resolve(null);
+            });
+            buttonRow.appendChild(cancelButton);
             showDialog(true);
             input.focus();
 
         });
     };
 
-    var populateNamePicker = function(title, names, clickHandler){
-        dialogTitle.innerHTML = title;
-        dialogContent.innerHTML = "";
-        dialogFooter.innerHTML = "";
-	
-	var list = document.createElement("ul");
-	dialogContent.appendChild(list);
-
-	for(var i = 0; i < names.length; ++i){
-	    var item = document.createElement("li");
-	    item.textContent = names[i];
-            item.id = names[i];
-            item.addEventListener('click', function(e){
-                clickHandler(e);
-                showDialog(false);
-            });
+    var populateNamePicker = function(title, names){
+        return new Promise(function(resolve, reject){
+            
+            dialogTitle.innerHTML = title;
+            dialogContent.innerHTML = "";
+            dialogFooter.innerHTML = "";
 	    
-	    list.appendChild(item);
-	}
+	    var list = document.createElement("ul");
+	    dialogContent.appendChild(list);
 
-        dialogFooter.appendChild(makeCancelButton(modalScreen));
-        showDialog(true);
+	    for(var i = 0; i < names.length; ++i){
+	        var item = document.createElement("li");
+	        item.textContent = names[i];
+                item.id = names[i];
+                item.addEventListener('click', function(e){
+                    showDialog(false);
+                    resolve(e.target.textContent);
+                });
+	        
+	        list.appendChild(item);
+	    }
+
+            var cancelButton = makeCancelButton();
+            cancelButton.addEventListener('click', function(){
+                resolve(null);
+            });
+            dialogFooter.appendChild(cancelButton);
+
+            showDialog(true);
+        });
     };
 
     var setKeyHandler = function(handler){

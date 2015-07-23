@@ -1,6 +1,6 @@
 "use strict";
 
-define(["iter2d", "csshelper", "evileval", "net"], function(iter2d, csshelper, evileval, net){
+define(["iter2d", "csshelper", "evileval", "net", "ui"], function(iter2d, csshelper, evileval, net, ui){
             
 
     var makeCell = function(row, col, height, width){
@@ -13,7 +13,7 @@ define(["iter2d", "csshelper", "evileval", "net"], function(iter2d, csshelper, e
         return cell;
     };
 
-    var addCellUiListeners = function(cellUi, store){
+    var addCellUiListeners = function(cellUi, canvasAnim, store){
         var childNodes = cellUi.childNodes;
         cellUi.addEventListener("mouseover", function(e){
             for(var i = 0; i < childNodes.length; i++){
@@ -25,7 +25,7 @@ define(["iter2d", "csshelper", "evileval", "net"], function(iter2d, csshelper, e
                 childNodes[i].style.visibility = "hidden";
             };
         });
-        addLoadAnimationHandler(cellUi.id, store); 
+        addLoadAnimationHandler(cellUi.id, canvasAnim, store); 
     };
 
     var makeCanvasAnimation = function(context){
@@ -143,14 +143,19 @@ define(["iter2d", "csshelper", "evileval", "net"], function(iter2d, csshelper, e
         return cellUi;
     };
 
-    var addLoadAnimationHandler = function(cellUiId, store){
+    var addLoadAnimationHandler = function(cellUiId, canvasAnim, store){
         var loadAnimationIcon = document.getElementById(cellUiId + loadIconSuffix);
         loadAnimationIcon.addEventListener('click', function(){
             store.loadAnimationList().then(function(fileUris){
-                alert(fileUris);
+                var names = fileUris.map(store.uriToAnimationName);
+                return ui.populateNamePicker("choose animation", names);
+            }).then(function(fileName){
+                var fileUri = store.animationNameToUri(fileName);
+                evileval.loadJsAnim(fileUri).then(function(animationCodeClone){
+                    canvasAnim.setAnimation(animationCodeClone, fileUri);
+                });
             });
-            //TODO display list in dialog
-            //TODO load animation on canvasAnim
+
         });
     };
     
@@ -210,8 +215,8 @@ define(["iter2d", "csshelper", "evileval", "net"], function(iter2d, csshelper, e
             var height = 150,
                 width = 150,
                 cell = makeCell(row, col, height, width);
-            addCellUiListeners(cell.ui, store); 
             cell.canvasAnim = makeCanvasAnimation(cell.context);
+            addCellUiListeners(cell.ui, cell.canvasAnim, store); 
             evileval.loadJsAnim(animUri).then(function(animationCodeClone){
                 cell.canvasAnim.setAnimation(animationCodeClone, animUri);
             });

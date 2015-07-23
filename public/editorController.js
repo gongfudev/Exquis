@@ -3,8 +3,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
     var makeAssemblageController = function(exquis){
         var controller = {
             load: function(){
-                var pickAssemblage = function(e){
-                  var chosenAssemblage = e.target.textContent;
+              var pickAssemblage = function(chosenAssemblage){
                   document.location = "/assemblage/" + chosenAssemblage;
               };
 
@@ -14,7 +13,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
                 }).map(function(f){
                     return f.replace(/\.json$/, "");
                 });
-                ui.populateNamePicker("choose assemblage", files, pickAssemblage);		
+                ui.populateNamePicker("choose assemblage", files).then(pickAssemblage);		
             });
           },
             save: function(){
@@ -23,6 +22,9 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
             saveAs: function(){
                 return ui.buildPrompt("enter file name")
                 .then(function(fileName){
+                    if(fileName == null){
+                        throw "filename is null";
+                    }
                     net.saveAssemblage(fileName, exquis.assemblage());
                     exquis.assName = fileName;
                     history.pushState({},"...", fileName);
@@ -40,9 +42,8 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
 
         var controller = {
             load: function(){
-                var pickAnimation = function(e){
-		    var chosenAnimationName = e.target.textContent,
-                        canvasAnim = exquis.targetCell.canvasAnim;
+                var pickAnimation = function(chosenAnimationName){
+                    var canvasAnim = exquis.targetCell.canvasAnim;
                     canvasAnim.uri = net.makeAnimationFileUri(chosenAnimationName);
                     updateWithCanvasAnim(canvasAnim, chosenAnimationName);
                 };
@@ -54,7 +55,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
                     }).map(function(f){
                         return f.replace(/\.js$/, "");
                     });
-		    ui.populateNamePicker("choose animation", files, pickAnimation);
+		    ui.populateNamePicker("choose animation", files).then(pickAnimation);
 		});
             },
 
@@ -64,6 +65,9 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
 	    saveAs: function(){
                 return ui.buildPrompt("enter file name")
                 .then(function(fileName){
+                    if(fileName == null){
+                        throw "filename is null";
+                    }
                     net.saveAnimation(exquis.targetCell.canvasAnim, null, fileName);
                     exquis.targetCell.canvasAnim.animationName = fileName;
                     return fileName;
