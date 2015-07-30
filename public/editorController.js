@@ -38,11 +38,12 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
         return controller;
     };
 
-    var makeAnimationController = function(exquis){
+    var currentCanvasAnim;
+    var makeAnimationController = function(){
 
         var controller = {
             save: function(){
-		net.saveAnimation(exquis.targetCell.canvasAnim);
+		net.saveAnimation(currentCanvasAnim);
             },
 	    saveAs: function(){
                 return ui.buildPrompt("enter file name")
@@ -50,8 +51,8 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
                     if(fileName == null){
                         throw "filename is null";
                     }
-                    net.saveAnimation(exquis.targetCell.canvasAnim, null, fileName);
-                    exquis.targetCell.canvasAnim.animationName = fileName;
+                    net.saveAnimation(currentCanvasAnim, null, fileName);
+                    currentCanvasAnim.animationName = fileName;
                     return fileName;
                 });
             }
@@ -60,16 +61,19 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
         return controller;
     };
 
-    var makeTextAreaController = function(exquis){
+    var makeTextAreaController = function(){
         var controller = {
             onCodeChange: function(codeString){
-                return exquis.targetCell.canvasAnim.addCodeStringToEvaluate(codeString);
+                return currentCanvasAnim.addCodeStringToEvaluate(codeString);
             }
         };
         return controller;
     };
 
     var updateWithCanvasAnim = function(canvasAnim, newAnimationName){
+        // we would like
+        //view.setEditorContent(canvasAnim.animationName, canvasAnim.getCodeString());
+        currentCanvasAnim = canvasAnim;
         if (canvasAnim.uri.match(/^data:/)){
             var animCodeString = evileval.dataUri2text(canvasAnim.uri);
             view.setEditorContent(canvasAnim.animationName, animCodeString); 
@@ -85,8 +89,8 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
     return function(exquis, makeEditorView){
         var controller = {
             assController: makeAssemblageController(exquis),
-            animController: makeAnimationController(exquis),
-            textAreaController: makeTextAreaController(exquis),
+            animController: makeAnimationController(),
+            textAreaController: makeTextAreaController(),
             updateWithCanvasAnim: updateWithCanvasAnim
         };
         view = makeEditorView(controller);
