@@ -70,20 +70,11 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
         return controller;
     };
 
-    var updateWithCanvasAnim = function(canvasAnim, newAnimationName){
-        // we would like
-        //view.setEditorContent(canvasAnim.animationName, canvasAnim.getCodeString());
+    var updateWithCanvasAnim = function(canvasAnim){
         currentCanvasAnim = canvasAnim;
-        if (canvasAnim.uri.match(/^data:/)){
-            var animCodeString = evileval.dataUri2text(canvasAnim.uri);
-            view.setEditorContent(canvasAnim.animationName, animCodeString); 
-        }else{
-            canvasAnim.loadAnimation(canvasAnim.uri)
-                .then(function(animCodeString){
-                    view.setEditorContent(canvasAnim.animationName, animCodeString);
-                    canvasAnim.uri = evileval.toDataUri(animCodeString);
-                });
-        }
+        canvasAnim.getSourceCodeString().then(function(codeString){
+            view.setEditorContent(canvasAnim.animationName, codeString);
+        });
     };
 
     var displayInvalidity = function(err, canvasAnim){

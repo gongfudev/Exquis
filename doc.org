@@ -52,8 +52,8 @@ or else loads it from the store with originalUrl and calls setCodeString
 - is called every time a key is pressed on the editor
 
 ******* DONE give the canvasAnim object to the editor.
-TODO the editor calls canvasAnim.getCodeString, 
-TODO which calls .setJavaScriptCodeString  
+******** DONE the editor calls canvasAnim.getCodeString, 
+******** TODO which calls .setJavaScriptCodeString  
 
 ******* TODO a new component: the store
 different implementations of the store would save the animation in different places.
