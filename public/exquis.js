@@ -175,15 +175,16 @@ define(["iter2d", "csshelper", "evileval", "net", "ui"], function(iter2d, csshel
     };
 
 
-
+    var currentCell;
     var addEditor = function(exquis, makeEditorView, makeEditorController){
         exquis.editorController = makeEditorController(exquis, makeEditorView);
         
         iter2d.forEach2dArray(exquis.cells, function(cell){
             var edit = function(){ 
-                if (exquis.targetCell) { csshelper.removeClass(exquis.targetCell.hint, "visible-cell"); }
-                exquis.targetCell = cell;
-                csshelper.addClass(exquis.targetCell.hint, "visible-cell");
+                if (currentCell) { csshelper.removeClass(currentCell.hint, "visible-cell"); }
+                currentCell = cell;
+                exquis.currentCell = currentCell; //only for debugging
+                csshelper.addClass(currentCell.hint, "visible-cell");
                 exquis.editorController.updateWithCanvasAnim(cell.canvasAnim);
                 exquis.editorController.show();
             };
@@ -197,7 +198,7 @@ define(["iter2d", "csshelper", "evileval", "net", "ui"], function(iter2d, csshel
             if (event.target.tagName === "HTML"){
                 // unselect edition
                 exquis.editorController.hide();
-                if (exquis.targetCell) { csshelper.removeClass(exquis.targetCell.hint, "visible-cell"); }
+                if (currentCell) { csshelper.removeClass(currentCell.hint, "visible-cell"); }
             }
         };
         document.addEventListener('click', possiblyHideEditor, true);
@@ -261,9 +262,7 @@ define(["iter2d", "csshelper", "evileval", "net", "ui"], function(iter2d, csshel
                 try{
                     canvasAnim.draw(neighbouringBorders);
                 }catch(e){
-                    if(exquis.targetCell === cell ){
-                        exquis.editorController.displayInvalidity(e);
-                    }
+                    exquis.editorController.displayInvalidity(e, cell.canvasAnim);
                 }
             });
         };

@@ -100,10 +100,7 @@ define([], function(){
 		// unselect edition
 		    editor.className = "invisible";
 	    },
-        displayInvalidity : function(err){
-            console.log(err);
-            displayCodeValidity(false);
-        }
+            displayCodeValidity: displayCodeValidity
         };
         return theView;
     };

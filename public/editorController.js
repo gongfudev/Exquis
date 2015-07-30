@@ -85,6 +85,13 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
                 });
         }
     };
+
+    var displayInvalidity = function(err, canvasAnim){
+        if(currentCanvasAnim === canvasAnim){
+            console.log(err);
+            view.displayCodeValidity(false);
+        }
+    };
     
     return function(exquis, makeEditorView){
         var controller = {
@@ -96,7 +103,7 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
         view = makeEditorView(controller);
         controller.hide = view.hide;
         controller.show = view.show;
-        controller.displayInvalidity = view.displayInvalidity;
+        controller.displayInvalidity = displayInvalidity;
         return controller;
     };
 
