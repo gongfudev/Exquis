@@ -27,12 +27,10 @@ define([], function(){
         
         var makeAnimationButtons = function(displayAnimationName) {
 
-	    var animLoadButton = document.getElementById("animation_load_button"),
-		animSaveButton = document.getElementById("animation_save_button"),
+	    var animSaveButton = document.getElementById("animation_save_button"),
 		animSaveAsButton = document.getElementById("animation_save_as_button");
 
             
-	    animLoadButton.addEventListener('click', animController.load, true);
 	    animSaveButton.addEventListener('click', animController.save, true);
 
 	    var animSaveAs = function(){
