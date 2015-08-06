@@ -9,8 +9,8 @@ define([], function(){
     var loadJsAnim = function(jsAnimPath){
         return new Promise(function(resolve, reject){
             require([jsAnimPath],
-                    function(animationCode){
-                        resolve(Object.create(animationCode));
+                    function(evaluatedAnimation){
+                        resolve(Object.create(evaluatedAnimation));
                     },
                     function(err){
                         reject(err);
@@ -18,15 +18,12 @@ define([], function(){
         });
     };
     
+    // TODO this method should only be called by a canvasAnim who uses the store to
+    // convert path to name
     var loadJsAnimOnCanvasAnim = function(jsAnimPath, canvasAnim, animationName){
         return loadJsAnim(jsAnimPath)
-            .then(function(animationCodeClone){
-                canvasAnim.uri = jsAnimPath;
-                canvasAnim.animationName = animationName;
-                canvasAnim.codeToSetup = animationCodeClone;
-	        if(canvasAnim.hasOwnProperty("setup")){
-                    canvasAnim.setup();
-                }
+            .then(function(evaluatedAnimationClone){
+                canvasAnim.setAnimation(evaluatedAnimationClone, jsAnimPath);
                 return canvasAnim;
             });
     };
@@ -48,7 +45,7 @@ define([], function(){
     };
 	
     return {
-        loadJsAnim: loadJsAnim,
+        loadJsAnimOnCanvasAnim: loadJsAnimOnCanvasAnim,
         evalAnimation: evalAnimation,
         toDataUri: toDataUri,
         dataUri2text: dataUri2text,

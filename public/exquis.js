@@ -92,8 +92,6 @@ define(["iter2d", "csshelper", "evileval", "net", "ui"], function(iter2d, csshel
                     return net.HTTPget(this.uri).then(function(animCodeString){
                         this.animationName = net.extractAnimationNameFromUri(this.uri);
                         this.addCodeStringToEvaluate(animCodeString);
-                        // update the cache
-                        this.uri = evileval.toDataUri(animCodeString);
                         return animCodeString;
                     }.bind(this));
                 }
@@ -158,11 +156,10 @@ define(["iter2d", "csshelper", "evileval", "net", "ui"], function(iter2d, csshel
             store.loadAnimationList().then(function(fileUris){
                 var names = fileUris.map(store.uriToAnimationName);
                 return ui.populateNamePicker("choose animation", names);
-            }).then(function(fileName){
-                var fileUri = store.animationNameToUri(fileName);
-                evileval.loadJsAnim(fileUri).then(function(animationCodeClone){
-                    canvasAnim.setAnimation(animationCodeClone, fileUri);
-                });
+            }).then(function(animationName){
+                var fileUri = store.animationNameToUri(animationName);
+                evileval.loadJsAnimOnCanvasAnim(fileUri, canvasAnim, animationName);
+                //TODO notify or update the editor to fix the BUG
             });
 
         });
@@ -226,10 +223,10 @@ define(["iter2d", "csshelper", "evileval", "net", "ui"], function(iter2d, csshel
                 width = 150,
                 cell = makeCell(row, col, height, width);
             cell.canvasAnim = makeCanvasAnimation(cell.context);
-            addCellUiListeners(cell.ui, cell.canvasAnim, store); 
-            evileval.loadJsAnim(animUri).then(function(animationCodeClone){
-                cell.canvasAnim.setAnimation(animationCodeClone, animUri);
-            });
+            addCellUiListeners(cell.ui, cell.canvasAnim, store);
+            // TODO the next two lines should be a function on canvasAnim
+            var animationName = store.uriToAnimationName(animUri);
+            evileval.loadJsAnimOnCanvasAnim(animUri, cell.canvasAnim, animationName); 
             return cell;
         });
         
