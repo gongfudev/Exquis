@@ -66,16 +66,6 @@ define(["iter2d", "csshelper", "evileval", "net", "ui"], function(iter2d, csshel
                 });
             },
  
-            loadAnimation : function(uri){
-                var canvasAnim = this,
-                    animationName = net.extractAnimationNameFromUri(uri);
-                return net.HTTPget(uri).then(function(animCodeString){
-                    canvasAnim.animationName = animationName;
-                    canvasAnim.addCodeStringToEvaluate(animCodeString);
-                    return animCodeString;
-                });
-            },
-            
             setAnimation: function(codeToSetup, uri){
                 this.codeToSetup = codeToSetup;
                 this.animationName = net.extractAnimationNameFromUri(uri),
@@ -89,19 +79,23 @@ define(["iter2d", "csshelper", "evileval", "net", "ui"], function(iter2d, csshel
 
                 this.setup();
             },
+            
             getSourceCodeString: function(){
-                
                 if (this.uri.match(/^data:/)){
+                    // the code is in the cache
                     return new Promise(function(resolve, reject){
                         var animCodeString = evileval.dataUri2text(this.uri);
                         resolve(animCodeString);
                     }.bind(this));
                 }else{
-                    return this.loadAnimation(this.uri)
-                        .then(function(animCodeString){
-                            this.uri = evileval.toDataUri(animCodeString);
-                            return animCodeString;
-                        }.bind(this));
+                    // get the code from the internets
+                    return net.HTTPget(this.uri).then(function(animCodeString){
+                        this.animationName = net.extractAnimationNameFromUri(this.uri);
+                        this.addCodeStringToEvaluate(animCodeString);
+                        // update the cache
+                        this.uri = evileval.toDataUri(animCodeString);
+                        return animCodeString;
+                    }.bind(this));
                 }
             }
         };

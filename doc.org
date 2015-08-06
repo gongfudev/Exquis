@@ -28,8 +28,8 @@ delete this method
 creates an evaluateCode method to be called at the next iteration
 **** editorController.textAreaController.onCodeChange
 you have typed something
-TODO: the editor should know CanvasAnim, but should not access exquis. 
-      canvasAnim is given to the editor by editorController.loadCodeString(canvasAnim)
+TODO the editor should know CanvasAnim, but should not access exquis. 
+canvasAnim is given to the editor by editorController.loadCodeString(canvasAnim)
 TODO onCodeChange should call canvasAnim.setJavaScriptCodeString instead.
 
 **** exquis.canvasAnim.loadAnimation
