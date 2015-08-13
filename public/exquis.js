@@ -30,6 +30,7 @@ define(["iter2d", "csshelper", "evileval", "net", "ui"], function(iter2d, csshel
 
     var makeCanvasAnimation = function(context){
         return {
+            updateListener:null,
             currentCode: null,
             context: context, //might be useful to debug
             borders : function(){
@@ -81,6 +82,7 @@ define(["iter2d", "csshelper", "evileval", "net", "ui"], function(iter2d, csshel
             },
             
             getSourceCodeString: function(){
+                //TODO continue refactoring here, see doc.org
                 if (this.uri.match(/^data:/)){
                     // the code is in the cache
                     return new Promise(function(resolve, reject){
@@ -157,9 +159,19 @@ define(["iter2d", "csshelper", "evileval", "net", "ui"], function(iter2d, csshel
                 var names = fileUris.map(store.uriToAnimationName);
                 return ui.populateNamePicker("choose animation", names);
             }).then(function(animationName){
-                var fileUri = store.animationNameToUri(animationName);
-                evileval.loadJsAnimOnCanvasAnim(fileUri, canvasAnim, animationName);
-                //TODO notify or update the editor to fix the BUG
+                if (animationName){
+                    var fileUri = store.animationNameToUri(animationName);
+                    return evileval.loadJsAnimOnCanvasAnim(fileUri, canvasAnim, animationName);
+                }else{
+                    throw "no animation name";
+                }
+            }).then(function(canvasAnim){ return canvasAnim.getSourceCodeString();
+            }).then(function(codeString){
+                if(canvasAnim.updateListener){
+                    canvasAnim.updateListener(canvasAnim.animationName, codeString);
+                }
+            }).catch(function(e){
+                console.log(e);
             });
 
         });

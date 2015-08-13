@@ -71,7 +71,12 @@ define(['ui', 'net', 'evileval'], function(ui, net, evileval){
     };
 
     var updateWithCanvasAnim = function(canvasAnim){
+        if(currentCanvasAnim){
+            currentCanvasAnim.updateListener = null;
+        }
         currentCanvasAnim = canvasAnim;
+        currentCanvasAnim.updateListener = view.setEditorContent;
+        
         canvasAnim.getSourceCodeString().then(function(codeString){
             view.setEditorContent(canvasAnim.animationName, codeString);
         });
