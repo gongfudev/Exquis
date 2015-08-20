@@ -13,9 +13,6 @@ par exemple en mettant les boutons de l'animation à coté de son nom, ou les me
 ** remplacer setInterval par requestAnimation
 * new animations
 * bugs
-** TODO animation name is displayed incorectly the second time you click on edit cell button
-net.extractAnimationNameFromUri cannot deduce the name from a data uri
-this problem will be solved when we introduce the distinction between canvasAnim.originalUrl and .codeUri 
 
 * implement blockly interface https://code.google.com/p/blockly/
 * allow usage of files from external urls (github.com, pastebin, etc)

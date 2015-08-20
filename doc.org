@@ -16,11 +16,11 @@ net.loadAssemblage(x, assName, init)
 exquis.init is called with all the loaded animations as argument
 exquis.init creates an exquis object and calls makeEditor(exquis)
 
-* ev.loadJsAnimOnCanvasAnim
+* ev.loadJsAnimOnCanvasAnim DELETED
 loads animationCode from uri with requirejs
 sets canvasAnim.animationName 
 TODO compute the animation name from the url instead of taking an argument 
-** evileval.evalAnimation
+** evileval.evalAnimation DELETED
 converts codeString to data uri
 TODO converting the codeString to data uri is now the job of canvasAnim.setCodeString
 delete this method
@@ -39,7 +39,6 @@ or else loads it from the store with originalUrl and calls setCodeString
 
 ***** editorController.textAreaController.updateWithCanvasAnim (if ! match data:)
 - loads the code as text (codeString) from the url TODO put this in canvasAnim.getSourceCodeString
-- stores it in a data uri  TODO put this on canvasAnim.setCodeString
 - puts the codeString in the editor
 
 ******* TODO find a better name for this method: editorController.loadCodeString(canvasAnim)?
@@ -61,7 +60,7 @@ The store needs to know where to save an animation based on its url.
 Currently the original url is replaced by a data uri when it is first edited,
 because it's only used to load the code. We need to keep it in order to save it.
 
-******* TODO canvasAnim.originalUrl .codeUri
+******* DONE canvasAnim.originalUrl .codeUri
 originalUrl is the address from where the animation is first loaded
 codeUri is a data uri that contains the code being edited
  

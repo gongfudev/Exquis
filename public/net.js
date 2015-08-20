@@ -3,10 +3,10 @@
 define(["iter2d", "evileval"], function(iter2d, evileval){
 
     var saveAnimation = function(canvasAnim, callback, fileName){
-        if (!canvasAnim.uri.match(/^data:/)){
+        if (!canvasAnim.codeCacheUri){
             return;
         }
-        var JSString = evileval.dataUri2text(canvasAnim.uri),
+        var JSString = evileval.dataUri2text(canvasAnim.codeCacheUri),
             dirName = "animations",
             name = (fileName || canvasAnim.animationName) + ".js";
 

@@ -52,25 +52,38 @@ define(["iter2d", "csshelper", "evileval", "net", "ui"], function(iter2d, csshel
                 this.currentCode.draw(context, borders, this.lib);
             },
 
+            toDataUri : function(jsCode){
+                return "data:text/javascript;base64," + btoa(jsCode);
+            },
+            
             addCodeStringToEvaluate: function(codeString){
-                var canvasAnim = this;
                 return new Promise(function(resolve, reject){
-                    canvasAnim.evaluateCode = function(){
-                        evileval.evalAnimation(codeString, canvasAnim)
-                            .then(function(){
+                    this.evaluateCode = function(){
+                        var codeAsUri = this.toDataUri(codeString);
+                        evileval.loadJsAnim(codeAsUri)
+                            .then(function(evaluatedAnimationClone){
+                                this.setAnimation(evaluatedAnimationClone, this.originalUrl);
+                                this.codeCacheUri = codeAsUri;
                                 resolve();
-                            }, function(err){
+                            }.bind(this))
+                            .catch( function(err){
                                 console.log(err);
                                 reject(err);
                             });
                     };
-                });
+                }.bind(this));
             },
- 
+            loadAnim: function(url){
+                return evileval.loadJsAnim(url).then(function(evaluatedAnimationClone){
+                    this.setAnimation(evaluatedAnimationClone, url);
+                    this.codeCacheUri = null;
+                    return this;
+                }.bind(this));
+            },
             setAnimation: function(codeToSetup, uri){
                 this.codeToSetup = codeToSetup;
                 this.animationName = net.extractAnimationNameFromUri(uri),
-                this.uri = uri;
+                this.originalUrl = uri;
                 this.setup = function(){
                     // force reset matrix
                     context.setTransform(1, 0, 0, 1, 0, 0);
@@ -83,16 +96,16 @@ define(["iter2d", "csshelper", "evileval", "net", "ui"], function(iter2d, csshel
             
             getSourceCodeString: function(){
                 //TODO continue refactoring here, see doc.org
-                if (this.uri.match(/^data:/)){
+                if (this.codeCacheUri){
                     // the code is in the cache
                     return new Promise(function(resolve, reject){
-                        var animCodeString = evileval.dataUri2text(this.uri);
+                        var animCodeString = evileval.dataUri2text(this.codeCacheUri);
                         resolve(animCodeString);
                     }.bind(this));
                 }else{
                     // get the code from the internets
-                    return net.HTTPget(this.uri).then(function(animCodeString){
-                        this.animationName = net.extractAnimationNameFromUri(this.uri);
+                    return net.HTTPget(this.originalUrl).then(function(animCodeString){
+                        this.animationName = net.extractAnimationNameFromUri(this.originalUrl);
                         this.addCodeStringToEvaluate(animCodeString);
                         return animCodeString;
                     }.bind(this));
@@ -161,7 +174,7 @@ define(["iter2d", "csshelper", "evileval", "net", "ui"], function(iter2d, csshel
             }).then(function(animationName){
                 if (animationName){
                     var fileUri = store.animationNameToUri(animationName);
-                    return evileval.loadJsAnimOnCanvasAnim(fileUri, canvasAnim, animationName);
+                    return canvasAnim.loadAnim(fileUri);
                 }else{
                     throw "no animation name";
                 }
@@ -236,9 +249,7 @@ define(["iter2d", "csshelper", "evileval", "net", "ui"], function(iter2d, csshel
                 cell = makeCell(row, col, height, width);
             cell.canvasAnim = makeCanvasAnimation(cell.context);
             addCellUiListeners(cell.ui, cell.canvasAnim, store);
-            // TODO the next two lines should be a function on canvasAnim
-            var animationName = store.uriToAnimationName(animUri);
-            evileval.loadJsAnimOnCanvasAnim(animUri, cell.canvasAnim, animationName); 
+            cell.canvasAnim.loadAnim(animUri);
             return cell;
         });
         
