@@ -95,7 +95,6 @@ define(["iter2d", "csshelper", "evileval", "net", "ui"], function(iter2d, csshel
             },
             
             getSourceCodeString: function(){
-                //TODO continue refactoring here, see doc.org
                 if (this.codeCacheUri){
                     // the code is in the cache
                     return new Promise(function(resolve, reject){
@@ -240,9 +239,6 @@ define(["iter2d", "csshelper", "evileval", "net", "ui"], function(iter2d, csshel
             exquis = {};
         exquis.assName = assName;
 
-        //TODO canvasAnim should have a method to load the source code from the url:
-        // getSourceCodeString (which reads from the cache of the canvasAnim, or the store)
-        // This becomes necessary when start to have code other than javascript
         exquis.cells = iter2d.map2dArray(animUris,function(animUri,row,col){
             var height = 150,
                 width = 150,

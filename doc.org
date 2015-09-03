@@ -30,7 +30,6 @@ creates an evaluateCode method to be called at the next iteration
 you have typed something
 TODO the editor should know CanvasAnim, but should not access exquis. 
 canvasAnim is given to the editor by editorController.loadCodeString(canvasAnim)
-TODO onCodeChange should call canvasAnim.setJavaScriptCodeString instead.
 
 **** exquis.canvasAnim.getSourceCodeString
 returns the code as a string in whatever original language it was written in
@@ -41,18 +40,10 @@ or else loads it from the store with originalUrl and calls setCodeString
 - loads the code as text (codeString) from the url TODO put this in canvasAnim.getSourceCodeString
 - puts the codeString in the editor
 
-******* TODO find a better name for this method: editorController.loadCodeString(canvasAnim)?
-
-******* TODO canvasAnim.setJavaScriptCodeString
-- stores the codeString in the codeUri (method updateCodeUriFromString)
-- sets up the canvasAnim to evaluate it: canvasAnim._addCodeStringToEvaluate
-- is called every time a key is pressed on the editor
-
 ******* DONE give the canvasAnim object to the editor.
 ******** DONE the editor calls canvasAnim.getCodeString, 
-******** TODO which calls .setJavaScriptCodeString  
 
-******* TODO a new component: the store
+******* DONE a new component: the store
 different implementations of the store would save the animation in different places.
 The original url of the animation is independent of the store
 because we want exquis to be able to just display animations from any url.
@@ -66,14 +57,7 @@ codeUri is a data uri that contains the code being edited
  
 ****** editorController...load...pickanimation
 you click the button to load a new animation
-TODO pickanimation is no longer on the editor, we're moving that button 
-TODO pickanimation is followed by canvasAnim.setJavaScriptCodeString
-****** exquis.addEditor...edit
-you open the editor to look at the code
-TODO edit should be called with the codeString as argument 
-(or do we want to keep the responsibility for codeString in the editor?
-no one else needs it, and the canvasAnim could refer to it through an uri,
-but maybe this exposes too much to the editor?)
+DONE pickanimation is no longer on the editor, we're moving that button 
 ** net.loadAssemblage
 *** net.findAndLoadAssemblage
 **** main
