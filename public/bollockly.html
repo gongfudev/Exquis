@@ -1,0 +1,51 @@
+<html>
+  <head>
+    <script src="lib/blockly/blockly_compressed.js"></script>
+    <script src="lib/blockly/blocks_compressed.js"></script>
+    <script src="lib/blockly/msg/js/en.js"></script>
+    <script src="lib/blockly/javascript_compressed.js"></script>
+
+    <script>
+      function loadBlockly(){
+        var workspace = Blockly.inject('blocklyDiv',
+        {toolbox: document.getElementById('toolbox')});
+
+        function myUpdateFunction() {
+           var code = Blockly.JavaScript.workspaceToCode(workspace);
+           console.log(Blockly.Xml.workspaceToDom(workspace));
+           document.getElementById('textarea').value = code;
+        }
+        workspace.addChangeListener(myUpdateFunction);
+
+        window.execute  = function (){
+          Blockly.JavaScript.addReservedWords('code');
+          var code = Blockly.JavaScript.workspaceToCode(workspace);
+          console.log(code);
+          try {
+            eval(code);
+          } catch (e) {
+            alert(e);
+          }
+        }
+      }
+      window.onload = loadBlockly;
+
+
+    </script>
+
+  </head>
+  <body >
+    <div id="blocklyDiv" style="height: 480px; width: 600px;"></div>
+    <xml id="toolbox" style="display: none">
+      <block type="controls_if"></block>
+      <block type="controls_repeat_ext"></block>
+      <block type="logic_compare"></block>
+      <block type="math_number"></block>
+      <block type="math_arithmetic"></block>
+      <block type="text"></block>
+      <block type="text_print"></block>
+    </xml>
+    <textarea id="textarea"></textarea>
+<button onclick="execute()">exec</button>
+  </body>
+</html>
