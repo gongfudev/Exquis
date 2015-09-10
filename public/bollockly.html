@@ -4,34 +4,8 @@
     <script src="lib/blockly/blocks_compressed.js"></script>
     <script src="lib/blockly/msg/js/en.js"></script>
     <script src="lib/blockly/javascript_compressed.js"></script>
-
-    <script>
-      function loadBlockly(){
-        var workspace = Blockly.inject('blocklyDiv',
-        {toolbox: document.getElementById('toolbox')});
-
-        function myUpdateFunction() {
-           var code = Blockly.JavaScript.workspaceToCode(workspace);
-           console.log(Blockly.Xml.workspaceToDom(workspace));
-           document.getElementById('textarea').value = code;
-        }
-        workspace.addChangeListener(myUpdateFunction);
-
-        window.execute  = function (){
-          Blockly.JavaScript.addReservedWords('code');
-          var code = Blockly.JavaScript.workspaceToCode(workspace);
-          console.log(code);
-          try {
-            eval(code);
-          } catch (e) {
-            alert(e);
-          }
-        }
-      }
-      window.onload = loadBlockly;
-
-
-    </script>
+    <script src="square.js"></script>
+    <script src="bollockly.js"></script>
 
   </head>
   <body >
@@ -44,8 +18,12 @@
       <block type="math_arithmetic"></block>
       <block type="text"></block>
       <block type="text_print"></block>
+      <block type="square"></block>
     </xml>
     <textarea id="textarea"></textarea>
 <button onclick="execute()">exec</button>
+<button onclick="save()">save</button>
+<button onclick="load()">load</button>
+    <canvas width="400" height="400" id="canvas"></canvas>
   </body>
 </html>
