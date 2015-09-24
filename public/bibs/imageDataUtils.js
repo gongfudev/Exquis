@@ -129,7 +129,7 @@ define({
         }
         return result;
     },
-    sliceImageData: function(context, imageData, start, length){
+    cropLine: function(context, imageData, start, length){
         var horizontal = imageData.height == 1,
             startIndex = start * 4,
             endIndex = (start + length) * 4, 
@@ -150,21 +150,21 @@ define({
                                                 fromRectangle.height);
         context.putImageData(currentImage, toPoint.x, toPoint.y);
     },
-    drawPixels: function(context, chgRec, srcPixels, horizontal){
+    drawLineInRec: function(context, linePixels, chgRec, horizontal){
         var size = horizontal ? chgRec.width : chgRec.height,
             d= [0,0];
         for(var i=0; i<size; i++){
             d[horizontal? 0 : 1] = i;
-            context.putImageData(srcPixels, chgRec.x + d[0], chgRec.y + d[1]);
+            context.putImageData(linePixels, chgRec.x + d[0], chgRec.y + d[1]);
         }
     },
     pushPixels: function(ctx, srcPixels, rectangle, horiz, speed, filter){
         var opts = this.pixelTranslateParams(rectangle, horiz, speed),
-            pixels = srcPixels;
+            linePixels = srcPixels;
         if(filter){
-            pixels = filter.call(this, ctx, srcPixels); 
+            linePixels = filter.call(this, ctx, srcPixels); 
         }
-        this.drawPixels(ctx, opts.changeRectangle, pixels, horiz);
+        this.drawLineInRec(ctx, linePixels, opts.changeRectangle, horiz);
         this.copyContextPixels(ctx, opts.copyRectangle, opts.pastePoint);
     },
     pushLine: function(ctx, borders, rec, horiz, speed, filter){
@@ -183,25 +183,25 @@ define({
             touchesSouth = rec.y + rec.height >= ctx.canvas.height;
 
         if(      fromEast  &&  touchesEast){
-            return this.sliceImageData(ctx, borders.east, rec.y, rec.height);
+            return this.cropLine(ctx, borders.east, rec.y, rec.height);
 
         }else if(fromEast  && !touchesEast){
             return ctx.getImageData(rec.x + rec.width, rec.y, 1, rec.height);
 
         }else if(fromWest  &&  touchesWest){
-            return this.sliceImageData(ctx, borders.west, rec.y, rec.height);
+            return this.cropLine(ctx, borders.west, rec.y, rec.height);
 
         }else if(fromWest  && !touchesWest){
             return ctx.getImageData(rec.x - 1 , rec.y, 1, rec.height);
 
         }else if(fromNorth &&  touchesNorth){
-            return this.sliceImageData(ctx, borders.north, rec.x, rec.width);
+            return this.cropLine(ctx, borders.north, rec.x, rec.width);
 
         }else if(fromNorth && !touchesNorth){
             return ctx.getImageData(rec.x, rec.y - 1, rec.width, 1);
 
         }else if(fromSouth &&  touchesSouth){
-            return this.sliceImageData(ctx, borders.south, rec.x, rec.width);
+            return this.cropLine(ctx, borders.south, rec.x, rec.width);
 
         }else if(fromSouth && !touchesSouth){
             return ctx.getImageData(rec.x, rec.y + rec.height , rec.width, 1);

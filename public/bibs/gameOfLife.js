@@ -85,7 +85,7 @@ define({
 
       
       return livingCells;
-    }
+    };
   },
 
   makeGlider: function(center_x, center_y){

@@ -1,5 +1,5 @@
-define(["bibs/imageDataUtils", "bibs/shapes"], 
-function(idu, shapes){
+define(["bibs/imageDataUtils"], 
+function(idu){
   return {
       draw: function (context, borders){
           var rec = idu.rectangle(0, 50, 150, 100) ;
