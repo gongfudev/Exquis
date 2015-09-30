@@ -36,7 +36,7 @@ define(function(){
                 limitingDimension: closestPossibleImpact[1] };
     };
 
-    var next = function(startPoint, direction, speed, limits){
+    var next = function(limits, direction, startPoint, speed){
         var totalTravelledPercentage = 0;
         var nextPoint = null;
         direction = direction.slice();
@@ -59,15 +59,34 @@ define(function(){
         return {point: nextPoint, direction: direction};
     };
 
-    var makeWanderer = function(startPoint, direction, speed, limits){
+    var makeWanderer = function(limits, direction, startPoint, speed){
+        //defaults
+        if(!limits){
+            var limit = [0,150]; 
+            limits = [limit, limit];
+        }
+        if(!direction){
+            direction = limits.map(function(l,index){
+                return index * 2 + 1;
+            });
+        }
+        if(!startPoint){
+            startPoint = limits.map(function(limit,i){ 
+                return (limit[0] + limit[1]) / 2; 
+            });
+        }
+        if(speed !==0 && !speed){
+            speed = 1;
+        }
+
         return {
             coordinates: startPoint,
             limits: limits,
-            direction: normalize(direction),
+            direction: direction,
             speed: speed,
             move: function(){
-                var nextState = next(this.coordinates, this.direction,
-                                     this.speed, this.limits);
+                var nextState = next(this.limits, normalize(this.direction),
+                                     this.coordinates, this.speed);
                 this.coordinates = nextState.point;
                 this.direction = nextState.direction;
             }
