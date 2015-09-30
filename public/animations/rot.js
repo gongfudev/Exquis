@@ -1,8 +1,7 @@
 define(["bibs/canvasBuffer"], function(canvasBuffer){ return {
     setup: function(context){
         this.TO_RADIANS = Math.PI/180;
-        this.buffer = canvasBuffer.makeBuffer(context,
-                                              context.canvas.width,
+        this.buffer = canvasBuffer.makeBuffer(context.canvas.width,
                                               context.canvas.height);
         this.axis = {x: 0, y: 20};
         this.rotation = 0;
@@ -16,14 +15,14 @@ define(["bibs/canvasBuffer"], function(canvasBuffer){ return {
         context.putImageData(borders.south, 0, context.canvas.height -1 );
 
         //copy canvas to buffer
-        this.buffer.copyToBuffer({x:0, y:0});
+        this.buffer.copyToBuffer(context, {x:0, y:0});
         
         //copy from buffer to rotated canvas
         context.save();
         context.translate(this.axis.x, this.axis.y);
         context.rotate(this.rotation * this.TO_RADIANS);
         context.translate(-this.axis.x, -this.axis.y);
-        this.buffer.copyFromBuffer();
+        this.buffer.copyFromBuffer(context);
         context.restore();
         
         // change rotation for next loop        

@@ -1,33 +1,29 @@
 define(function(){
 
-    var makeBuffer = function(originalCtx, width, height){
+    var makeBuffer = function(width, height){
         var buffer = document.createElement('canvas');
         buffer.width = width;
         buffer.height = height;
         var bufferCtx = buffer.getContext("2d");
         
         return {
-            width: buffer.width,
-            height: buffer.height,
-            copyToBuffer: function(sourcePoint){
+            width: width,
+            height: height,
+            copyToBuffer: function(sourceCtx, sourcePoint){
+                // Copy a rectangle the size of the buffer from sourcePoint.
+                // This function does not react to translate, rotate etc..
                 var x = Math.round(sourcePoint.x);
                 var y = Math.round(sourcePoint.y);
-                var imageData = originalCtx.getImageData(sourcePoint.x, 
-                                                         sourcePoint.y, 
-                                                         buffer.width, 
-                                                         buffer.height);
+                var imageData = sourceCtx.getImageData(x, y, width, height);
                 bufferCtx.putImageData(imageData, 0, 0);
             },
-            copyFromBuffer: function(destRec){
-                // use drawImage because it allows to scale
-                // and translate originalCtx
-                originalCtx.drawImage(buffer, 
-                                      0, 0,
-                                      buffer.width, 
-                                      buffer.height);
+            copyFromBuffer: function(destinationCtx){
+                // use drawImage because it allows to scale,
+                // translate and rotate destinationCtx
+                destinationCtx.drawImage(buffer, 0, 0, width, height);
             }
         };
     };
 
-    return { makeBuffer: makeBuffer};
+    return { makeBuffer: makeBuffer };
 });

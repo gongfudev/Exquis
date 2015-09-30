@@ -62,7 +62,8 @@ define(["iter2d", "csshelper", "evileval", "net", "ui"], function(iter2d, csshel
                         var codeAsUri = this.toDataUri(codeString);
                         evileval.loadJsAnim(codeAsUri)
                             .then(function(evaluatedAnimationClone){
-                                this.setAnimation(evaluatedAnimationClone, this.originalUrl);
+                                this.setAnimation(evaluatedAnimationClone,
+                                                  this.originalUrl);
                                 this.codeCacheUri = codeAsUri;
                                 resolve();
                             }.bind(this))
@@ -73,13 +74,16 @@ define(["iter2d", "csshelper", "evileval", "net", "ui"], function(iter2d, csshel
                     };
                 }.bind(this));
             },
+            
             loadAnim: function(url){
-                return evileval.loadJsAnim(url).then(function(evaluatedAnimationClone){
-                    this.setAnimation(evaluatedAnimationClone, url);
-                    this.codeCacheUri = null;
-                    return this;
-                }.bind(this));
+                return evileval.loadJsAnim(url).then(
+                    function(evaluatedAnimationClone){
+                        this.setAnimation(evaluatedAnimationClone, url);
+                        this.codeCacheUri = null;
+                        return this;
+                    }.bind(this));
             },
+
             setAnimation: function(codeToSetup, uri){
                 this.codeToSetup = codeToSetup;
                 this.animationName = net.extractAnimationNameFromUri(uri),

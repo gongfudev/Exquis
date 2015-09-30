@@ -12,7 +12,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "node test/testImageDataUtils.js",
+    "test": "node test/testSuite.js",
     "start": "node server.js"
   },
   "repository": {
