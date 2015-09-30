@@ -9,6 +9,7 @@ define(function(){
         return {
             width: width,
             height: height,
+            context: bufferCtx,
             copyToBuffer: function(sourceCtx, sourcePoint){
                 // Copy a rectangle the size of the buffer from sourcePoint.
                 // This function does not react to translate, rotate etc..
@@ -21,6 +22,13 @@ define(function(){
                 // use drawImage because it allows to scale,
                 // translate and rotate destinationCtx
                 destinationCtx.drawImage(buffer, 0, 0, width, height);
+            },
+            setTransparency: function(alpha){
+                var imageData = bufferCtx.getImageData(0, 0, width, height);
+                for (var i = 0, n = imageData.data.length; i < n; i += 4) {
+                    imageData.data[i+3] = alpha;
+                }
+                bufferCtx.putImageData(imageData,0,0);
             }
         };
     };
