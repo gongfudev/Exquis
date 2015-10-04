@@ -168,6 +168,7 @@ define({
         this.copyContextPixels(ctx, opts.copyRectangle, opts.pastePoint);
     },
     pushLine: function(ctx, borders, rec, horiz, speed, filter){
+        rec = rec || this.rectangle(0, 0, ctx.canvas.width, ctx.canvas.height);
         var positiveDir = speed > 0,
             pixels = this.linePixels(ctx, borders, rec, horiz, positiveDir);
         this.pushPixels(ctx, pixels, rec, horiz, speed, filter);

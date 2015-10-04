@@ -7,7 +7,6 @@ define( function(context){
     };
 
     var provideVideoContext = function(width, height){
-        applyVendorPrefix();
 	var video = document.createElement("video");
 	video.width = width;
 	video.height = height;
@@ -41,5 +40,25 @@ define( function(context){
 
         return video;
     };
-    return {provideVideoContext: provideVideoContext};
+    
+    var makeWebCam = function(width, height){
+        if(!width){
+            width = 320;
+            height = 240;
+        }
+
+        applyVendorPrefix();
+        var videoContext =  provideVideoContext(width, height);
+        
+        return {
+            context: videoContext,
+            copyFromCam : function(context){
+                context.drawImage(videoContext, 0, 0, 
+                                  videoContext.width, videoContext.height);
+            }
+        };
+
+    };
+
+    return {makeWebCam: makeWebCam };
 });
