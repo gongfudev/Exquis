@@ -9,8 +9,9 @@ Blockly.Blocks['square'] = {
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.setColour(330);
-    this.setTooltip('');
+    this.setTooltip('squares');
     this.setHelpUrl('http://www.example.com/');
+    //  this.setOutput(true, 'Number');
   }
 };
 
@@ -18,7 +19,7 @@ Blockly.JavaScript['square'] = function(block) {
   var value_color = Blockly.JavaScript.valueToCode(block, 'COLOR', Blockly.JavaScript.ORDER_ATOMIC);
   var value_angle = Blockly.JavaScript.valueToCode(block, 'angle', Blockly.JavaScript.ORDER_ATOMIC);
   // TODO: Assemble JavaScript into code variable.
-  var code = "("+makesquare().toString().replace("__COLOR__", value_color)+")(ctx)";
+  var code = "("+makesquare().toString().replace("__COLOR__", value_color)+")(ctx);";
   return code;
 };
 
